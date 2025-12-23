@@ -1,4 +1,4 @@
-# TStart
+# TanStack Start + Better Auth + Fumadocs
 
 This is a TanStack Start application generated with
 [Create Fumadocs](https://github.com/fuma-nama/fumadocs).

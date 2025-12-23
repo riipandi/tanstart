@@ -16,5 +16,7 @@ node_modules
 .tanstack
 
 .source/
+storage/
 routeTree.gen.ts
 routes.gen.ts
+database.sqlite
