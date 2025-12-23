@@ -1,0 +1,158 @@
+/** Colors **/
+:root {
+    --background: var(--color-white);
+    --foreground: var(--color-zinc-950);
+    --card: var(--color-white);
+    --card-foreground: var(--color-zinc-950);
+    --popover: var(--color-white);
+    --popover-foreground: var(--color-zinc-950);
+    --primary: var(--color-blue-500);
+    --primary-foreground: var(--color-white);
+    --secondary: var(--color-zinc-100);
+    --secondary-foreground: var(--color-zinc-900);
+    --muted: var(--color-zinc-100);
+    --muted-foreground: var(--color-zinc-500);
+    --accent: var(--color-zinc-100);
+    --accent-foreground: var(--color-zinc-900);
+    --destructive: var(--color-red-600);
+    --destructive-foreground: var(--color-white);
+    --info: var(--color-blue-500);
+    --info-foreground: var(--color-blue-700);
+    --success: var(--color-emerald-500);
+    --success-foreground: var(--color-emerald-700);
+    --warning: var(--color-amber-500);
+    --warning-foreground: var(--color-amber-700);
+    --border: oklch(94% 0.004 286.32);
+    --input: var(--color-zinc-200);
+    --ring: var(--color-zinc-400);
+
+    /* Sidebar Colors - Light Mode */
+    --sidebar: var(--color-zinc-50);
+    --sidebar-foreground: var(--color-zinc-950);
+    --sidebar-primary: var(--color-blue-500);
+    --sidebar-primary-foreground: var(--color-white);
+    --sidebar-accent: var(--color-zinc-100);
+    --sidebar-accent-foreground: var(--color-zinc-900);
+    --sidebar-border: oklch(94% 0.004 286.32);
+    --sidebar-ring: var(--color-zinc-400);
+    --sidebar-muted: var(--color-zinc-100);
+    --sidebar-muted-foreground: var(--color-zinc-500);
+
+    /* Charts Color - Light Mode */
+    --chart-1: var(--color-blue-500);
+    --chart-2: var(--color-green-500);
+    --chart-3: var(--color-yellow-500);
+    --chart-4: var(--color-red-500);
+    --chart-5: var(--color-purple-500);
+
+    /* Typography and Radius */
+    --font-sans: system-ui, -apple-system, Inter, Roboto, Aptos, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace;
+    --radius: 0.55rem;
+
+    &:where([data-theme="dark"], [data-theme="dark"] *) {
+        --background: var(--color-zinc-950);
+        --foreground: var(--color-zinc-50);
+        --card: var(--color-zinc-950);
+        --card-foreground: var(--color-zinc-50);
+        --popover: var(--color-zinc-950);
+        --popover-foreground: var(--color-zinc-50);
+        --primary: var(--color-blue-600);
+        --primary-foreground: var(--color-white);
+        --secondary: var(--color-zinc-800);
+        --secondary-foreground: var(--color-zinc-50);
+        --muted: var(--color-zinc-900);
+        --muted-foreground: var(--color-zinc-500);
+        --accent: var(--color-zinc-900);
+        --accent-foreground: var(--color-zinc-50);
+        --destructive: var(--color-red-600);
+        --destructive-foreground: var(--color-white);
+        --info: var(--color-blue-500);
+        --info-foreground: var(--color-blue-400);
+        --success: var(--color-emerald-500);
+        --success-foreground: var(--color-emerald-400);
+        --warning: var(--color-amber-500);
+        --warning-foreground: var(--color-amber-400);
+        --border: var(--color-zinc-800);
+        --input: var(--color-zinc-800);
+        --ring: var(--color-zinc-600);
+
+        /* Sidebar Colors - Dark Mode */
+        --sidebar: var(--color-zinc-950);
+        --sidebar-foreground: var(--color-zinc-50);
+        --sidebar-primary: var(--color-blue-600);
+        --sidebar-primary-foreground: var(--color-white);
+        --sidebar-accent: var(--color-zinc-800);
+        --sidebar-accent-foreground: var(--color-zinc-50);
+        --sidebar-border: var(--color-zinc-800);
+        --sidebar-ring: var(--color-zinc-600);
+        --sidebar-muted: var(--color-zinc-900);
+        --sidebar-muted-foreground: var(--color-zinc-500);
+
+        /* Charts Color - Dark Mode */
+        --chart-1: var(--color-blue-500);
+        --chart-2: var(--color-green-500);
+        --chart-3: var(--color-yellow-500);
+        --chart-4: var(--color-red-500);
+        --chart-5: var(--color-purple-500);
+    }
+}
+
+/** Dark Mode Variant **/
+@custom-variant dark (&:where([data-theme="dark"] *));
+
+/** Theme Setup **/
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-info: var(--info);
+    --color-info-foreground: var(--info-foreground);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    /* Sidebar Theme */
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-muted: var(--sidebar-muted);
+    --color-sidebar-muted-foreground: var(--sidebar-muted-foreground);
+
+    /* Charts Theme */
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    /* Typography and Radius */
+    --font-sans: var(--font-sans);
+    --font-mono: var(--font-mono);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+}

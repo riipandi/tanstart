@@ -1,4 +1,5 @@
 import { AuthUIProvider } from '@daveyplate/better-auth-ui'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -45,6 +46,14 @@ function RootComponent() {
   )
 }
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60,
+    },
+  },
+})
+
 function RootDocument({ children }: React.PropsWithChildren) {
   const { navigate } = useRouter()
 
@@ -54,16 +63,16 @@ function RootDocument({ children }: React.PropsWithChildren) {
         <HeadContent />
       </head>
       <body className="flex min-h-screen flex-col">
-        <RootProvider>
+        <QueryClientProvider client={queryClient}>
           <AuthUIProvider
             authClient={authClient}
             navigate={(href) => navigate({ href })}
             replace={(href) => navigate({ href, replace: true })}
             Link={({ href, ...props }) => <Link to={href} {...props} />}
           >
-            {children}
+            <RootProvider>{children}</RootProvider>
           </AuthUIProvider>
-        </RootProvider>
+        </QueryClientProvider>
         <Scripts />
       </body>
     </html>

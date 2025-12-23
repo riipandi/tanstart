@@ -19,4 +19,5 @@ node_modules
 storage/
 routeTree.gen.ts
 routes.gen.ts
-database.sqlite
+database.db*
+example.db*
