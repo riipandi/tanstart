@@ -2,6 +2,7 @@ import { passkey } from '@better-auth/passkey'
 import { LibsqlDialect } from '@libsql/kysely-libsql'
 import { betterAuth } from 'better-auth'
 import {
+  admin,
   apiKey,
   emailOTP,
   genericOAuth,
@@ -92,6 +93,10 @@ export const auth = betterAuth({
     }),
     passkey(),
     apiKey(),
+    admin({
+      adminRoles: ['admin'],
+      defaultRole: 'user',
+    }),
     tanstackStartCookies(/* make sure this is the last plugin in the array */),
   ],
   experimental: {
