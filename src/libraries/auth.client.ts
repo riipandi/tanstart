@@ -4,6 +4,7 @@ import {
   apiKeyClient,
   emailOTPClient,
   genericOAuthClient,
+  lastLoginMethodClient,
   magicLinkClient,
   oneTimeTokenClient,
   organizationClient,
@@ -32,5 +33,6 @@ export const authClient = createAuthClient({
 
     // Utility plugins
     oneTimeTokenClient(),
+    lastLoginMethodClient(),
   ],
 })

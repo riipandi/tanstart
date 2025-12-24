@@ -6,6 +6,8 @@ import {
   apiKey,
   emailOTP,
   genericOAuth,
+  haveIBeenPwned,
+  lastLoginMethod,
   magicLink,
   organization,
   phoneNumber,
@@ -102,6 +104,8 @@ export const auth = betterAuth({
 
     // Utility plugins
     oneTimeToken(),
+    lastLoginMethod(),
+    haveIBeenPwned(),
 
     // Add TanStack Start Cookies plugin
     tanstackStartCookies(/* make sure this is the last plugin in the array */),
