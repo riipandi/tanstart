@@ -1,6 +1,13 @@
 import { LibsqlDialect } from '@libsql/kysely-libsql'
 import { betterAuth } from 'better-auth'
-import { emailOTP, genericOAuth, magicLink, twoFactor, username } from 'better-auth/plugins'
+import {
+  emailOTP,
+  genericOAuth,
+  magicLink,
+  phoneNumber,
+  twoFactor,
+  username,
+} from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { consola } from 'consola'
 import { env } from 'std-env'
@@ -56,6 +63,11 @@ export const auth = betterAuth({
         //   // Send the OTP for password reset
         // }
         consola.log('sendVerificationOTP', data)
+      },
+    }),
+    phoneNumber({
+      sendOTP: (data, ctx) => {
+        consola.log('sendOTP', data, ctx)
       },
     }),
     twoFactor({
