@@ -1,1 +1,2 @@
-alter table "user" add column "lastLoginMethod" text;
+alter table "user"
+add column "lastLoginMethod" text;

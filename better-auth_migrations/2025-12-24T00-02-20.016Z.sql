@@ -1,6 +1,12 @@
-alter table "user" add column "twoFactorEnabled" integer;
+alter table "user"
+add column "twoFactorEnabled" integer;
 
-create table "twoFactor" ("id" text not null primary key, "secret" text not null, "backupCodes" text not null, "userId" text not null references "user" ("id") on delete cascade);
+create table "twoFactor" (
+  "id" text not null primary key,
+  "secret" text not null,
+  "backupCodes" text not null,
+  "userId" text not null references "user" ("id") on delete cascade
+);
 
 create index "twoFactor_secret_idx" on "twoFactor" ("secret");
 
