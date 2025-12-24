@@ -105,24 +105,20 @@ export const auth = betterAuth({
 
     // Utility plugins
     oneTimeToken(),
-    lastLoginMethod(),
+    lastLoginMethod({ storeInDatabase: true }),
     haveIBeenPwned(),
 
     // Add TanStack Start Cookies plugin
     tanstackStartCookies(/* make sure this is the last plugin in the array */),
   ],
 
+  // Additional configuration options
   advanced: {
     ipAddress: {
       ipAddressHeaders: ['cf-connecting-ip'],
     },
   },
 
-  telemetry: {
-    enabled: false,
-  },
-
-  experimental: {
-    joins: true,
-  },
+  telemetry: { enabled: false },
+  experimental: { joins: true },
 })
