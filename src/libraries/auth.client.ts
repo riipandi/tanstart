@@ -1,3 +1,4 @@
+import { passkeyClient } from '@better-auth/passkey/client'
 import {
   emailOTPClient,
   genericOAuthClient,
@@ -18,5 +19,6 @@ export const authClient = createAuthClient({
     phoneNumberClient(),
     twoFactorClient(),
     genericOAuthClient(),
+    passkeyClient(),
   ],
 })

@@ -1,3 +1,4 @@
+import { passkey } from '@better-auth/passkey'
 import { LibsqlDialect } from '@libsql/kysely-libsql'
 import { betterAuth } from 'better-auth'
 import {
@@ -88,6 +89,7 @@ export const auth = betterAuth({
         },
       ],
     }),
+    passkey(),
     tanstackStartCookies(/* make sure this is the last plugin in the array */),
   ],
   experimental: {
