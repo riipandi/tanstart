@@ -12,6 +12,7 @@ import {
   twoFactor,
   username,
 } from 'better-auth/plugins'
+import { oneTimeToken } from 'better-auth/plugins/one-time-token'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { consola } from 'consola'
 import { env } from 'std-env'
@@ -93,11 +94,14 @@ export const auth = betterAuth({
       ],
     }),
     passkey(),
-    apiKey(),
 
     // Authorization plugins
+    apiKey(),
     admin({ adminRoles: ['admin'], defaultRole: 'user' }),
     organization(),
+
+    // Utility plugins
+    oneTimeToken(),
 
     // Add TanStack Start Cookies plugin
     tanstackStartCookies(/* make sure this is the last plugin in the array */),
