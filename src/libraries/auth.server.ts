@@ -53,6 +53,7 @@ export const auth = betterAuth({
       clientSecret: env.GITHUB_CLIENT_SECRET!,
     },
   },
+
   plugins: [
     username(),
     magicLink({
@@ -110,6 +111,17 @@ export const auth = betterAuth({
     // Add TanStack Start Cookies plugin
     tanstackStartCookies(/* make sure this is the last plugin in the array */),
   ],
+
+  advanced: {
+    ipAddress: {
+      ipAddressHeaders: ['cf-connecting-ip'],
+    },
+  },
+
+  telemetry: {
+    enabled: false,
+  },
+
   experimental: {
     joins: true,
   },
