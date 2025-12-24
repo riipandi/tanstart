@@ -56,6 +56,21 @@ function RootDocument({ children }: React.PropsWithChildren) {
             navigate={(href) => navigate({ href })}
             replace={(href) => navigate({ href, replace: true })}
             Link={({ href, ...props }) => <Link to={href} {...props} />}
+            account={true}
+            avatar={true}
+            deleteUser={true}
+            organization={true}
+            teams={true}
+            credentials={true}
+            signUp={true}
+            changeEmail={true}
+            emailVerification={true}
+            emailOTP={true}
+            gravatar={true}
+            magicLink={true}
+            nameRequired={true}
+            passkey={true}
+            social={{ providers: ['github'] }}
           >
             <RootProvider>{children}</RootProvider>
           </AuthUIProvider>

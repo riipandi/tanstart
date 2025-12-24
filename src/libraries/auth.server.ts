@@ -1,11 +1,12 @@
 import { LibsqlDialect } from '@libsql/kysely-libsql'
 import { betterAuth } from 'better-auth'
-import { genericOAuth } from 'better-auth/plugins'
+import { genericOAuth, twoFactor } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { consola } from 'consola'
 import { env } from 'std-env'
 
 export const auth = betterAuth({
+  appName: 'TanStack Starter',
   database: {
     dialect: new LibsqlDialect({
       url: 'file:database.db',
@@ -23,13 +24,13 @@ export const auth = betterAuth({
     sendResetPassword: async (ctx) => {
       consola.log('sendResetPassword', ctx)
     },
-    onPasswordReset: async (ctx, request) => {
-      consola.log('onPasswordReset', ctx, request)
+    onPasswordReset: async (data, request) => {
+      consola.log('onPasswordReset', data, request)
     },
   },
   emailVerification: {
-    sendVerificationEmail: async (ctx, request) => {
-      consola.log('sendVerificationEmail', ctx, request)
+    sendVerificationEmail: async (data, request) => {
+      consola.log('sendVerificationEmail', data, request)
     },
   },
   socialProviders: {
@@ -39,6 +40,13 @@ export const auth = betterAuth({
     },
   },
   plugins: [
+    twoFactor({
+      otpOptions: {
+        async sendOTP(data, ctx) {
+          consola.log('sendOTP', data, ctx)
+        },
+      },
+    }),
     genericOAuth({
       config: [
         {
