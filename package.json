@@ -26,7 +26,7 @@
         "@libsql/kysely-libsql": "^0.4.1",
         "@tanstack/react-query": "^5.90.12",
         "@tanstack/react-router": "1.136.18",
-        "@tanstack/react-router-devtools": "1.143.3",
+        "@tanstack/react-router-devtools": "1.143.4",
         "@tanstack/react-start": "1.136.18",
         "better-auth": "^1.4.9",
         "consola": "^3.4.2",
