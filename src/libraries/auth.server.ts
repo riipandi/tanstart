@@ -1,6 +1,6 @@
 import { LibsqlDialect } from '@libsql/kysely-libsql'
 import { betterAuth } from 'better-auth'
-import { genericOAuth, magicLink, twoFactor, username } from 'better-auth/plugins'
+import { emailOTP, genericOAuth, magicLink, twoFactor, username } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { consola } from 'consola'
 import { env } from 'std-env'
@@ -44,6 +44,18 @@ export const auth = betterAuth({
     magicLink({
       sendMagicLink: async (data, ctx) => {
         consola.log('sendMagicLink', data, ctx)
+      },
+    }),
+    emailOTP({
+      async sendVerificationOTP(data) {
+        // if (data.type === 'sign-in') {
+        //   // Send the OTP for sign in
+        // } else if (data.type === 'email-verification') {
+        //   // Send the OTP for email verification
+        // } else {
+        //   // Send the OTP for password reset
+        // }
+        consola.log('sendVerificationOTP', data)
       },
     }),
     twoFactor({
