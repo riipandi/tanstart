@@ -52,12 +52,14 @@ function RootDocument({ children }: React.PropsWithChildren) {
       <body className="flex min-h-screen flex-col">
         <QueryClientProvider client={queryClient}>
           <AuthUIProvider
+            redirectTo="/account/profile"
             authClient={authClient}
             navigate={(href) => navigate({ href })}
             replace={(href) => navigate({ href, replace: true })}
             Link={({ href, ...props }) => <Link to={href} {...props} />}
             account={true}
             avatar={true}
+            apiKey={{ prefix: 'ak_' }}
             deleteUser={true}
             organization={true}
             teams={true}
