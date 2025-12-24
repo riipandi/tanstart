@@ -1,6 +1,6 @@
 import { LibsqlDialect } from '@libsql/kysely-libsql'
 import { betterAuth } from 'better-auth'
-import { genericOAuth, twoFactor } from 'better-auth/plugins'
+import { genericOAuth, twoFactor, username } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { consola } from 'consola'
 import { env } from 'std-env'
@@ -40,6 +40,7 @@ export const auth = betterAuth({
     },
   },
   plugins: [
+    username(),
     twoFactor({
       otpOptions: {
         async sendOTP(data, ctx) {
