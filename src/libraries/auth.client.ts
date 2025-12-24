@@ -5,6 +5,7 @@ import {
   emailOTPClient,
   genericOAuthClient,
   magicLinkClient,
+  organizationClient,
   phoneNumberClient,
   twoFactorClient,
   usernameClient,
@@ -23,6 +24,9 @@ export const authClient = createAuthClient({
     genericOAuthClient(),
     passkeyClient(),
     apiKeyClient(),
+
+    // Authorization plugins
     adminClient(),
+    organizationClient(),
   ],
 })

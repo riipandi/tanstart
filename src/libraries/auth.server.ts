@@ -7,6 +7,7 @@ import {
   emailOTP,
   genericOAuth,
   magicLink,
+  organization,
   phoneNumber,
   twoFactor,
   username,
@@ -93,10 +94,12 @@ export const auth = betterAuth({
     }),
     passkey(),
     apiKey(),
-    admin({
-      adminRoles: ['admin'],
-      defaultRole: 'user',
-    }),
+
+    // Authorization plugins
+    admin({ adminRoles: ['admin'], defaultRole: 'user' }),
+    organization(),
+
+    // Add TanStack Start Cookies plugin
     tanstackStartCookies(/* make sure this is the last plugin in the array */),
   ],
   experimental: {
