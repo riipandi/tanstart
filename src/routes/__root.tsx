@@ -1,7 +1,7 @@
 import { AuthUIProvider } from '@daveyplate/better-auth-ui'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
-  createRootRouteWithContext,
+  createRootRoute,
   HeadContent,
   Link,
   Outlet,
@@ -13,13 +13,7 @@ import type * as React from 'react'
 import { authClient } from '#/libraries/auth.client'
 import appCss from '#/styles/globals.css?url'
 
-interface GlobalContext {
-  auth: {
-    isAuthenticated: boolean
-  }
-}
-
-export const Route = createRootRouteWithContext<GlobalContext>()({
+export const Route = createRootRoute({
   component: RootComponent,
   head: () => ({
     meta: [
@@ -29,13 +23,6 @@ export const Route = createRootRouteWithContext<GlobalContext>()({
     ],
     links: [{ rel: 'stylesheet', href: appCss }],
   }),
-  beforeLoad: async ({ context }) => {
-    // TODO: Fetch real auth state using `createServerFn`
-    context.auth = {
-      isAuthenticated: true,
-    }
-    return null
-  },
 })
 
 function RootComponent() {

@@ -1,6 +1,7 @@
 import { LibsqlDialect } from '@libsql/kysely-libsql'
 import { betterAuth } from 'better-auth'
 import { genericOAuth } from 'better-auth/plugins'
+import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { consola } from 'consola'
 import { env } from 'std-env'
 
@@ -18,7 +19,7 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    requireEmailVerification: false,
     sendResetPassword: async (ctx) => {
       consola.log('sendResetPassword', ctx)
     },
@@ -49,6 +50,7 @@ export const auth = betterAuth({
         },
       ],
     }),
+    tanstackStartCookies(/* make sure this is the last plugin in the array */),
   ],
   experimental: { joins: true },
 })

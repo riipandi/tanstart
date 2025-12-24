@@ -19,4 +19,7 @@ export default defineConfig({
     nitro(),
   ],
   server: { port: 3000 },
+  build: {
+    chunkSizeWarningLimit: 1024 * 2,
+  },
 })
