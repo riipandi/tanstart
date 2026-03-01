@@ -3,11 +3,11 @@ import { QueryClient } from '@tanstack/react-query'
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
-import Header from '#/components/Header'
 import { getContext, Provider } from '#/integrations/tanstack-query/root-provider'
 import type { TRPCRouter } from '#/integrations/trpc/router'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
+import Header from './-header'
 
 export interface GlobalContext {
   queryClient: QueryClient

@@ -3,7 +3,6 @@ import {
   ChevronDown,
   ChevronRight,
   ClipboardType,
-  Globe,
   Home,
   Menu,
   Network,
@@ -217,19 +216,6 @@ export default function Header() {
             <Network size={20} />
             <span className='font-medium'>TanStack Query</span>
           </Link>
-
-          {/* <Link
-            to='/signin'
-            onClick={() => setIsOpen(false)}
-            className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
-            }}
-          >
-            <Globe size={20} />
-            <span className='font-medium'>Better Auth</span>
-          </Link> */}
 
           <Link
             to='/demo/trpc-todo'

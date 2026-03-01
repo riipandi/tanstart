@@ -1,7 +1,7 @@
 import { useStore } from '@tanstack/react-form'
-import { useFieldContext, useFormContext } from '#/hooks/demo.form-context'
+import { useFieldContext, useFormContext } from '#/hooks/use-form'
 
-export function SubscribeButton({ label }: { label: string }) {
+export function SubmitButton({ label }: { label: string }) {
   const form = useFormContext()
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
@@ -42,6 +42,28 @@ export function TextField({ label, placeholder }: { label: string; placeholder?:
       <label htmlFor={label} className='mb-1 block text-xl font-bold'>
         {label}
         <input
+          value={field.state.value}
+          placeholder={placeholder}
+          onBlur={field.handleBlur}
+          onChange={(e) => field.handleChange(e.target.value)}
+          className='w-full rounded-md border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none'
+        />
+      </label>
+      {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
+    </div>
+  )
+}
+
+export function PasswordField({ label, placeholder }: { label: string; placeholder?: string }) {
+  const field = useFieldContext<string>()
+  const errors = useStore(field.store, (state) => state.meta.errors)
+
+  return (
+    <div>
+      <label htmlFor={label} className='mb-1 block text-xl font-bold'>
+        {label}
+        <input
+          type='password'
           value={field.state.value}
           placeholder={placeholder}
           onBlur={field.handleBlur}
