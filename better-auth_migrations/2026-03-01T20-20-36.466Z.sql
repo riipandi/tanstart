@@ -6,6 +6,8 @@ create table "account" ("id" text not null primary key, "account_id" text not nu
 
 create table "verification" ("id" text not null primary key, "identifier" text not null, "value" text not null, "expires_at" timestamptz not null, "created_at" timestamptz default CURRENT_TIMESTAMP not null, "updated_at" timestamptz default CURRENT_TIMESTAMP not null);
 
+create table "rate_limit" ("id" text not null primary key, "key" text not null unique, "count" integer not null, "last_request" bigint not null);
+
 create index "session_user_id_idx" on "session" ("user_id");
 
 create index "account_user_id_idx" on "account" ("user_id");

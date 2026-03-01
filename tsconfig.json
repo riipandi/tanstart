@@ -21,6 +21,7 @@
     "noUnusedParameters": true,
     "skipLibCheck": true,
     "strict": true,
+    "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "target": "esnext",
     "tsBuildInfoFile": ".tanstack/tsconfig.tsbuildinfo",
