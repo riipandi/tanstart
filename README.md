@@ -103,15 +103,9 @@ See the [LICENSE-APACHE](./LICENSE-APACHE) and [LICENSE-MIT](./LICENSE-MIT) file
 
 ---
 
-<sub>🤫 Psst! If you like my work you can support me via [GitHub sponsors](https://github.com/sponsors/riipandi) or by subscribing on Polar.</sub>
+<sub>🤫 Psst! If you like my work you can support me via [GitHub sponsors](https://github.com/sponsors/riipandi).</sub>
 
-<a href="https://polar.sh/riipandi" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)"
-      srcset="https://polar.sh/embed/subscribe.svg?org=riipandi&label=Subscribe&darkmode"><img
-      alt="Subscribe on Polar" src="https://polar.sh/embed/subscribe.svg?org=riipandi&label=Subscribe">
-  </picture>
-</a>
+[![Made by](https://badgen.net/badge/icon/Aris%20Ripandi?label=Made+by&color=black&labelColor=black)][riipandi-x]
 
 <!-- link reference definition -->
 [clsx]: https://www.npmjs.com/package/clsx
