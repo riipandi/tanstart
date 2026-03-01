@@ -8,11 +8,9 @@
 import { betterAuth } from 'better-auth'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { typeid } from 'typeid-js'
+import { protectedEnv } from '#/config'
 import { passwordHash, passwordVerify } from '#/lib/crypto'
-import pkg from '~/package.json' with { type: 'json' }
 import { db } from './db'
-
-const isProduction = process.env.NODE_ENV === 'production'
 
 export const auth = betterAuth({
   database: {
@@ -22,8 +20,8 @@ export const auth = betterAuth({
     debugLogs: false,
     casing: 'snake'
   },
-  baseURL: process.env.APP_BASE_URL!,
-  secret: process.env.AUTH_SECRET!,
+  baseURL: protectedEnv.PUBLIC_BASE_URL,
+  secret: protectedEnv.AUTH_SECRET_KEY,
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
@@ -50,18 +48,14 @@ export const auth = betterAuth({
     }
   },
   socialProviders: {
-    facebook: {
-      clientId: process.env.FACEBOOK_CLIENT_ID!,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!
-    },
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!
+      clientId: protectedEnv.AUTH_GITHUB_CLIENT_ID,
+      clientSecret: protectedEnv.AUTH_GITHUB_CLIENT_SECRET
     },
     google: {
       prompt: 'select_account',
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+      clientId: protectedEnv.AUTH_GOOGLE_CLIENT_ID,
+      clientSecret: protectedEnv.AUTH_GOOGLE_CLIENT_SECRET
     }
   },
   session: {
@@ -92,19 +86,19 @@ export const auth = betterAuth({
   rateLimit: {
     enabled: true,
     storage: 'database',
-    window: 10, // time window in seconds
-    max: 100, // max requests in the window
+    max: protectedEnv.PUBLIC_RATE_LIMIT_DEFAULT_MAX, // max requests in the window
+    window: protectedEnv.PUBLIC_RATE_LIMIT_DEFAULT_WINDOW, // time window in seconds
     customRules: {
       '/get-session': false,
       '/sign-in/email': { window: 10, max: 3 }
     }
   },
   advanced: {
-    cookiePrefix: pkg.name,
-    useSecureCookies: isProduction,
+    cookiePrefix: protectedEnv.PUBLIC_IDENTIFIER,
+    useSecureCookies: protectedEnv.APP_MODE === 'production',
     crossSubDomainCookies: {
-      enabled: isProduction,
-      domain: process.env.APP_DOMAIN
+      enabled: protectedEnv.APP_MODE === 'production',
+      domain: protectedEnv.PUBLIC_SITE_DOMAIN
     },
     database: {
       generateId: (opts) => {

@@ -4,11 +4,11 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import { nitro, type NitroPluginConfig } from 'nitro/vite'
 import { fileURLToPath } from 'node:url'
+import { isProduction } from 'std-env'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
 const resolve = (path: string) => fileURLToPath(new URL(path, import.meta.url))
-const isProduction = process.env.NODE_ENV === 'production'
 
 const nitroConfig: NitroPluginConfig = {
   compatibilityDate: '2025-09-15',

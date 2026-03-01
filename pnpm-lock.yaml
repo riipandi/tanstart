@@ -65,6 +65,9 @@ importers:
       kysely:
         specifier: ^0.28.11
         version: 0.28.11
+      loglayer:
+        specifier: ^9.1.0
+        version: 9.1.0
       lucide-react:
         specifier: ^0.575.0
         version: 0.575.0(react@19.2.4)
@@ -666,6 +669,26 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@loglayer/context-manager@2.0.2':
+    resolution: {integrity: sha512-IVt/iqACGw2GnucKOpyJ69MbGQSRzsArOwsTNMuOAfzm36zTphGIH4K7g7lhRvcd2jY0dZzvWA6tCqannpgXXg==}
+    engines: {node: '>=18'}
+
+  '@loglayer/log-level-manager@2.0.2':
+    resolution: {integrity: sha512-hq6hjkXzrYyz0DwYUqizP0hS3jhPl5S/7U33Cd0EPbfLmDjYWzzcM0mQKUdtBi6qNX4DAPpag3oBGytB2zmghg==}
+    engines: {node: '>=18'}
+
+  '@loglayer/plugin@3.0.2':
+    resolution: {integrity: sha512-ghIYpuPw/Q0jdlr7ErkaySfsSCsIigwIb1lvR5qhZrz3oEqGotDFZzhgU1YeO7BacA042ygv/xww3Ip3ROokeg==}
+    engines: {node: '>=18'}
+
+  '@loglayer/shared@4.1.0':
+    resolution: {integrity: sha512-hGSWhLhMF9L7sB0rXippvKhku9D9dT8imZ5OFpa4VHAVnclY0DQ+3wIPE37rzu0QAiBbyR3/HH03Q1Cgik8zYA==}
+    engines: {node: '>=18'}
+
+  '@loglayer/transport@3.0.2':
+    resolution: {integrity: sha512-5t0lj/ibQQxGPpghNta8u10zl8owU0my/i2fHF/LdcCAtpw/IHblmpKSgOzdH9XE19Ub/i0VYj0JrFrFv8/NXw==}
+    engines: {node: '>=18'}
 
   '@mdx-js/react@3.1.1':
     resolution: {integrity: sha512-f++rKLQgUVYDAtECQ6fn/is15GkEH9+nZPM3MS0RcxVqoTfawHvDlSCH7JbMhAM6uJ32v3eXLvLmLvjGu7PTQw==}
@@ -3010,6 +3033,10 @@ packages:
   lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
+  loglayer@9.1.0:
+    resolution: {integrity: sha512-KFCtoydUtfshszDMIEMa180MMT4jDgBz7FkkO0r3mLDzOkfqGUCbtH9DRszK/pEPrG7999FXfBsyv4DNhvmrag==}
+    engines: {node: '>=18'}
+
   long@5.3.2:
     resolution: {integrity: sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA==}
 
@@ -4433,6 +4460,24 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@loglayer/context-manager@2.0.2':
+    dependencies:
+      '@loglayer/shared': 4.1.0
+
+  '@loglayer/log-level-manager@2.0.2':
+    dependencies:
+      '@loglayer/shared': 4.1.0
+
+  '@loglayer/plugin@3.0.2':
+    dependencies:
+      '@loglayer/shared': 4.1.0
+
+  '@loglayer/shared@4.1.0': {}
+
+  '@loglayer/transport@3.0.2':
+    dependencies:
+      '@loglayer/shared': 4.1.0
 
   '@mdx-js/react@3.1.1(@types/react@19.2.14)(react@19.2.4)':
     dependencies:
@@ -6521,6 +6566,14 @@ snapshots:
   lilconfig@2.1.0: {}
 
   lodash@4.17.21: {}
+
+  loglayer@9.1.0:
+    dependencies:
+      '@loglayer/context-manager': 2.0.2
+      '@loglayer/log-level-manager': 2.0.2
+      '@loglayer/plugin': 3.0.2
+      '@loglayer/shared': 4.1.0
+      '@loglayer/transport': 3.0.2
 
   long@5.3.2: {}
 
