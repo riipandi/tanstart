@@ -1,12 +1,11 @@
-import { TanStackDevtools } from '@tanstack/react-devtools'
 import { QueryClient } from '@tanstack/react-query'
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
+import { GlobalNotFound } from '#/components/boundaries'
 import { getContext, Provider } from '#/integrations/tanstack-query/root-provider'
 import type { TRPCRouter } from '#/integrations/trpc/router'
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
-import appCss from '../styles.css?url'
+import { AppDevTools } from '#/lib/devtools'
+import appCss from '../styles/globals.css?url'
 import Header from './-header'
 
 export interface GlobalContext {
@@ -15,7 +14,8 @@ export interface GlobalContext {
 }
 
 export const Route = createRootRouteWithContext<GlobalContext>()({
-  notFoundComponent: () => <div>Not found</div>,
+  shellComponent: RootDocument,
+  notFoundComponent: GlobalNotFound,
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
@@ -23,8 +23,7 @@ export const Route = createRootRouteWithContext<GlobalContext>()({
       { title: 'Better Start' }
     ],
     links: [{ rel: 'stylesheet', href: appCss }]
-  }),
-  shellComponent: RootDocument
+  })
 })
 
 function RootDocument({ children }: React.PropsWithChildren) {
@@ -39,13 +38,7 @@ function RootDocument({ children }: React.PropsWithChildren) {
         <body>
           <Header />
           {children}
-          <TanStackDevtools
-            config={{ position: 'bottom-right' }}
-            plugins={[
-              { name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> },
-              TanStackQueryDevtools
-            ]}
-          />
+          <AppDevTools queryClient={queryClient} />
           <Scripts />
         </body>
       </html>

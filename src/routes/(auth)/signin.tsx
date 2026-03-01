@@ -72,40 +72,36 @@ function RouteComponent() {
         </Activity>
 
         <form onSubmit={handleSubmit} className='grid gap-4'>
-          <div className='grid gap-2'>
-            <form.AppField
-              name='email'
-              validators={{
-                onBlur: ({ value }) => {
-                  if (!value || value.trim().length === 0) {
-                    return 'Email is required'
-                  }
-                  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-                    return 'Invalid email address'
-                  }
-                  return undefined
+          <form.AppField
+            name='email'
+            validators={{
+              onBlur: ({ value }) => {
+                if (!value || value.trim().length === 0) {
+                  return 'Email is required'
                 }
-              }}
-            >
-              {(field) => <field.TextField label='Email' />}
-            </form.AppField>
-          </div>
+                if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+                  return 'Invalid email address'
+                }
+                return undefined
+              }
+            }}
+          >
+            {(field) => <field.TextField label='Email' />}
+          </form.AppField>
 
-          <div className='grid gap-2'>
-            <form.AppField
-              name='password'
-              validators={{
-                onBlur: ({ value }) => {
-                  if (!value || value.trim().length === 0) {
-                    return 'Password is required'
-                  }
-                  return undefined
+          <form.AppField
+            name='password'
+            validators={{
+              onBlur: ({ value }) => {
+                if (!value || value.trim().length === 0) {
+                  return 'Password is required'
                 }
-              }}
-            >
-              {(field) => <field.PasswordField label='Password' />}
-            </form.AppField>
-          </div>
+                return undefined
+              }
+            }}
+          >
+            {(field) => <field.PasswordField label='Password' />}
+          </form.AppField>
 
           <form.AppForm>
             <form.SubmitButton label='Sign In' />
@@ -115,7 +111,7 @@ function RouteComponent() {
         <div className='mt-4 text-center'>
           <Link
             type='button'
-            to='/'
+            to='/signup'
             className='text-sm text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100'
           >
             Don't have an account? Sign up

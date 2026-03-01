@@ -12,27 +12,31 @@ export const Route = createFileRoute('/(auth)/signup')({
   component: RouteComponent
 })
 
-const signupSchema = z.object({
-  name: z.string().min(1, { error: 'Name is required' }),
-  email: z.email({ error: 'Please enter a valid email address' }),
-  password: z.string().min(8, { error: 'Password must be at least 8 characters' }),
-  confirmPassword: z.string().min(1, { error: 'Please confirm your password' })
-}).refine(data => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword']
-})
+const signupSchema = z
+  .object({
+    name: z.string().min(1, { error: 'Name is required' }),
+    email: z.email({ error: 'Please enter a valid email address' }),
+    password: z.string().min(8, { error: 'Password must be at least 8 characters' }),
+    confirmPassword: z.string().min(1, { error: 'Please confirm your password' })
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword']
+  })
 
 function RouteComponent() {
-  const navigate = Route.useNavigate()
   const search: SearchParams = Route.useSearch()
   const { isPending } = authClient.useSession()
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   const form = useAppForm({
     defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
     validators: { onChangeAsync: signupSchema },
     onSubmit: async ({ value, formApi }) => {
       setError(null)
+      setSuccess(null)
+
       try {
         const result = await authClient.signUp.email({
           email: value.email,
@@ -40,12 +44,14 @@ function RouteComponent() {
           name: value.name,
           callbackURL: search.redirect || '/'
         })
+
         if (result.error) {
           setError(result.error.message || 'Sign up failed')
+          return false
         }
-        formApi.reset()
-        const redirectTo = search.redirect || '/'
-        return navigate({ to: redirectTo })
+
+        setSuccess('Account created successfully! Please check your email to verify your account.')
+        return formApi.reset()
       } catch (err) {
         console.error(err)
         setError('An unexpected error occurred')
@@ -76,84 +82,93 @@ function RouteComponent() {
         </p>
 
         <Activity mode={error ? 'visible' : 'hidden'}>
-          <div className='border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20'>
+          <div className='mb-4 border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20'>
             <p className='text-sm text-red-600 dark:text-red-400'>{error}</p>
           </div>
         </Activity>
 
+        <Activity mode={success ? 'visible' : 'hidden'}>
+          <div className='mb-4 border border-green-200 bg-green-50 p-3 dark:border-green-800 dark:bg-green-900/20'>
+            <p className='text-sm text-green-600 dark:text-green-400'>{success}</p>
+          </div>
+        </Activity>
+
         <form onSubmit={handleSubmit} className='grid gap-4'>
-          <div className='grid gap-2'>
-            <form.AppField
-              name='name'
-              validators={{
-                onBlur: ({ value }) => {
-                  if (!value || value.trim().length === 0) {
-                    return 'Name is required'
-                  }
-                  return undefined
+          <form.AppField
+            name='name'
+            validators={{
+              onBlur: ({ value }) => {
+                if (!value || value.trim().length === 0) {
+                  return 'Name is required'
                 }
-              }}
-            >
-              {(field) => <field.TextField label='Name' />}
-            </form.AppField>
-          </div>
+                return undefined
+              }
+            }}
+          >
+            {(field) => <field.TextField label='Name' />}
+          </form.AppField>
 
-          <div className='grid gap-2'>
-            <form.AppField
-              name='email'
-              validators={{
-                onBlur: ({ value }) => {
-                  if (!value || value.trim().length === 0) {
-                    return 'Email is required'
-                  }
-                  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-                    return 'Invalid email address'
-                  }
-                  return undefined
+          <form.AppField
+            name='email'
+            validators={{
+              onBlur: ({ value }) => {
+                if (!value || value.trim().length === 0) {
+                  return 'Email is required'
                 }
-              }}
-            >
-              {(field) => <field.TextField label='Email' />}
-            </form.AppField>
-          </div>
+                if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+                  return 'Invalid email address'
+                }
+                return undefined
+              }
+            }}
+          >
+            {(field) => <field.TextField label='Email' />}
+          </form.AppField>
 
-          <div className='grid gap-2'>
-            <form.AppField
-              name='password'
-              validators={{
-                onBlur: ({ value }) => {
-                  if (!value || value.trim().length === 0) {
-                    return 'Password is required'
-                  }
-                  if (value.length < 8) {
-                    return 'Password must be at least 8 characters'
-                  }
-                  return undefined
+          {/* <form.AppField
+            name='phone'
+            validators={{
+              onBlur: ({ value }) => {
+                if (!/^(\+\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(value)) {
+                  return 'Invalid phone number format'
                 }
-              }}
-            >
-              {(field) => <field.PasswordField label='Password' />}
-            </form.AppField>
-          </div>
+                return undefined
+              }
+            }}
+          >
+            {(field) => <field.TextField label='Phone' placeholder='123-456-7890' />}
+          </form.AppField> */}
 
-          <div className='grid gap-2'>
-            <form.AppField
-              name='confirmPassword'
-              validators={{
-                onBlur: ({ value, values }) => {
-                  if (!value || value.trim().length === 0) {
-                    return 'Please confirm your password'
-                  }
-                  if (values.password && value !== values.password) {
-                    return "Passwords don't match"
-                  }
-                  return undefined
+          <form.AppField
+            name='password'
+            validators={{
+              onBlur: ({ value }) => {
+                if (!value || value.trim().length === 0) {
+                  return 'Password is required'
                 }
-              }}
-            >
-              {(field) => <field.PasswordField label='Confirm Password' />}
-            </form.AppField>
-          </div>
+                if (value.length < 8) {
+                  return 'Password must be at least 8 characters'
+                }
+                return undefined
+              }
+            }}
+          >
+            {(field) => <field.PasswordField label='Password' />}
+          </form.AppField>
+
+          <form.AppField
+            name='confirmPassword'
+            validators={{
+              onBlur: ({ value }) => {
+                if (!value || value.trim().length === 0) {
+                  return 'Please confirm your password'
+                }
+                return undefined
+              }
+            }}
+          >
+            {(field) => <field.PasswordField label='Confirm Password' />}
+          </form.AppField>
 
           <form.AppForm>
             <form.SubmitButton label='Sign Up' />
