@@ -1,6 +1,6 @@
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
-import { auth, type Session } from '#/lib/auth'
+import { auth, type Session } from '#/guards/auth'
 
 type Context = {
   headers: Headers

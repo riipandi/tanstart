@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Activity, useState } from 'react'
 import { z } from 'zod'
+import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
-import { authClient } from '#/lib/auth-client'
 
 interface SearchParams {
   redirect?: string

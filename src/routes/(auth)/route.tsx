@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
-import { getSession } from '#/lib/session'
+import { getSession } from '#/guards/session'
 
 interface BeforeLoadParams {
   search?: { redirect?: string }

@@ -9,8 +9,8 @@ import { betterAuth } from 'better-auth'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { typeid } from 'typeid-js'
 import { protectedEnv } from '#/config'
-import { passwordHash, passwordVerify } from '#/lib/crypto'
-import { db } from './db'
+import { db } from '#/database/db-client'
+import { passwordHash, passwordVerify } from '#/utils/crypto'
 
 export const auth = betterAuth({
   database: {

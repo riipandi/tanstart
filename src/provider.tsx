@@ -3,8 +3,8 @@ import { createTRPCClient, httpBatchStreamLink } from '@trpc/client'
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query'
 import { env } from 'std-env'
 import superjson from 'superjson'
-import { TRPCProvider } from '#/integrations/trpc/react'
-import type { TRPCRouter } from '#/integrations/trpc/router'
+import { TRPCProvider } from '#/trpc/react'
+import type { TRPCRouter } from '#/trpc/router'
 
 function getUrl() {
   const base = (() => {
@@ -44,7 +44,7 @@ interface ProviderProps {
   queryClient: QueryClient
 }
 
-export function Provider({ children, queryClient }: ProviderProps) {
+export function RootProvider({ children, queryClient }: ProviderProps) {
   return (
     <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
       {children}

@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { authClient } from '#/lib/auth-client'
-import { getSession } from '#/lib/session'
+import { authClient } from '#/guards/auth-client'
+import { getSession } from '#/guards/session'
 
 export const Route = createFileRoute('/(app)/dashboard')({
   component: RouteComponent,

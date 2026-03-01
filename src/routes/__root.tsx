@@ -2,9 +2,9 @@ import { QueryClient } from '@tanstack/react-query'
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
 import { GlobalNotFound } from '#/components/boundaries'
-import { getContext, Provider } from '#/integrations/tanstack-query/root-provider'
-import type { TRPCRouter } from '#/integrations/trpc/router'
-import { AppDevTools } from '#/lib/devtools'
+import { AppDevTools } from '#/devtools'
+import { getContext, RootProvider } from '#/provider'
+import type { TRPCRouter } from '#/trpc/router'
 import appCss from '../styles/globals.css?url'
 import Header from './-header'
 
@@ -30,7 +30,7 @@ function RootDocument({ children }: React.PropsWithChildren) {
   const { queryClient } = getContext()
 
   return (
-    <Provider queryClient={queryClient}>
+    <RootProvider queryClient={queryClient}>
       <html lang='en'>
         <head>
           <HeadContent />
@@ -42,6 +42,6 @@ function RootDocument({ children }: React.PropsWithChildren) {
           <Scripts />
         </body>
       </html>
-    </Provider>
+    </RootProvider>
   )
 }

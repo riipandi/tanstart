@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useCallback, useState } from 'react'
-import { useTRPC } from '#/integrations/trpc/react'
+import { useTRPC } from '#/trpc/react'
 
 export const Route = createFileRoute('/demo/trpc-todo')({
   component: TRPCTodos,
