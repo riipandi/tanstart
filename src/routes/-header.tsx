@@ -2,7 +2,6 @@ import { Link } from '@tanstack/react-router'
 import {
   ChevronDown,
   ChevronRight,
-  ClipboardType,
   Home,
   Menu,
   Network,
@@ -164,32 +163,6 @@ export default function Header() {
               </Link>
             </div>
           )}
-
-          <Link
-            to='/demo/form/simple'
-            onClick={() => setIsOpen(false)}
-            className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
-            }}
-          >
-            <ClipboardType size={20} />
-            <span className='font-medium'>Simple Form</span>
-          </Link>
-
-          <Link
-            to='/demo/form/address'
-            onClick={() => setIsOpen(false)}
-            className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
-            }}
-          >
-            <ClipboardType size={20} />
-            <span className='font-medium'>Address Form</span>
-          </Link>
 
           <Link
             to='/demo/table'

@@ -20,6 +20,9 @@ function TRPCTodos() {
     onSuccess: () => {
       refetch()
       setTodo('')
+    },
+    onError: (error) => {
+      console.warn(error.message)
     }
   })
 
