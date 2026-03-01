@@ -28,7 +28,8 @@
     "useDefineForClassFields": true,
     "verbatimModuleSyntax": false,
     "paths": {
-      "#/*": ["./src/*"]
+      "#/*": ["./src/*"],
+      "~/package.json": ["./package.json"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
