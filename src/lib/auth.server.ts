@@ -1,12 +1,18 @@
 import { betterAuth } from 'better-auth'
+import type { BetterAuthOptions } from 'better-auth/types'
 import { Pool } from 'pg'
 
 const dialect = new Pool({
-  connectionString: 'postgresql://postgres:password@localhost:5432/database'
+  connectionString: String(process.env.DATABASE_URL)
 })
 
-export const auth = betterAuth({
-  database: { dialect, type: 'postgresql' },
+const authOptions: BetterAuthOptions = {
+  database: {
+    dialect,
+    type: 'postgresql',
+    transaction: true,
+    casing: 'snake'
+  },
   baseURL: process.env.APP_BASE_URL!,
   emailAndPassword: { enabled: true },
   socialProviders: {
@@ -23,4 +29,6 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!
     }
   }
-})
+}
+
+export const auth = betterAuth(authOptions)
