@@ -12,23 +12,11 @@ export const Route = createFileRoute('/demo/trpc-todo')({
 
 function TRPCTodos() {
   const trpc = useTRPC()
-  const hasTodos =
-    trpc.todos !== undefined &&
-    typeof trpc.todos === 'object' &&
-    trpc.todos !== null &&
-    'list' in trpc.todos &&
-    'add' in trpc.todos
-  const { data, refetch } = useQuery(
-    hasTodos && typeof (trpc.todos as any).list.queryOptions === 'function'
-      ? (trpc.todos as any).list.queryOptions()
-      : { queryKey: ['todos'], queryFn: async () => [] }
-  )
+  const { data = [], refetch } = useQuery(trpc.todos.list.queryOptions())
 
   const [todo, setTodo] = useState('')
   const { mutate: addTodo } = useMutation({
-    ...(hasTodos && typeof (trpc.todos as any).add.mutationOptions === 'function'
-      ? (trpc.todos as any).add.mutationOptions()
-      : {}),
+    ...trpc.todos.add.mutationOptions(),
     onSuccess: () => {
       refetch()
       setTodo('')
@@ -36,7 +24,7 @@ function TRPCTodos() {
   })
 
   const submitTodo = useCallback(() => {
-    addTodo({ name: todo } as any)
+    addTodo({ name: todo })
   }, [addTodo, todo])
 
   return (
@@ -76,6 +64,7 @@ function TRPCTodos() {
             className='w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 backdrop-blur-sm focus:border-transparent focus:ring-2 focus:ring-blue-400 focus:outline-none'
           />
           <button
+            type='button'
             disabled={todo.trim().length === 0}
             onClick={submitTodo}
             className='rounded-lg bg-blue-500 px-4 py-3 font-bold text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-blue-500/50'

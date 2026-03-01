@@ -3,21 +3,25 @@ import { createTRPCRouter, publicProcedure } from './init'
 
 const todos = [
   { id: 1, name: 'Get groceries' },
-  { id: 2, name: 'Buy a new phone' },
+  { id: 2, name: 'Buy a new domain' },
   { id: 3, name: 'Finish the project' }
 ]
 
-const todosRouter = {
-  list: publicProcedure.query(() => todos),
-  add: publicProcedure.input(z.object({ name: z.string() })).mutation(({ input }) => {
-    const newTodo = { id: todos.length + 1, name: input.name }
-    todos.push(newTodo)
-    return newTodo
-  })
+const TodoAddSchema = z.object({ name: z.string() })
+
+function defineTodosRouter() {
+  return {
+    list: publicProcedure.query(() => todos),
+    add: publicProcedure.input(TodoAddSchema).mutation(({ input }) => {
+      const newTodo = { id: todos.length + 1, name: input.name }
+      todos.push(newTodo)
+      return newTodo
+    })
+  }
 }
 
 export const trpcRouter = createTRPCRouter({
-  todos: todosRouter
+  todos: defineTodosRouter()
 })
 
 export type TRPCRouter = typeof trpcRouter

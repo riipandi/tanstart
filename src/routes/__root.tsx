@@ -3,7 +3,7 @@ import { QueryClient } from '@tanstack/react-query'
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
-import { Provider } from '#/integrations/tanstack-query/root-provider'
+import { getContext, Provider } from '#/integrations/tanstack-query/root-provider'
 import type { TRPCRouter } from '#/integrations/trpc/router'
 import Header from '../components/Header'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
@@ -16,6 +16,7 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  notFoundComponent: () => <div>Not found</div>,
   head: () => ({
     meta: [
       {
@@ -40,9 +41,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   shellComponent: RootDocument
 })
 
-const queryClient = new QueryClient()
-
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const { queryClient } = getContext()
+
   return (
     <Provider queryClient={queryClient}>
       <html lang='en'>
