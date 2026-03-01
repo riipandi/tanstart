@@ -8,13 +8,18 @@ interface SearchParams {
   redirect?: string
 }
 
-export const Route = createFileRoute('/(auth)/signin')({
+export const Route = createFileRoute('/(auth)/signup')({
   component: RouteComponent
 })
 
-const signinSchema = z.object({
+const signupSchema = z.object({
+  name: z.string().min(1, { error: 'Name is required' }),
   email: z.email({ error: 'Please enter a valid email address' }),
-  password: z.string().min(1, { error: 'Password is required' })
+  password: z.string().min(8, { error: 'Password must be at least 8 characters' }),
+  confirmPassword: z.string().min(1, { error: 'Please confirm your password' })
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ['confirmPassword']
 })
 
 function RouteComponent() {
@@ -24,16 +29,21 @@ function RouteComponent() {
   const [error, setError] = useState<string | null>(null)
 
   const form = useAppForm({
-    defaultValues: { email: '', password: '' },
-    validators: { onChangeAsync: signinSchema },
+    defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
+    validators: { onChangeAsync: signupSchema },
     onSubmit: async ({ value, formApi }) => {
       setError(null)
       try {
-        const result = await authClient.signIn.email(value)
+        const result = await authClient.signUp.email({
+          email: value.email,
+          password: value.password,
+          name: value.name,
+          callbackURL: search.redirect || '/'
+        })
         if (result.error) {
-          setError(result.error.message || 'Sign in failed')
-          return formApi.resetField('password')
+          setError(result.error.message || 'Sign up failed')
         }
+        formApi.reset()
         const redirectTo = search.redirect || '/'
         return navigate({ to: redirectTo })
       } catch (err) {
@@ -60,18 +70,34 @@ function RouteComponent() {
   return (
     <div className='flex justify-center px-4 py-10'>
       <div className='w-full max-w-md p-6'>
-        <h1 className='text-lg leading-none font-semibold tracking-tight'>Sign in</h1>
+        <h1 className='text-lg leading-none font-semibold tracking-tight'>Create an account</h1>
         <p className='mt-2 mb-6 text-sm text-neutral-500 dark:text-neutral-400'>
-          Enter your email below to login to your account
+          Enter your details below to create your account
         </p>
 
         <Activity mode={error ? 'visible' : 'hidden'}>
-          <div className='mb-4 border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20'>
+          <div className='border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20'>
             <p className='text-sm text-red-600 dark:text-red-400'>{error}</p>
           </div>
         </Activity>
 
         <form onSubmit={handleSubmit} className='grid gap-4'>
+          <div className='grid gap-2'>
+            <form.AppField
+              name='name'
+              validators={{
+                onBlur: ({ value }) => {
+                  if (!value || value.trim().length === 0) {
+                    return 'Name is required'
+                  }
+                  return undefined
+                }
+              }}
+            >
+              {(field) => <field.TextField label='Name' />}
+            </form.AppField>
+          </div>
+
           <div className='grid gap-2'>
             <form.AppField
               name='email'
@@ -99,6 +125,9 @@ function RouteComponent() {
                   if (!value || value.trim().length === 0) {
                     return 'Password is required'
                   }
+                  if (value.length < 8) {
+                    return 'Password must be at least 8 characters'
+                  }
                   return undefined
                 }
               }}
@@ -107,18 +136,37 @@ function RouteComponent() {
             </form.AppField>
           </div>
 
+          <div className='grid gap-2'>
+            <form.AppField
+              name='confirmPassword'
+              validators={{
+                onBlur: ({ value, values }) => {
+                  if (!value || value.trim().length === 0) {
+                    return 'Please confirm your password'
+                  }
+                  if (values.password && value !== values.password) {
+                    return "Passwords don't match"
+                  }
+                  return undefined
+                }
+              }}
+            >
+              {(field) => <field.PasswordField label='Confirm Password' />}
+            </form.AppField>
+          </div>
+
           <form.AppForm>
-            <form.SubmitButton label='Sign In' />
+            <form.SubmitButton label='Sign Up' />
           </form.AppForm>
         </form>
 
         <div className='mt-4 text-center'>
           <Link
             type='button'
-            to='/'
+            to='/signin'
             className='text-sm text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100'
           >
-            Don't have an account? Sign up
+            Already have an account? Sign in
           </Link>
         </div>
 
