@@ -1,8 +1,8 @@
 {
-    "name": "tsaas",
-    "private": true,
-    "sideEffects": false,
+    "name": "better-start",
     "type": "module",
+    "sideEffects": false,
+    "private": true,
     "scripts": {
         "dev": "vite dev",
         "build": "vite build && fumadocs-mdx",

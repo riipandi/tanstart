@@ -12,6 +12,7 @@ import { RootProvider } from 'fumadocs-ui/provider/tanstack'
 import type * as React from 'react'
 import { authClient } from '#/libraries/auth.client'
 import appCss from '#/styles/globals.css?url'
+import { useDynamicFavicon } from '#/hooks/use-dynamic-favicon'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -43,6 +44,8 @@ const queryClient = new QueryClient({
 
 function RootDocument({ children }: React.PropsWithChildren) {
   const { navigate } = useRouter()
+
+  useDynamicFavicon()
 
   return (
     <html lang="en" suppressHydrationWarning>
