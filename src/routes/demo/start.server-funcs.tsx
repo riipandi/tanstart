@@ -1,19 +1,14 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { createServerFn } from '@tanstack/react-start'
+import { createMiddleware, createServerFn } from '@tanstack/react-start'
 import fs from 'node:fs'
 import { useCallback, useState } from 'react'
 
-/*
-const loggingMiddleware = createMiddleware().server(
-  async ({ next, request }) => {
-    console.log("Request:", request.url);
-    return next();
-  }
-);
-const loggedServerFunction = createServerFn({ method: "GET" }).middleware([
-  loggingMiddleware,
-]);
-*/
+const loggingMiddleware = createMiddleware().server(async ({ next, request }) => {
+  console.info('REQ:', request.url)
+  return next()
+})
+
+const loggedServerFn = createServerFn({ method: 'GET' }).middleware([loggingMiddleware])
 
 const TODOS_FILE = 'todos.json'
 
@@ -32,7 +27,7 @@ async function readTodos() {
   )
 }
 
-const getTodos = createServerFn({
+const getTodos = loggedServerFn({
   method: 'GET'
 }).handler(async () => await readTodos())
 

@@ -1,17 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import {
-  ChevronDown,
-  ChevronRight,
-  Home,
-  Menu,
-  Network,
-  SquareFunction,
-  StickyNote,
-  Table,
-  X
-} from 'lucide-react'
+import * as Lucide from 'lucide-react'
 import { useState } from 'react'
-import BetterAuthHeader from '../integrations/better-auth/header-user.tsx'
+import UserMenu from './-user-menu'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -25,7 +15,7 @@ export default function Header() {
           className='rounded-lg p-2 transition-colors hover:bg-gray-700'
           aria-label='Open menu'
         >
-          <Menu size={24} />
+          <Lucide.Menu size={24} />
         </button>
         <h1 className='ml-4 text-xl font-semibold'>
           <Link to='/'>
@@ -46,7 +36,7 @@ export default function Header() {
             className='rounded-lg p-2 transition-colors hover:bg-gray-800'
             aria-label='Close menu'
           >
-            <X size={24} />
+            <Lucide.X size={24} />
           </button>
         </div>
 
@@ -60,7 +50,7 @@ export default function Header() {
                 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
             }}
           >
-            <Home size={20} />
+            <Lucide.Home size={20} />
             <span className='font-medium'>Home</span>
           </Link>
 
@@ -75,21 +65,8 @@ export default function Header() {
                 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
             }}
           >
-            <SquareFunction size={20} />
+            <Lucide.SquareFunction size={20} />
             <span className='font-medium'>Start - Server Functions</span>
-          </Link>
-
-          <Link
-            to='/demo/start/api-request'
-            onClick={() => setIsOpen(false)}
-            className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
-            }}
-          >
-            <Network size={20} />
-            <span className='font-medium'>Start - API Request</span>
           </Link>
 
           <div className='flex flex-row justify-between'>
@@ -102,7 +79,7 @@ export default function Header() {
                   'flex-1 flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
               }}
             >
-              <StickyNote size={20} />
+              <Lucide.StickyNote size={20} />
               <span className='font-medium'>Start - SSR Demos</span>
             </Link>
             <button
@@ -115,9 +92,9 @@ export default function Header() {
               }
             >
               {groupedExpanded.StartSSRDemo ? (
-                <ChevronDown size={20} />
+                <Lucide.ChevronDown size={20} />
               ) : (
-                <ChevronRight size={20} />
+                <Lucide.ChevronRight size={20} />
               )}
             </button>
           </div>
@@ -132,7 +109,7 @@ export default function Header() {
                     'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
                 }}
               >
-                <StickyNote size={20} />
+                <Lucide.StickyNote size={20} />
                 <span className='font-medium'>SPA Mode</span>
               </Link>
 
@@ -145,7 +122,7 @@ export default function Header() {
                     'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
                 }}
               >
-                <StickyNote size={20} />
+                <Lucide.StickyNote size={20} />
                 <span className='font-medium'>Full SSR</span>
               </Link>
 
@@ -158,7 +135,7 @@ export default function Header() {
                     'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
                 }}
               >
-                <StickyNote size={20} />
+                <Lucide.StickyNote size={20} />
                 <span className='font-medium'>Data Only</span>
               </Link>
             </div>
@@ -173,7 +150,7 @@ export default function Header() {
                 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
             }}
           >
-            <Table size={20} />
+            <Lucide.Table size={20} />
             <span className='font-medium'>TanStack Table</span>
           </Link>
 
@@ -186,7 +163,7 @@ export default function Header() {
                 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
             }}
           >
-            <Network size={20} />
+            <Lucide.Network size={20} />
             <span className='font-medium'>TanStack Query</span>
           </Link>
 
@@ -199,7 +176,7 @@ export default function Header() {
                 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
             }}
           >
-            <Network size={20} />
+            <Lucide.Network size={20} />
             <span className='font-medium'>tRPC Todo</span>
           </Link>
 
@@ -207,7 +184,7 @@ export default function Header() {
         </nav>
 
         <div className='flex flex-col gap-2 border-t border-gray-700 bg-gray-800 p-4'>
-          <BetterAuthHeader />
+          <UserMenu />
         </div>
       </aside>
     </>

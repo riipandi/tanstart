@@ -1,7 +1,7 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { authClient } from '#/lib/auth-client'
 
-export default function BetterAuthHeader() {
+export default function UserMenu() {
   const { data: session, isPending } = authClient.useSession()
   const navigate = useNavigate()
 

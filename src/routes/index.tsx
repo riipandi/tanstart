@@ -1,42 +1,42 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Zap, Server, Route as RouteIcon, Shield, Waves, Sparkles } from 'lucide-react'
+import * as Lucide from 'lucide-react'
 
 export const Route = createFileRoute('/')({ component: App })
 
 function App() {
   const features = [
     {
-      icon: <Zap className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Zap className='h-12 w-12 text-cyan-400' />,
       title: 'Powerful Server Functions',
       description:
         'Write server-side code that seamlessly integrates with your client components. Type-safe, secure, and simple.'
     },
     {
-      icon: <Server className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Server className='h-12 w-12 text-cyan-400' />,
       title: 'Flexible Server Side Rendering',
       description:
         'Full-document SSR, streaming, and progressive enhancement out of the box. Control exactly what renders where.'
     },
     {
-      icon: <RouteIcon className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Route className='h-12 w-12 text-cyan-400' />,
       title: 'API Routes',
       description:
         'Build type-safe API endpoints alongside your application. No separate backend needed.'
     },
     {
-      icon: <Shield className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Shield className='h-12 w-12 text-cyan-400' />,
       title: 'Strongly Typed Everything',
       description:
         'End-to-end type safety from server to client. Catch errors before they reach production.'
     },
     {
-      icon: <Waves className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Waves className='h-12 w-12 text-cyan-400' />,
       title: 'Full Streaming Support',
       description:
         'Stream data from server to client progressively. Perfect for AI applications and real-time updates.'
     },
     {
-      icon: <Sparkles className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Sparkles className='h-12 w-12 text-cyan-400' />,
       title: 'Next Generation Ready',
       description:
         'Built from the ground up for modern web applications. Deploy anywhere JavaScript runs.'
@@ -44,9 +44,9 @@ function App() {
   ]
 
   return (
-    <div className='min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900'>
+    <div className='min-h-screen bg-linear-to-b from-slate-900 via-slate-800 to-slate-900'>
       <section className='relative overflow-hidden px-6 py-20 text-center'>
-        <div className='absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10'></div>
+        <div className='absolute inset-0 bg-linear-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10'></div>
         <div className='relative mx-auto max-w-5xl'>
           <div className='mb-6 flex items-center justify-center gap-6'>
             <img
@@ -54,9 +54,9 @@ function App() {
               alt='TanStack Logo'
               className='h-24 w-24 md:h-32 md:w-32'
             />
-            <h1 className='text-6xl font-black [letter-spacing:-0.08em] text-white md:text-7xl'>
+            <h1 className='text-6xl font-black tracking-[-0.08em] text-white md:text-7xl'>
               <span className='text-gray-300'>TANSTACK</span>{' '}
-              <span className='bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent'>
+              <span className='bg-linear-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent'>
                 START
               </span>
             </h1>
