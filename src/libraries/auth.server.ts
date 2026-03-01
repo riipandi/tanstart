@@ -20,7 +20,7 @@ import { consola } from 'consola'
 import { env } from 'std-env'
 
 export const auth = betterAuth({
-  appName: 'TanStack Starter',
+  appName: 'Better Start',
   database: {
     dialect: new LibsqlDialect({
       url: 'file:database.db',

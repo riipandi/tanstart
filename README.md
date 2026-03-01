@@ -92,14 +92,7 @@ effort to contribute something to the open-source community. Your work means the
 
 ## 📝 License
 
-Licensed under either of [Apache License 2.0][license-apache] or [MIT license][license-mit] at your option.
-
-> Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this project by you,
-> as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
-
-Copyrights in this project are retained by their contributors.
-
-See the [LICENSE-APACHE](./LICENSE-APACHE) and [LICENSE-MIT](./LICENSE-MIT) files for more information.
+This project licensed under the [MIT license][license-mit]. See the [LICENSE](./LICENSE) file for more information.
 
 ---
 
@@ -113,7 +106,6 @@ See the [LICENSE-APACHE](./LICENSE-APACHE) and [LICENSE-MIT](./LICENSE-MIT) file
 [expressjs]: https://expressjs.com/
 [fly-io]: https://fly.io/docs/reference/configuration/#services-http_checks
 [kysely-dialects]: https://www.kysely.dev/docs/dialects
-[license-apache]: https://choosealicense.com/licenses/apache-2.0/
 [license-mit]: https://choosealicense.com/licenses/mit/
 [playwright]: https://playwright.dev
 [riipandi-x]: https://x.com/intent/follow?screen_name=riipandi
