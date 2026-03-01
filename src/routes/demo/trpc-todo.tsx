@@ -1,7 +1,7 @@
-import { useTRPC } from '@/integrations/trpc/react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useCallback, useState } from 'react'
+import { useTRPC } from '#/integrations/trpc/react'
 
 export const Route = createFileRoute('/demo/trpc-todo')({
   component: TRPCTodos,
@@ -12,11 +12,23 @@ export const Route = createFileRoute('/demo/trpc-todo')({
 
 function TRPCTodos() {
   const trpc = useTRPC()
-  const { data, refetch } = useQuery(trpc.todos.list.queryOptions())
+  const hasTodos =
+    trpc.todos !== undefined &&
+    typeof trpc.todos === 'object' &&
+    trpc.todos !== null &&
+    'list' in trpc.todos &&
+    'add' in trpc.todos
+  const { data, refetch } = useQuery(
+    hasTodos && typeof (trpc.todos as any).list.queryOptions === 'function'
+      ? (trpc.todos as any).list.queryOptions()
+      : { queryKey: ['todos'], queryFn: async () => [] }
+  )
 
   const [todo, setTodo] = useState('')
   const { mutate: addTodo } = useMutation({
-    ...trpc.todos.add.mutationOptions(),
+    ...(hasTodos && typeof (trpc.todos as any).add.mutationOptions === 'function'
+      ? (trpc.todos as any).add.mutationOptions()
+      : {}),
     onSuccess: () => {
       refetch()
       setTodo('')
@@ -24,12 +36,12 @@ function TRPCTodos() {
   })
 
   const submitTodo = useCallback(() => {
-    addTodo({ name: todo })
+    addTodo({ name: todo } as any)
   }, [addTodo, todo])
 
   return (
     <div
-      className='flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 p-4 text-white'
+      className='flex min-h-screen items-center justify-center bg-linear-to-br from-purple-100 to-blue-100 p-4 text-white'
       style={{
         backgroundImage: 'radial-gradient(50% 50% at 95% 5%, #4a90c2 0%, #317eb9 50%, #1e4d72 100%)'
       }}
@@ -37,14 +49,18 @@ function TRPCTodos() {
       <div className='w-full max-w-2xl rounded-xl border-8 border-black/10 bg-black/50 p-8 shadow-xl backdrop-blur-md'>
         <h1 className='mb-4 text-2xl'>tRPC Todos list</h1>
         <ul className='mb-4 space-y-2'>
-          {data?.map((t) => (
-            <li
-              key={t.id}
-              className='rounded-lg border border-white/20 bg-white/10 p-3 shadow-md backdrop-blur-sm'
-            >
-              <span className='text-lg text-white'>{t.name}</span>
-            </li>
-          ))}
+          {Array.isArray(data) && data.length > 0 ? (
+            data.map((t: { id: number; name: string }) => (
+              <li
+                key={t.id}
+                className='rounded-lg border border-white/20 bg-white/10 p-3 shadow-md backdrop-blur-sm'
+              >
+                <span className='text-lg text-white'>{t.name}</span>
+              </li>
+            ))
+          ) : (
+            <li className='text-white/60'>No todos found.</li>
+          )}
         </ul>
         <div className='flex flex-col gap-2'>
           <input

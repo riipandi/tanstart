@@ -1,5 +1,3 @@
-import { makeData } from '@/data/demo-table-data'
-import type { Person } from '@/data/demo-table-data'
 import { compareItems, rankItem } from '@tanstack/match-sorter-utils'
 import type { RankingInfo } from '@tanstack/match-sorter-utils'
 import { createFileRoute } from '@tanstack/react-router'
@@ -20,6 +18,8 @@ import type {
   SortingFn
 } from '@tanstack/react-table'
 import React from 'react'
+import { makeData } from '#/data/demo-table-data'
+import type { Person } from '#/data/demo-table-data'
 
 export const Route = createFileRoute('/demo/table')({
   component: TableDemo
@@ -53,11 +53,12 @@ const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
   let dir = 0
 
   // Only sort by rank if the column has ranking information
-  if (rowA.columnFiltersMeta[columnId]) {
-    dir = compareItems(
-      rowA.columnFiltersMeta[columnId]?.itemRank!,
-      rowB.columnFiltersMeta[columnId]?.itemRank!
-    )
+  if (rowA.columnFiltersMeta[columnId] && rowB.columnFiltersMeta[columnId]) {
+    const rankA = rowA.columnFiltersMeta[columnId]?.itemRank
+    const rankB = rowB.columnFiltersMeta[columnId]?.itemRank
+    if (rankA && rankB) {
+      dir = compareItems(rankA, rankB)
+    }
   }
 
   // Provide an alphanumeric fallback for when the item ranks are equal
