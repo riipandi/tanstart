@@ -3,15 +3,14 @@ import { QueryClient } from '@tanstack/react-query'
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
+import Header from '#/components/Header'
 import { getContext, Provider } from '#/integrations/tanstack-query/root-provider'
 import type { TRPCRouter } from '#/integrations/trpc/router'
-import Header from '../components/Header'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 
 export interface GlobalContext {
   queryClient: QueryClient
-
   trpc: TRPCOptionsProxy<TRPCRouter>
 }
 
@@ -19,29 +18,16 @@ export const Route = createRootRouteWithContext<GlobalContext>()({
   notFoundComponent: () => <div>Not found</div>,
   head: () => ({
     meta: [
-      {
-        charSet: 'utf-8'
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1'
-      },
-      {
-        title: 'TanStack Start Starter'
-      }
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { title: 'Better Start' }
     ],
-    links: [
-      {
-        rel: 'stylesheet',
-        href: appCss
-      }
-    ]
+    links: [{ rel: 'stylesheet', href: appCss }]
   }),
-
   shellComponent: RootDocument
 })
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({ children }: React.PropsWithChildren) {
   const { queryClient } = getContext()
 
   return (
@@ -54,14 +40,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <Header />
           {children}
           <TanStackDevtools
-            config={{
-              position: 'bottom-right'
-            }}
+            config={{ position: 'bottom-right' }}
             plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />
-              },
+              { name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> },
               TanStackQueryDevtools
             ]}
           />

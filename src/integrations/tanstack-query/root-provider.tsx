@@ -34,19 +34,16 @@ export function getContext() {
     client: trpcClient,
     queryClient: queryClient
   })
-  return {
-    queryClient,
-    trpc: serverHelpers
-  }
+
+  return { queryClient, trpc: serverHelpers }
 }
 
-export function Provider({
-  children,
-  queryClient
-}: {
+interface ProviderProps {
   children: React.ReactNode
   queryClient: QueryClient
-}) {
+}
+
+export function Provider({ children, queryClient }: ProviderProps) {
   return (
     <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
       {children}

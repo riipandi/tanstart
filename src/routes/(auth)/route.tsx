@@ -1,10 +1,8 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
-import type { ParsedLocation } from '@tanstack/react-router'
-import { getSession } from '#/lib/auth.server'
+import { getSession } from '#/lib/session'
 
 interface BeforeLoadParams {
   search?: { redirect?: string }
-  location: ParsedLocation
 }
 
 export const Route = createFileRoute('/(auth)')({

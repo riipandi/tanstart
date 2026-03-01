@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
-import { getSession } from '#/lib/auth.server'
+import { getSession } from '#/lib/session'
 
 export const Route = createFileRoute('/(app)')({
   component: RouteComponent,
@@ -8,10 +8,10 @@ export const Route = createFileRoute('/(app)')({
     if (!session) {
       throw redirect({
         to: '/signin',
-        search: { redirect: location.pathname }
+        search: { redirect: location.href }
       })
     }
-    return { user: session.user }
+    return { session }
   }
 })
 

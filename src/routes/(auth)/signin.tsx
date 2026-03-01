@@ -7,6 +7,8 @@ export const Route = createFileRoute('/(auth)/signin')({
 })
 
 function RouteComponent() {
+  const navigate = Route.useNavigate()
+
   const { isPending } = authClient.useSession()
   const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState('')
@@ -46,6 +48,7 @@ function RouteComponent() {
         if (result.error) {
           setError(result.error.message || 'Sign in failed')
         }
+        return navigate({ to: '/dashboard' })
       }
     } catch (err) {
       console.error(err)

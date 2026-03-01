@@ -19,7 +19,7 @@ export const auth = betterAuth({
     db,
     type: 'postgres',
     transaction: true,
-    debugLogs: !isProduction,
+    debugLogs: false,
     casing: 'snake'
   },
   baseURL: process.env.APP_BASE_URL!,
