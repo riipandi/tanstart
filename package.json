@@ -15,7 +15,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite dev --port 3000",
-    "auth": "pnpm dlx auth@latest",
+    "auth:migrate": "pnpm dlx auth@latest migrate --config ./src/lib/auth.ts",
+    "auth:generate": "pnpm dlx auth@latest generate --config ./src/lib/auth.ts",
     "start": "PORT=3000 node --env-file-if-exists=.env.local .output/server/index.mjs",
     "docker:build": "docker build -f ./deploy/Dockerfile.distroless . --build-arg DISTROLESS_TAG=debug-nonroot -t $npm_package_config_image:$npm_package_version-dev",
     "docker:push": "docker push $npm_package_config_image:latest-dev && docker push $npm_package_config_image:$npm_package_version-dev",
@@ -68,6 +69,7 @@
     "@trpc/server": "^11.11.0",
     "@trpc/tanstack-react-query": "^11.11.0",
     "better-auth": "^1.5.0",
+    "kysely": "^0.28.11",
     "lucide-react": "^0.575.0",
     "pg": "^8.19.0",
     "react": "^19.2.4",

@@ -1,16 +1,13 @@
 import { betterAuth } from 'better-auth'
-import type { BetterAuthOptions } from 'better-auth/types'
-import { Pool } from 'pg'
+import { tanstackStartCookies } from 'better-auth/tanstack-start'
+import { db } from './db'
 
-const dialect = new Pool({
-  connectionString: String(process.env.DATABASE_URL)
-})
-
-const authOptions: BetterAuthOptions = {
+export const auth = betterAuth({
   database: {
-    dialect,
-    type: 'postgresql',
+    db,
+    type: 'postgres',
     transaction: true,
+    debugLogs: true,
     casing: 'snake'
   },
   baseURL: process.env.APP_BASE_URL!,
@@ -28,7 +25,6 @@ const authOptions: BetterAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!
     }
-  }
-}
-
-export const auth = betterAuth(authOptions)
+  },
+  plugins: [tanstackStartCookies()]
+})
