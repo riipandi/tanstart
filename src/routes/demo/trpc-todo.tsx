@@ -1,15 +1,13 @@
-import { useCallback, useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
 import { useTRPC } from '@/integrations/trpc/react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import { useCallback, useState } from 'react'
 
 export const Route = createFileRoute('/demo/trpc-todo')({
   component: TRPCTodos,
   loader: async ({ context }) => {
-    await context.queryClient.prefetchQuery(
-      context.trpc.todos.list.queryOptions(),
-    )
-  },
+    await context.queryClient.prefetchQuery(context.trpc.todos.list.queryOptions())
+  }
 })
 
 function TRPCTodos() {
@@ -22,7 +20,7 @@ function TRPCTodos() {
     onSuccess: () => {
       refetch()
       setTodo('')
-    },
+    }
   })
 
   const submitTodo = useCallback(() => {
@@ -31,27 +29,26 @@ function TRPCTodos() {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4 text-white"
+      className='flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 p-4 text-white'
       style={{
-        backgroundImage:
-          'radial-gradient(50% 50% at 95% 5%, #4a90c2 0%, #317eb9 50%, #1e4d72 100%)',
+        backgroundImage: 'radial-gradient(50% 50% at 95% 5%, #4a90c2 0%, #317eb9 50%, #1e4d72 100%)'
       }}
     >
-      <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-        <h1 className="text-2xl mb-4">tRPC Todos list</h1>
-        <ul className="mb-4 space-y-2">
+      <div className='w-full max-w-2xl rounded-xl border-8 border-black/10 bg-black/50 p-8 shadow-xl backdrop-blur-md'>
+        <h1 className='mb-4 text-2xl'>tRPC Todos list</h1>
+        <ul className='mb-4 space-y-2'>
           {data?.map((t) => (
             <li
               key={t.id}
-              className="bg-white/10 border border-white/20 rounded-lg p-3 backdrop-blur-sm shadow-md"
+              className='rounded-lg border border-white/20 bg-white/10 p-3 shadow-md backdrop-blur-sm'
             >
-              <span className="text-lg text-white">{t.name}</span>
+              <span className='text-lg text-white'>{t.name}</span>
             </li>
           ))}
         </ul>
-        <div className="flex flex-col gap-2">
+        <div className='flex flex-col gap-2'>
           <input
-            type="text"
+            type='text'
             value={todo}
             onChange={(e) => setTodo(e.target.value)}
             onKeyDown={(e) => {
@@ -59,13 +56,13 @@ function TRPCTodos() {
                 submitTodo()
               }
             }}
-            placeholder="Enter a new todo..."
-            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 backdrop-blur-sm text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+            placeholder='Enter a new todo...'
+            className='w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/60 backdrop-blur-sm focus:border-transparent focus:ring-2 focus:ring-blue-400 focus:outline-none'
           />
           <button
             disabled={todo.trim().length === 0}
             onClick={submitTodo}
-            className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors"
+            className='rounded-lg bg-blue-500 px-4 py-3 font-bold text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-blue-500/50'
           >
             Add todo
           </button>

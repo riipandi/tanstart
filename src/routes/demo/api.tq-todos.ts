@@ -3,16 +3,16 @@ import { createFileRoute } from '@tanstack/react-router'
 const todos = [
   {
     id: 1,
-    name: 'Buy groceries',
+    name: 'Buy groceries'
   },
   {
     id: 2,
-    name: 'Buy mobile phone',
+    name: 'Buy mobile phone'
   },
   {
     id: 3,
-    name: 'Buy laptop',
-  },
+    name: 'Buy laptop'
+  }
 ]
 
 export const Route = createFileRoute('/demo/api/tq-todos')({
@@ -25,11 +25,11 @@ export const Route = createFileRoute('/demo/api/tq-todos')({
         const name = await request.json()
         const todo = {
           id: todos.length + 1,
-          name,
+          name
         }
         todos.push(todo)
         return Response.json(todo)
-      },
-    },
-  },
+      }
+    }
+  }
 })

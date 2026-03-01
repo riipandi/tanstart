@@ -1,12 +1,52 @@
 {
   "name": "better-start",
+  "version": "0.0.0",
   "private": true,
+  "description": "Faster way to start building your MVP application",
+  "homepage": "https://github.com/riipandi/better-start#readme",
+  "bugs": {
+    "url": "https://github.com/riipandi/better-start/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/riipandi/better-start.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest run"
+    "start": "PORT=3000 node --env-file-if-exists=.env.local .output/server/index.mjs",
+    "docker:build": "docker build -f ./deploy/Dockerfile.distroless . --build-arg DISTROLESS_TAG=debug-nonroot -t $npm_package_config_image:$npm_package_version-dev",
+    "docker:push": "docker push $npm_package_config_image:latest-dev && docker push $npm_package_config_image:$npm_package_version-dev",
+    "docker:run": "pnpm --silent run dockerx --name $npm_package_name $npm_package_config_image:$npm_package_version-dev",
+    "docker:shell": "pnpm --silent run dockerx --entrypoint sh $npm_package_config_image:$npm_package_version-dev",
+    "docker:prune": "docker image rm --force $(docker image list --filter reference=$npm_package_config_image:* -q)",
+    "docker:images": "docker image list --filter reference=$npm_package_config_image:*",
+    "compose:up": "docker compose -f compose.yaml up --detach --remove-orphans",
+    "compose:down": "docker compose -f compose.yaml down --remove-orphans",
+    "compose:cleanup": "docker compose -f compose.yaml down --remove-orphans --volumes",
+    "compose:restart": "pnpm --silent run compose:down && pnpm --silent run compose:up",
+    "cleanup": "pnpm dlx del-cli .{output,tanstack,wrangler} storybook-static pnpm-lock.yaml node_modules",
+    "update-deps": "npm-check-updates --configFileName .ncurc.json",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "storybook:build": "storybook build",
+    "e2e-install": "playwright install chromium --with-deps",
+    "e2e-chrome": "playwright test --headed --project Chromium",
+    "e2e-firefox": "playwright test --headed --project Firefox",
+    "e2e-mobile": "playwright test --headed --project 'Mobile Chrome'",
+    "e2e-safari": "playwright test --headed --project Safari",
+    "e2e-report": "playwright show-report .build/e2e-result",
+    "e2e-ui": "playwright test --ui",
+    "e2e": "playwright test",
+    "test:report": "pnpm dlx serve output/test-result -l 8000 -s -n -C",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "test": "vitest --run",
+    "typecheck": "tsc -b --noEmit --extendedDiagnostics",
+    "knip": "knip -c .knip.jsonc --reporter markdown --no-exit-code",
+    "check": "oxfmt --check && oxlint",
+    "format": "oxfmt --write .",
+    "lint": "oxlint --fix"
   },
   "dependencies": {
     "@faker-js/faker": "^10.0.0",
@@ -45,9 +85,20 @@
     "@vitejs/plugin-react": "^5.0.4",
     "babel-plugin-react-compiler": "^1.0.0",
     "jsdom": "^27.0.0",
+    "knip": "^5.84.1",
+    "npm-check-updates": "^19.4.1",
+    "oxfmt": "^0.34.0",
+    "oxlint": "^1.49.0",
     "typescript": "^5.7.2",
     "vite": "^7.1.7",
     "vitest": "^3.0.5",
     "web-vitals": "^5.1.0"
-  }
+  },
+  "config": {
+    "image": "ghcr.io/riipandi/better-start"
+  },
+  "engines": {
+    "node": ">=24.12.0"
+  },
+  "packageManager": "pnpm@10.30.1"
 }

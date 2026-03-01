@@ -1,9 +1,8 @@
+import { useAppForm } from '@/hooks/demo.form'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { useAppForm } from '@/hooks/demo.form'
-
 export const Route = createFileRoute('/demo/form/address')({
-  component: AddressForm,
+  component: AddressForm
 })
 
 function AddressForm() {
@@ -16,14 +15,14 @@ function AddressForm() {
         city: '',
         state: '',
         zipCode: '',
-        country: '',
+        country: ''
       },
-      phone: '',
+      phone: ''
     },
     validators: {
       onBlur: ({ value }) => {
         const errors = {
-          fields: {},
+          fields: {}
         } as {
           fields: Record<string, string>
         }
@@ -31,38 +30,37 @@ function AddressForm() {
           errors.fields.fullName = 'Full name is required'
         }
         return errors
-      },
+      }
     },
     onSubmit: ({ value }) => {
       console.log(value)
       // Show success message
       alert('Form submitted successfully!')
-    },
+    }
   })
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4 text-white"
+      className='flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 p-4 text-white'
       style={{
-        backgroundImage:
-          'radial-gradient(50% 50% at 5% 40%, #f4a460 0%, #8b4513 70%, #1a0f0a 100%)',
+        backgroundImage: 'radial-gradient(50% 50% at 5% 40%, #f4a460 0%, #8b4513 70%, #1a0f0a 100%)'
       }}
     >
-      <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
+      <div className='w-full max-w-2xl rounded-xl border-8 border-black/10 bg-black/50 p-8 shadow-xl backdrop-blur-md'>
         <form
           onSubmit={(e) => {
             e.preventDefault()
             e.stopPropagation()
             form.handleSubmit()
           }}
-          className="space-y-6"
+          className='space-y-6'
         >
-          <form.AppField name="fullName">
-            {(field) => <field.TextField label="Full Name" />}
+          <form.AppField name='fullName'>
+            {(field) => <field.TextField label='Full Name' />}
           </form.AppField>
 
           <form.AppField
-            name="email"
+            name='email'
             validators={{
               onBlur: ({ value }) => {
                 if (!value || value.trim().length === 0) {
@@ -72,55 +70,55 @@ function AddressForm() {
                   return 'Invalid email address'
                 }
                 return undefined
-              },
+              }
             }}
           >
-            {(field) => <field.TextField label="Email" />}
+            {(field) => <field.TextField label='Email' />}
           </form.AppField>
 
           <form.AppField
-            name="address.street"
+            name='address.street'
             validators={{
               onBlur: ({ value }) => {
                 if (!value || value.trim().length === 0) {
                   return 'Street address is required'
                 }
                 return undefined
-              },
+              }
             }}
           >
-            {(field) => <field.TextField label="Street Address" />}
+            {(field) => <field.TextField label='Street Address' />}
           </form.AppField>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
             <form.AppField
-              name="address.city"
+              name='address.city'
               validators={{
                 onBlur: ({ value }) => {
                   if (!value || value.trim().length === 0) {
                     return 'City is required'
                   }
                   return undefined
-                },
+                }
               }}
             >
-              {(field) => <field.TextField label="City" />}
+              {(field) => <field.TextField label='City' />}
             </form.AppField>
             <form.AppField
-              name="address.state"
+              name='address.state'
               validators={{
                 onBlur: ({ value }) => {
                   if (!value || value.trim().length === 0) {
                     return 'State is required'
                   }
                   return undefined
-                },
+                }
               }}
             >
-              {(field) => <field.TextField label="State" />}
+              {(field) => <field.TextField label='State' />}
             </form.AppField>
             <form.AppField
-              name="address.zipCode"
+              name='address.zipCode'
               validators={{
                 onBlur: ({ value }) => {
                   if (!value || value.trim().length === 0) {
@@ -130,27 +128,27 @@ function AddressForm() {
                     return 'Invalid zip code format'
                   }
                   return undefined
-                },
+                }
               }}
             >
-              {(field) => <field.TextField label="Zip Code" />}
+              {(field) => <field.TextField label='Zip Code' />}
             </form.AppField>
           </div>
 
           <form.AppField
-            name="address.country"
+            name='address.country'
             validators={{
               onBlur: ({ value }) => {
                 if (!value || value.trim().length === 0) {
                   return 'Country is required'
                 }
                 return undefined
-              },
+              }
             }}
           >
             {(field) => (
               <field.Select
-                label="Country"
+                label='Country'
                 values={[
                   { label: 'United States', value: 'US' },
                   { label: 'Canada', value: 'CA' },
@@ -158,39 +156,33 @@ function AddressForm() {
                   { label: 'Australia', value: 'AU' },
                   { label: 'Germany', value: 'DE' },
                   { label: 'France', value: 'FR' },
-                  { label: 'Japan', value: 'JP' },
+                  { label: 'Japan', value: 'JP' }
                 ]}
-                placeholder="Select a country"
+                placeholder='Select a country'
               />
             )}
           </form.AppField>
 
           <form.AppField
-            name="phone"
+            name='phone'
             validators={{
               onBlur: ({ value }) => {
                 if (!value || value.trim().length === 0) {
                   return 'Phone number is required'
                 }
-                if (
-                  !/^(\+\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(
-                    value,
-                  )
-                ) {
+                if (!/^(\+\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(value)) {
                   return 'Invalid phone number format'
                 }
                 return undefined
-              },
+              }
             }}
           >
-            {(field) => (
-              <field.TextField label="Phone" placeholder="123-456-7890" />
-            )}
+            {(field) => <field.TextField label='Phone' placeholder='123-456-7890' />}
           </form.AppField>
 
-          <div className="flex justify-end">
+          <div className='flex justify-end'>
             <form.AppForm>
-              <form.SubscribeButton label="Submit" />
+              <form.SubscribeButton label='Submit' />
             </form.AppForm>
           </div>
         </form>

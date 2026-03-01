@@ -1,22 +1,13 @@
-import {
-  HeadContent,
-  Scripts,
-  createRootRouteWithContext,
-} from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
-
-import Header from '../components/Header'
-
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
-
-import appCss from '../styles.css?url'
-
-import  { QueryClient  } from '@tanstack/react-query'
-
-import type { TRPCRouter } from '@/integrations/trpc/router'
-import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
 import { Provider } from '@/integrations/tanstack-query/root-provider'
+import type { TRPCRouter } from '@/integrations/trpc/router'
+import { TanStackDevtools } from '@tanstack/react-devtools'
+import { QueryClient } from '@tanstack/react-query'
+import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
+import Header from '../components/Header'
+import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
+import appCss from '../styles.css?url'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -28,55 +19,54 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
       {
-        charSet: 'utf-8',
+        charSet: 'utf-8'
       },
       {
         name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
+        content: 'width=device-width, initial-scale=1'
       },
       {
-        title: 'TanStack Start Starter',
-      },
+        title: 'TanStack Start Starter'
+      }
     ],
     links: [
       {
         rel: 'stylesheet',
-        href: appCss,
-      },
-    ],
+        href: appCss
+      }
+    ]
   }),
 
-  shellComponent: RootDocument,
+  shellComponent: RootDocument
 })
 
 const queryClient = new QueryClient()
 
-
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <Provider queryClient={queryClient}>
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <Header />
-        {children}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            TanStackQueryDevtools,
-          ]}
-        />
-        <Scripts />
-      </body>
-    </html>
+      <html lang='en'>
+        <head>
+          <HeadContent />
+        </head>
+        <body>
+          <Header />
+          {children}
+          <TanStackDevtools
+            config={{
+              position: 'bottom-right'
+            }}
+            plugins={[
+              {
+                name: 'Tanstack Router',
+                render: <TanStackRouterDevtoolsPanel />
+              },
+              TanStackQueryDevtools
+            ]}
+          />
+          <Scripts />
+        </body>
+      </html>
     </Provider>
   )
 }
