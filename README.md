@@ -1,117 +1,290 @@
-# Better Start
+Welcome to your new TanStack app! 
 
-[![Release](https://img.shields.io/github/v/release/riipandi/better-start?logo=tanstack&color=orange)](https://github.com/riipandi/better-start/releases)
-[![Languages](https://img.shields.io/github/languages/top/riipandi/better-start)](https://github.com/riipandi/better-start)
-[![Test](https://github.com/riipandi/better-start/actions/workflows/test.yml/badge.svg)](https://github.com/riipandi/better-start/actions/workflows/test.yml)
-[![Contribution](https://badgen.net/badge/icon/Contributions%20Welcome?icon=bitcoin-lightning&label&color=black&labelColor=black)](https://github.com/riipandi/better-start/pulse)
+# Getting Started
 
-Better Start is a robust SaaS starter kit designed to boost developer productivity. Built with React, 
-TanStack Start, TypeScript, Kysely, and Better Auth this boilerplate offers a solid foundation for modern
-web applications. It comes pre-configured with authentication, user invitation functionality, and admin
-capabilities. While LibSQL (SQLite compatible) is the default database, developers can easily switch to
-any database [supported by Kysely][kysely-dialects]. The project embraces minimalism by not including
-a UI kit, but it's set up with Tailwind CSS for flexible styling. Docker configuration is included for
-easy deployment, with the option to deploy to Vercel or other edge platforms.
+To run this application:
 
-Unit testing with Vitest and E2E testing are provided out of the box. Code formatting and linting are
-handled by Oxlint and Oxfmt This starter kit empowers developers to quickly launch and scale their
-SaaS products with best practices and essential features ready to go.
-
-## What's in the stack?
-
-- [TanStack Start](https://tanstack.com/start) the full-stack framework powered by TanStack Router
-- [TypeScript][typescript] for static type checking
-- [Kysely](https://kysely.dev/) for type-safe database queries
-- [Better Auth](https://better-auth.com/) for authentication and authorization
-- [PostgreSQL](https://www.postgresql.org/) as the default database (easily switchable)
-- [Tailwind CSS][tailwindcss] for flexible styling
-- Deploy to [Fly.io](https://fly.io) using [Docker][docker] container (easy to switch to other edge platforms)
-- Ready for multi-tenant (multiple subdomains with a single codebase)
-- Healthcheck endpoint for [Fly backups region fallbacks][fly-io]
-- Custom [Express][expressjs] server for production
-- Styling with [Tailwind CSS][tailwindcss], [clsx][clsx], and [tailwind-merge][tailwind-merge]
-- Code formatting and linting with [Oxlint][oxlint] and [Oxfmt][oxfmt]
-- Unit testing with [Vitest][vitest]
-- E2E testing with [Playwright][playwright]
-
-## 🏁 Quickstart
-
-```sh
-pnpm dlx tiged riipandi/blueprint-nitrojs my-app
+```bash
+pnpm install
+pnpm dev
 ```
 
-To get started with setting up this project, refer to [CONTRIBUTING.md](./CONTRIBUTING.md) for step-by-step instructions.
+# Building For Production
 
-## 👷‍♂️ Contributions
+To build this application for production:
 
-Contributions are welcome! Please open a pull requests for your changes and tickets
-in case you would like to discuss something or have a question.
+```bash
+pnpm build
+```
 
-## ✨ Implemented Features
+## Testing
 
-- [ ] Authentication and Authorization
-    - [ ] Sign in
-        - [ ] Email and password
-        - [ ] Username and password
-        - [ ] Magic link
-        - [ ] Passkey
-        - [ ] Social provider (Google, GitHub, etc)
-        - [ ] Account Recovery (forgot password)
-        - [ ] Remember me
-    - [ ] Sign up
-        - [ ] Email, username and password
-        - [ ] Social provider (Google, GitHub, etc)
-        - [ ] Account verification via email
-    - [ ] Two Factor Authentication (2FA)
-        - [ ] Using TOTP (Google Authenticator, Authy, etc)
-        - [ ] OTP Code via email
-    - [ ] Session management
-    - [ ] Role-based access control (RBAC)
-    - [ ] Impersonation (login as another user)
-    - [ ] JWT/JWKS authentication
-- [ ] Account Management
-    - [ ] Update user profile (name, username, email)
-    - [ ] Update user password
-    - [ ] Update user avatar
-    - [ ] Delete user account
-- [ ] Organization Management
-    - [ ] User invitation
-    - [ ] Create organization
-    - [ ] Update organization
-    - [ ] Delete organization
-- [ ] Better logging integration
-- [ ] Roles and Permissions management
-- [ ] Using S3 for file storage (avatar, etc)
-- [ ] Automatic Kysely database migrations
-- [ ] Deployment via Docker container
+This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
 
-## 🙏 Thanks to...
+```bash
+pnpm test
+```
 
-In general, I'd like to thank every single one who open-sources their source code for their
-effort to contribute something to the open-source community. Your work means the world! 🌍 ❤️
+## Styling
 
-## 📝 License
+This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
 
-This project licensed under the [MIT license][license-mit]. See the [LICENSE](./LICENSE) file for more information.
 
----
 
-<sub>🤫 Psst! If you like my work you can support me via [GitHub sponsors](https://github.com/sponsors/riipandi).</sub>
 
-[![Made by](https://badgen.net/badge/icon/Aris%20Ripandi?label=Made+by&color=black&labelColor=black)][riipandi-x]
+## Routing
+This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
 
-<!-- link reference definition -->
-[clsx]: https://www.npmjs.com/package/clsx
-[docker]: https://docs.docker.com/engine/install
-[expressjs]: https://expressjs.com/
-[fly-io]: https://fly.io/docs/reference/configuration/#services-http_checks
-[kysely-dialects]: https://www.kysely.dev/docs/dialects
-[license-mit]: https://choosealicense.com/licenses/mit/
-[playwright]: https://playwright.dev
-[riipandi-x]: https://x.com/intent/follow?screen_name=riipandi
-[tailwind-merge]: https://www.npmjs.com/package/tailwind-merge
-[tailwindcss]: https://tailwindcss.com
-[typescript]: https://typescriptlang.org
-[vitest]: https://vitest.dev
-[oxlint]: https://oxc.rs/docs/guide/usage/linter
-[oxfmt]: https://oxc.rs/docs/guide/usage/formatter
+### Adding A Route
+
+To add a new route to your application just add another a new file in the `./src/routes` directory.
+
+TanStack will automatically generate the content of the route file for you.
+
+Now that you have two routes you can use a `Link` component to navigate between them.
+
+### Adding Links
+
+To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+
+```tsx
+import { Link } from "@tanstack/react-router";
+```
+
+Then anywhere in your JSX you can use it like so:
+
+```tsx
+<Link to="/about">About</Link>
+```
+
+This will create a link that will navigate to the `/about` route.
+
+More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+
+### Using A Layout
+
+In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
+
+Here is an example layout that includes a header:
+
+```tsx
+import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+
+import { Link } from "@tanstack/react-router";
+
+export const Route = createRootRoute({
+  component: () => (
+    <>
+      <header>
+        <nav>
+          <Link to="/">Home</Link>
+          <Link to="/about">About</Link>
+        </nav>
+      </header>
+      <Outlet />
+      <TanStackRouterDevtools />
+    </>
+  ),
+})
+```
+
+The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
+
+More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
+
+
+## Data Fetching
+
+There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
+
+For example:
+
+```tsx
+const peopleRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/people",
+  loader: async () => {
+    const response = await fetch("https://swapi.dev/api/people");
+    return response.json() as Promise<{
+      results: {
+        name: string;
+      }[];
+    }>;
+  },
+  component: () => {
+    const data = peopleRoute.useLoaderData();
+    return (
+      <ul>
+        {data.results.map((person) => (
+          <li key={person.name}>{person.name}</li>
+        ))}
+      </ul>
+    );
+  },
+});
+```
+
+Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
+
+### React-Query
+
+React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
+
+First add your dependencies:
+
+```bash
+pnpm add @tanstack/react-query @tanstack/react-query-devtools
+```
+
+Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
+
+```tsx
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// ...
+
+const queryClient = new QueryClient();
+
+// ...
+
+if (!rootElement.innerHTML) {
+  const root = ReactDOM.createRoot(rootElement);
+
+  root.render(
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  );
+}
+```
+
+You can also add TanStack Query Devtools to the root route (optional).
+
+```tsx
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+const rootRoute = createRootRoute({
+  component: () => (
+    <>
+      <Outlet />
+      <ReactQueryDevtools buttonPosition="top-right" />
+      <TanStackRouterDevtools />
+    </>
+  ),
+});
+```
+
+Now you can use `useQuery` to fetch your data.
+
+```tsx
+import { useQuery } from "@tanstack/react-query";
+
+import "./App.css";
+
+function App() {
+  const { data } = useQuery({
+    queryKey: ["people"],
+    queryFn: () =>
+      fetch("https://swapi.dev/api/people")
+        .then((res) => res.json())
+        .then((data) => data.results as { name: string }[]),
+    initialData: [],
+  });
+
+  return (
+    <div>
+      <ul>
+        {data.map((person) => (
+          <li key={person.name}>{person.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
+You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
+
+## State Management
+
+Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
+
+First you need to add TanStack Store as a dependency:
+
+```bash
+pnpm add @tanstack/store
+```
+
+Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
+
+```tsx
+import { useStore } from "@tanstack/react-store";
+import { Store } from "@tanstack/store";
+import "./App.css";
+
+const countStore = new Store(0);
+
+function App() {
+  const count = useStore(countStore);
+  return (
+    <div>
+      <button onClick={() => countStore.setState((n) => n + 1)}>
+        Increment - {count}
+      </button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
+
+Let's check this out by doubling the count using derived state.
+
+```tsx
+import { useStore } from "@tanstack/react-store";
+import { Store, Derived } from "@tanstack/store";
+import "./App.css";
+
+const countStore = new Store(0);
+
+const doubledStore = new Derived({
+  fn: () => countStore.state * 2,
+  deps: [countStore],
+});
+doubledStore.mount();
+
+function App() {
+  const count = useStore(countStore);
+  const doubledCount = useStore(doubledStore);
+
+  return (
+    <div>
+      <button onClick={() => countStore.setState((n) => n + 1)}>
+        Increment - {count}
+      </button>
+      <div>Doubled - {doubledCount}</div>
+    </div>
+  );
+}
+
+export default App;
+```
+
+We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
+
+Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
+
+You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
+
+# Demo files
+
+Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
+
+# Learn More
+
+You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).

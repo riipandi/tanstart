@@ -1,4 +1,3 @@
-User-Agent: *
-Allow: /
-
-Sitemap: https://example.com/sitemap.xml
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Disallow:

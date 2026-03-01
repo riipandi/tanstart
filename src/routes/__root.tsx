@@ -1,87 +1,82 @@
-import { AuthUIProvider } from '@daveyplate/better-auth-ui'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
-  createRootRoute,
   HeadContent,
-  Link,
-  Outlet,
   Scripts,
-  useRouter,
+  createRootRouteWithContext,
 } from '@tanstack/react-router'
-import { RootProvider } from 'fumadocs-ui/provider/tanstack'
-import type * as React from 'react'
-import { authClient } from '#/libraries/auth.client'
-import appCss from '#/styles/globals.css?url'
-import { useDynamicFavicon } from '#/hooks/use-dynamic-favicon'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { TanStackDevtools } from '@tanstack/react-devtools'
 
-export const Route = createRootRoute({
-  component: RootComponent,
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'Fumadocs on TanStack Start' },
-    ],
-    links: [{ rel: 'stylesheet', href: appCss }],
-  }),
-})
+import Header from '../components/Header'
 
-function RootComponent() {
-  return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
-  )
+import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
+
+import appCss from '../styles.css?url'
+
+import  { QueryClient  } from '@tanstack/react-query'
+
+import type { TRPCRouter } from '@/integrations/trpc/router'
+import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
+import { Provider } from '@/integrations/tanstack-query/root-provider'
+
+interface MyRouterContext {
+  queryClient: QueryClient
+
+  trpc: TRPCOptionsProxy<TRPCRouter>
 }
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60,
-    },
-  },
+export const Route = createRootRouteWithContext<MyRouterContext>()({
+  head: () => ({
+    meta: [
+      {
+        charSet: 'utf-8',
+      },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1',
+      },
+      {
+        title: 'TanStack Start Starter',
+      },
+    ],
+    links: [
+      {
+        rel: 'stylesheet',
+        href: appCss,
+      },
+    ],
+  }),
+
+  shellComponent: RootDocument,
 })
 
-function RootDocument({ children }: React.PropsWithChildren) {
-  const { navigate } = useRouter()
+const queryClient = new QueryClient()
 
-  useDynamicFavicon()
 
+function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <Provider queryClient={queryClient}>
+    <html lang="en">
       <head>
         <HeadContent />
       </head>
-      <body className="flex min-h-screen flex-col">
-        <QueryClientProvider client={queryClient}>
-          <AuthUIProvider
-            redirectTo="/account/profile"
-            authClient={authClient}
-            navigate={(href) => navigate({ href })}
-            replace={(href) => navigate({ href, replace: true })}
-            Link={({ href, ...props }) => <Link to={href} {...props} />}
-            account={true}
-            avatar={true}
-            apiKey={{ prefix: 'ak_' }}
-            deleteUser={true}
-            organization={true}
-            teams={true}
-            credentials={true}
-            signUp={true}
-            changeEmail={true}
-            emailVerification={true}
-            emailOTP={true}
-            gravatar={true}
-            magicLink={true}
-            nameRequired={true}
-            passkey={true}
-            social={{ providers: ['github'] }}
-          >
-            <RootProvider>{children}</RootProvider>
-          </AuthUIProvider>
-        </QueryClientProvider>
+      <body>
+        <Header />
+        {children}
+        <TanStackDevtools
+          config={{
+            position: 'bottom-right',
+          }}
+          plugins={[
+            {
+              name: 'Tanstack Router',
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+            TanStackQueryDevtools,
+          ]}
+        />
         <Scripts />
       </body>
     </html>
+    </Provider>
   )
 }
