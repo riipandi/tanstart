@@ -11,6 +11,9 @@ importers:
       '@faker-js/faker':
         specifier: ^10.3.0
         version: 10.3.0
+      '@lonik/themer':
+        specifier: ^0.5.2
+        version: 0.5.2(@tanstack/react-router@1.163.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vite@7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0))
       '@noble/hashes':
         specifier: ^2.0.1
         version: 2.0.1
@@ -695,6 +698,13 @@ packages:
   '@loglayer/transport@3.0.2':
     resolution: {integrity: sha512-5t0lj/ibQQxGPpghNta8u10zl8owU0my/i2fHF/LdcCAtpw/IHblmpKSgOzdH9XE19Ub/i0VYj0JrFrFv8/NXw==}
     engines: {node: '>=18'}
+
+  '@lonik/themer@0.5.2':
+    resolution: {integrity: sha512-4G4gpiiQboAMO6LE++22qaRiWn0a3kG/dDLSyQLk0DqPL/SqkoeR4R5LLCqpI9N0h0SV8h0MchO86EuWR/y13w==}
+    peerDependencies:
+      '@tanstack/react-router': '>=1.0.0'
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
 
   '@mdx-js/react@3.1.1':
     resolution: {integrity: sha512-f++rKLQgUVYDAtECQ6fn/is15GkEH9+nZPM3MS0RcxVqoTfawHvDlSCH7JbMhAM6uJ32v3eXLvLmLvjGu7PTQw==}
@@ -4497,6 +4507,16 @@ snapshots:
   '@loglayer/transport@3.0.2':
     dependencies:
       '@loglayer/shared': 4.1.0
+
+  '@lonik/themer@0.5.2(@tanstack/react-router@1.163.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vite@7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0))':
+    dependencies:
+      '@tailwindcss/vite': 4.2.1(vite@7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0))
+      '@tanstack/react-router': 1.163.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+      tailwindcss: 4.2.1
+    transitivePeerDependencies:
+      - vite
 
   '@mdx-js/react@3.1.1(@types/react@19.2.14)(react@19.2.4)':
     dependencies:

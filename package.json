@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^10.3.0",
+    "@lonik/themer": "^0.5.2",
     "@noble/hashes": "^2.0.1",
     "@tanstack/devtools-vite": "^0.5.2",
     "@tanstack/match-sorter-utils": "^8.19.4",
