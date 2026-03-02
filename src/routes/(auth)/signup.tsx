@@ -48,7 +48,7 @@ function RouteComponent() {
           email: value.email,
           password: value.password,
           name: value.name,
-          callbackURL: search.redirect || '/'
+          callbackURL: search.redirect || '/dashboard'
         })
 
         if (result.error) {
@@ -132,18 +132,18 @@ function RouteComponent() {
           </form.AppField>
 
           {/* <form.AppField
-            name='phone'
-            validators={{
-              onBlur: ({ value }) => {
-                if (!/^(\+\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(value)) {
-                  return 'Invalid phone number format'
+              name='phone'
+              validators={{
+                onBlur: ({ value }) => {
+                  if (!/^(\+\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(value)) {
+                    return 'Invalid phone number format'
+                  }
+                  return undefined
                 }
-                return undefined
-              }
-            }}
-          >
-            {(field) => <field.TextField label='Phone' placeholder='123-456-7890' />}
-          </form.AppField> */}
+              }}
+            >
+              {(field) => <field.TextField label='Phone' placeholder='123-456-7890' />}
+            </form.AppField> */}
 
           <form.AppField
             name='password'
@@ -199,7 +199,7 @@ function RouteComponent() {
             onClick={async () => {
               await authClient.signIn.social({
                 provider: 'github',
-                callbackURL: search.redirect || '/'
+                callbackURL: search.redirect || '/dashboard'
               })
             }}
           >
@@ -218,7 +218,7 @@ function RouteComponent() {
             onClick={async () => {
               await authClient.signIn.social({
                 provider: 'google',
-                callbackURL: search.redirect || '/'
+                callbackURL: search.redirect || '/dashboard'
               })
             }}
           >

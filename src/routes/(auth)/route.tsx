@@ -12,7 +12,7 @@ export const Route = createFileRoute('/(auth)')({
   beforeLoad: async ({ search }: BeforeLoadParams) => {
     const session = await getSession()
     if (session) {
-      const redirectTo = search?.redirect ?? '/'
+      const redirectTo = search?.redirect ?? '/dashboard'
       throw redirect({ href: redirectTo })
     }
   }

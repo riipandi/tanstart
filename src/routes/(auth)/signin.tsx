@@ -12,9 +12,7 @@ interface SearchParams {
 export const Route = createFileRoute('/(auth)/signin')({
   component: RouteComponent,
   loader: () => {
-    return {
-      enableSignUp: publicEnv.PUBLIC_ENABLE_SIGNUP
-    }
+    return { enableSignUp: publicEnv.PUBLIC_ENABLE_SIGNUP }
   }
 })
 
@@ -37,12 +35,15 @@ function RouteComponent() {
       setError(null)
       try {
         const result = await authClient.signIn.email(value)
+
         if (result.error) {
           setError(result.error.message || 'Sign in failed')
           return formApi.resetField('password')
         }
-        const redirectTo = search.redirect || '/'
-        return navigate({ to: redirectTo })
+
+        return result.data.url
+          ? navigate({ href: result.data.url })
+          : navigate({ to: search.redirect || '/dashboard' })
       } catch (err) {
         console.error(err)
         setError('An unexpected error occurred')
@@ -145,7 +146,7 @@ function RouteComponent() {
             onClick={async () => {
               await authClient.signIn.social({
                 provider: 'github',
-                callbackURL: search.redirect || '/'
+                callbackURL: search.redirect || '/dashboard'
               })
             }}
           >
@@ -164,7 +165,7 @@ function RouteComponent() {
             onClick={async () => {
               await authClient.signIn.social({
                 provider: 'google',
-                callbackURL: search.redirect || '/'
+                callbackURL: search.redirect || '/dashboard'
               })
             }}
           >
