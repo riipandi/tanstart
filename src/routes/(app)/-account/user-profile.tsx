@@ -1,5 +1,5 @@
 import { useRouter } from '@tanstack/react-router'
-import { Camera } from 'lucide-react'
+import * as Lucide from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Session } from '#/guards/auth-client'
 import { authClient } from '#/guards/auth-client'
@@ -123,7 +123,7 @@ export function UserProfile(user: Session['user']) {
               {isUploading ? (
                 <div className='h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent' />
               ) : (
-                <Camera className='text-white' size={20} />
+                <Lucide.Camera className='text-white' size={20} />
               )}
             </div>
 

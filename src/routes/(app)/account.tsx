@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { authClient } from '#/guards/auth-client'
 import { ensureSession } from '#/guards/session'
 import { ChangePassword } from './-account/change-password'
+import { SessionsList } from './-account/sessions-list'
 import { TwoFactorSettings } from './-account/two-factor'
 import { UserProfile } from './-account/user-profile'
 
@@ -36,6 +37,7 @@ function RouteComponent() {
         <UserProfile {...user} />
         <TwoFactorSettings {...user} />
         <ChangePassword />
+        <SessionsList />
 
         <div className='flex justify-between pt-4'>
           <Link
