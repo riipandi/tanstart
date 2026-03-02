@@ -14,7 +14,11 @@ export const Route = createFileRoute('/(auth)/signin')({
   component: RouteComponent,
   loader: () => {
     return { disableSignUp: publicEnv.PUBLIC_DISABLE_SIGNUP }
-  }
+  },
+  validateSearch: z.object({
+    logout: z.union([z.string(), z.boolean()]).optional(),
+    redirect: z.string().optional()
+  })
 })
 
 const signinSchema = z.object({
@@ -76,10 +80,26 @@ function RouteComponent() {
         </p>
 
         <Activity mode={error ? 'visible' : 'hidden'}>
-          <div className='border-border-critical bg-background-critical-faded mb-4 border-l-4 px-3 py-2.5'>
+          <div className='border-border-critical bg-background-critical-faded mb-6 border-l-4 px-3 py-2.5'>
             <p className='text-foreground-critical text-sm'>{error}</p>
           </div>
         </Activity>
+
+        <SignInWithSocialProvider
+          authClient={authClient}
+          callbackURL={search.redirect || '/dashboard'}
+        />
+
+        <div className='relative my-6'>
+          <div className='absolute inset-0 flex items-center'>
+            <div className='border-border-neutral-faded w-full border-t' />
+          </div>
+          <div className='relative flex justify-center text-xs uppercase'>
+            <span className='bg-background-page text-foreground-neutral px-2 font-medium'>
+              Or continue with
+            </span>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className='grid gap-4'>
           <form.AppField
@@ -142,24 +162,6 @@ function RouteComponent() {
             </Link>
           </div>
         </Activity>
-
-        <SignInWithSocialProvider
-          authClient={authClient}
-          callbackURL={search.redirect || '/dashboard'}
-        />
-
-        <p className='text-on-background-neutral mt-6 text-center text-xs'>
-          Built with{' '}
-          <a
-            href='https://better-auth.com'
-            target='_blank'
-            rel='noopener noreferrer'
-            className='hover:text-foreground-neutral font-medium'
-          >
-            BETTER-AUTH
-          </a>
-          .
-        </p>
       </div>
     </div>
   )

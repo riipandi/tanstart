@@ -55,19 +55,6 @@ function RouteComponent() {
         >
           Sign out
         </button>
-
-        <p className='text-on-background-neutral text-center text-xs'>
-          Built with{' '}
-          <a
-            href='https://better-auth.com'
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-foreground-primary font-medium hover:underline'
-          >
-            BETTER-AUTH
-          </a>
-          .
-        </p>
       </div>
     </div>
   )
