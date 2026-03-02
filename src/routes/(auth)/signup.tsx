@@ -23,7 +23,14 @@ const signupSchema = z
   .object({
     name: z.string().min(1, { error: 'Name is required' }),
     email: z.email({ error: 'Please enter a valid email address' }),
-    password: z.string().min(8, { error: 'Password must be at least 8 characters' }),
+    password: z
+      .string()
+      .min(8, { error: 'Password must be at least 8 characters' })
+      .regex(/[a-zA-Z]/, { error: 'Password must contain at least 1 letter' })
+      .regex(/[0-9]/, { error: 'Password must contain at least 1 number' })
+      .regex(/[!@#$%^&*(),.?":{}|<>]/, {
+        error: 'Password must contain at least 1 special character'
+      }),
     confirmPassword: z.string().min(1, { error: 'Please confirm your password' })
   })
   .refine((data) => data.password === data.confirmPassword, {

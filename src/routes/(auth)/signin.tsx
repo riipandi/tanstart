@@ -112,6 +112,15 @@ function RouteComponent() {
             {(field) => <field.PasswordField label='Password' />}
           </form.AppField>
 
+          <div className='text-right'>
+            <Link
+              to='/forgot-password'
+              className='text-foreground-primary text-sm font-medium transition-colors hover:underline'
+            >
+              Forgot password?
+            </Link>
+          </div>
+
           <form.AppForm>
             <form.SubmitButton label='Sign In' />
           </form.AppForm>

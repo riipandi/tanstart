@@ -6,6 +6,7 @@
  */
 
 import { betterAuth } from 'better-auth'
+import { twoFactor } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { typeid } from 'typeid-js'
 import { protectedEnv } from '#/config'
@@ -23,6 +24,7 @@ export const auth = betterAuth({
   },
   baseURL: protectedEnv.PUBLIC_BASE_URL,
   secret: protectedEnv.AUTH_SECRET_KEY,
+  appName: protectedEnv.PUBLIC_IDENTIFIER, // It'll be used as an issuer for 2FA.
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
@@ -162,7 +164,7 @@ export const auth = betterAuth({
     }
   },
   experimental: { joins: true },
-  plugins: [tanstackStartCookies()]
+  plugins: [tanstackStartCookies(), twoFactor()]
 })
 
 export type Session = typeof auth.$Infer.Session
