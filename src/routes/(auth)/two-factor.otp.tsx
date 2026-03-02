@@ -1,3 +1,4 @@
+import { useAsyncRateLimiter } from '@tanstack/react-pacer'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useCallback, useEffect, useState } from 'react'
 import { z } from 'zod'
@@ -29,7 +30,12 @@ function RouteComponent() {
   const search = Route.useSearch()
   const [error, setError] = useState<string | null>(null)
   const [isVerifying, setIsVerifying] = useState(false)
-  const [resendCountdown, setResendCountdown] = useState(0)
+
+  // Track initial OTP send time for resend cooldown
+  const [initialSendTime, setInitialSendTime] = useState<number | null>(null)
+
+  // Cooldown period: 10s for DEV, 60s for other environments
+  const cooldownPeriod = import.meta.env.DEV ? 10000 : 60000
 
   const safeRedirect = getSafeRedirect(search.redirect)
 
@@ -73,38 +79,47 @@ function RouteComponent() {
     }
   }, [])
 
+  const resendLimiter = useAsyncRateLimiter(
+    async () => {
+      await sendOtp()
+    },
+    {
+      limit: 1,
+      window: cooldownPeriod,
+      windowType: 'sliding'
+    },
+    (state) => ({
+      isExceeded: state.isExceeded,
+      executionTimes: state.executionTimes
+    })
+  )
+
+  const handleResend = () => resendLimiter.maybeExecute()
+
+  const resendState = resendLimiter.state
+
+  // Send OTP on mount and start cooldown
   useEffect(() => {
     sendOtp()
-
-    const timer = setInterval(() => {
-      setResendCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer)
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-
-    return () => clearInterval(timer)
+    setInitialSendTime(Date.now())
   }, [sendOtp])
 
-  const handleResend = () => {
-    if (resendCountdown > 0) return
+  // Force re-render for countdown
+  const [, setTick] = useState(0)
+  useEffect(() => {
+    if (initialSendTime || (resendState.isExceeded && resendState.executionTimes.length > 0)) {
+      const interval = setInterval(() => {
+        setTick((prev) => prev + 1)
+      }, 1000)
+      return () => clearInterval(interval)
+    }
+  }, [initialSendTime, resendState.isExceeded, resendState.executionTimes.length])
 
-    setResendCountdown(60)
-    sendOtp()
-
-    const timer = setInterval(() => {
-      setResendCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer)
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-  }
+  // Calculate resend cooldown
+  const cooldownEnd =
+    Math.max(initialSendTime ?? 0, resendState.executionTimes[0] ?? 0) + cooldownPeriod
+  const remainingSeconds = Math.ceil((cooldownEnd - Date.now()) / 1000)
+  const isCooldown = remainingSeconds > 0
 
   return (
     <div className='flex justify-center px-4 py-10'>
@@ -179,10 +194,10 @@ function RouteComponent() {
           <button
             type='button'
             onClick={handleResend}
-            disabled={resendCountdown > 0}
+            disabled={isCooldown}
             className='text-foreground-primary text-sm font-medium transition-colors hover:underline disabled:cursor-not-allowed disabled:opacity-50'
           >
-            {resendCountdown > 0 ? `Resend code in ${resendCountdown}s` : 'Resend code'}
+            {isCooldown ? `Resend code in ${remainingSeconds}s` : 'Resend code'}
           </button>
         </div>
 

@@ -39,7 +39,7 @@ function RouteComponent() {
 
   return (
     <div className='flex justify-center px-4 py-10'>
-      <div className='w-full max-w-xl space-y-8 p-6'>
+      <div className='w-full max-w-2xl space-y-8 p-6'>
         <Activity mode={deleteCancelled ? 'visible' : 'hidden'}>
           <div className='border-border-positive bg-background-positive-faded border-l-4 px-4 py-3'>
             <p className='text-foreground-positive text-sm'>

@@ -1,4 +1,5 @@
 import { TanStackDevtools, type TanStackDevtoolsReactInit } from '@tanstack/react-devtools'
+import { pacerDevtoolsPlugin } from '@tanstack/react-pacer-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
@@ -30,9 +31,10 @@ export function AppDevTools({ queryClient }: DevToolsProps) {
         name: 'TanStack Router',
         render: <TanStackRouterDevtoolsPanel />,
         defaultOpen: false
-      }
+      },
+      pacerDevtoolsPlugin()
     ]
   }
 
-  return <TanStackDevtools {...devToolsOptions} />
+  return <TanStackDevtools eventBusConfig={{ debug: false }} {...devToolsOptions} />
 }

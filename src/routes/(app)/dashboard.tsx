@@ -1,6 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { authClient } from '#/guards/auth-client'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { ensureSession } from '#/guards/session'
+import { clx } from '#/utils/variant'
 
 export const Route = createFileRoute('/(app)/dashboard')({
   component: RouteComponent,
@@ -12,17 +12,6 @@ export const Route = createFileRoute('/(app)/dashboard')({
 
 function RouteComponent() {
   const { user } = Route.useRouteContext()
-  const navigate = Route.useNavigate()
-
-  const handleSignOut = async () => {
-    const result = await authClient.signOut()
-
-    if (result.error) {
-      console.error(result.error)
-    }
-
-    return navigate({ to: '/signin', search: { logout: true } })
-  }
 
   return (
     <div className='flex justify-center px-6 py-10'>
@@ -48,13 +37,15 @@ function RouteComponent() {
           </div>
         </div>
 
-        <button
-          type='button'
-          className='border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded w-full rounded-md border px-4 py-2 text-sm font-medium transition-colors'
-          onClick={handleSignOut}
+        <Link
+          to='/account'
+          className={clx(
+            'border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded',
+            'block w-full rounded-md border px-4 py-2 text-center text-sm font-medium transition-colors'
+          )}
         >
-          Sign out
-        </button>
+          Account Settings
+        </Link>
       </div>
     </div>
   )

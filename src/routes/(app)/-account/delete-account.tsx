@@ -1,42 +1,27 @@
+import { useAsyncRateLimiter } from '@tanstack/react-pacer'
 import * as Lucide from 'lucide-react'
 import { Activity, useEffect, useState } from 'react'
 import { authClient } from '#/guards/auth-client'
 
 export function DeleteAccount() {
-  // Dialog visibility
   const [showDialog, setShowDialog] = useState(false)
-
-  // Form state
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  // Success state
   const [emailSent, setEmailSent] = useState(false)
 
-  // Resend timer
-  const [resendTimer, setResendTimer] = useState(0)
-  const [canResend, setCanResend] = useState(true)
+  // Track initial submit time for resend cooldown
+  const [initialSubmitTime, setInitialSubmitTime] = useState<number | null>(null)
 
-  // Handle resend timer
-  useEffect(() => {
-    if (resendTimer > 0) {
-      const timer = setTimeout(() => {
-        setResendTimer((prev) => prev - 1)
-      }, 1000)
-      return () => clearTimeout(timer)
-    } else if (resendTimer === 0 && !canResend) {
-      setCanResend(true)
-    }
-  }, [resendTimer, canResend])
+  // Cooldown period: 10s for DEV, 60s for other environments
+  const cooldownPeriod = import.meta.env.DEV ? 10_000 : 60_000
 
   const handleOpenDialog = () => {
     setShowDialog(true)
     setError(null)
     setPassword('')
     setEmailSent(false)
-    setResendTimer(0)
-    setCanResend(true)
+    setInitialSubmitTime(null)
   }
 
   const handleCloseDialog = () => {
@@ -79,10 +64,8 @@ export function DeleteAccount() {
 
       // Success - show email sent state
       setEmailSent(true)
+      setInitialSubmitTime(Date.now())
       setIsSubmitting(false)
-      // Start resend timer
-      setResendTimer(60)
-      setCanResend(false)
     } catch (err) {
       console.error('Delete account error:', err)
       setError('An unexpected error occurred. Please try again.')
@@ -90,39 +73,65 @@ export function DeleteAccount() {
     }
   }
 
-  const handleResendEmail = async () => {
-    if (!canResend || isSubmitting) return
+  const resendLimiter = useAsyncRateLimiter(
+    async () => {
+      setIsSubmitting(true)
+      setError(null)
 
-    setIsSubmitting(true)
-    setError(null)
+      try {
+        const result = await authClient.deleteUser({
+          password: password.trim(),
+          callbackURL: '/signin'
+        })
 
-    try {
-      // Re-submit with same password (user already verified password in previous step)
-      const result = await authClient.deleteUser({
-        password: password.trim(),
-        callbackURL: '/signin'
-      })
+        if (result.error) {
+          setError(result.error.message || 'Failed to resend email')
+          setIsSubmitting(false)
+          return
+        }
 
-      if (result.error) {
-        setError(result.error.message || 'Failed to resend email')
         setIsSubmitting(false)
-        return
+      } catch (err) {
+        console.error('Resend email error:', err)
+        setError('Failed to resend email. Please try again.')
+        setIsSubmitting(false)
       }
+    },
+    {
+      limit: 1,
+      window: cooldownPeriod,
+      windowType: 'sliding'
+    },
+    (state) => ({
+      isExceeded: state.isExceeded,
+      executionTimes: state.executionTimes
+    })
+  )
 
-      // Reset timer
-      setResendTimer(60)
-      setCanResend(false)
-      setIsSubmitting(false)
-    } catch (err) {
-      console.error('Resend email error:', err)
-      setError('Failed to resend email. Please try again.')
-      setIsSubmitting(false)
+  const handleResendEmail = () => resendLimiter.maybeExecute()
+
+  const resendState = resendLimiter.state
+
+  // Force re-render for countdown
+  const [, setTick] = useState(0)
+  useEffect(() => {
+    if (initialSubmitTime || (resendState.isExceeded && resendState.executionTimes.length > 0)) {
+      const interval = setInterval(() => {
+        setTick((prev) => prev + 1)
+      }, 1000)
+      return () => clearInterval(interval)
     }
-  }
+  }, [initialSubmitTime, resendState.isExceeded, resendState.executionTimes.length])
 
   const handleGotIt = () => {
     handleCloseDialog()
   }
+
+  // Calculate resend cooldown
+  const cooldownEnd =
+    Math.max(initialSubmitTime ?? 0, resendState.executionTimes[0] ?? 0) + cooldownPeriod
+  const remainingSeconds = Math.ceil((cooldownEnd - Date.now()) / 1000)
+  const isCooldown = remainingSeconds > 0
 
   return (
     <div className='border-border-critical-faded bg-background-critical-faded/50 rounded-lg border p-6'>
@@ -297,7 +306,7 @@ export function DeleteAccount() {
                   <button
                     type='button'
                     onClick={handleResendEmail}
-                    disabled={!canResend || isSubmitting}
+                    disabled={isCooldown || isSubmitting}
                     className='text-foreground-primary hover:text-foreground-primary/80 disabled:text-foreground-disabled disabled:hover:text-foreground-disabled mt-1 text-sm font-medium transition-colors disabled:cursor-not-allowed'
                   >
                     {isSubmitting ? (
@@ -305,10 +314,10 @@ export function DeleteAccount() {
                         <Lucide.Loader2 className='h-3 w-3 animate-spin' />
                         Resending...
                       </span>
-                    ) : canResend ? (
-                      'Resend email'
+                    ) : isCooldown ? (
+                      `Resend in ${remainingSeconds}s`
                     ) : (
-                      `Resend in ${resendTimer}s`
+                      'Resend email'
                     )}
                   </button>
                 </div>
