@@ -42,14 +42,14 @@ export const auth = betterAuth({
         }
       })
     },
-    onExistingUserSignUp: async ({ user }) => {
-      await sendMail({
-        to: user.email,
-        subject: 'Sign-up attempt with your email',
-        template: 'email-existing-user',
-        vars: { email: user.email }
-      })
-    },
+    // onExistingUserSignUp: async ({ user }) => {
+    //   await sendMail({
+    //     to: user.email,
+    //     subject: 'Sign-up attempt with your email',
+    //     template: 'email-existing-user',
+    //     vars: { email: user.email }
+    //   })
+    // },
     onPasswordReset: async ({ user }) => {
       await sendMail({
         to: user.email,
