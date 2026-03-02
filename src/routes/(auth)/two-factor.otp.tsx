@@ -1,19 +1,22 @@
-import { createFileRoute, Link, redirect } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { useCallback, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { authClient } from '#/guards/auth-client'
-import { getSession } from '#/guards/session'
 import { useAppForm } from '#/hooks/use-form'
+import { getSafeRedirect } from '#/utils/redirect'
 
 export const Route = createFileRoute('/(auth)/two-factor/otp')({
   component: RouteComponent,
-  beforeLoad: async () => {
-    const session = await getSession()
-    if (!session) {
-      throw redirect({ to: '/signin' })
-    }
-    return { session }
-  }
+  // beforeLoad: async () => {
+  //   const session = await getSession()
+  //   if (!session) {
+  //     throw redirect({ to: '/signin' })
+  //   }
+  //   return { session }
+  // },
+  validateSearch: z.object({
+    redirect: z.string().optional()
+  })
 })
 
 const otpSchema = z.object({
@@ -23,9 +26,12 @@ const otpSchema = z.object({
 
 function RouteComponent() {
   const navigate = Route.useNavigate()
+  const search = Route.useSearch()
   const [error, setError] = useState<string | null>(null)
   const [isVerifying, setIsVerifying] = useState(false)
   const [resendCountdown, setResendCountdown] = useState(0)
+
+  const safeRedirect = getSafeRedirect(search.redirect)
 
   const form = useAppForm({
     defaultValues: { code: '', trustDevice: false },
@@ -45,7 +51,7 @@ function RouteComponent() {
           return
         }
 
-        navigate({ to: '/dashboard' })
+        navigate({ to: safeRedirect })
       } catch (err) {
         console.error(err)
         setError('An unexpected error occurred')
@@ -55,7 +61,7 @@ function RouteComponent() {
     }
   })
 
-  const sendOtp = async () => {
+  const sendOtp = useCallback(async () => {
     try {
       const result = await authClient.twoFactor.sendOtp()
       if (result.error) {
@@ -65,7 +71,7 @@ function RouteComponent() {
       console.error(err)
       setError('Failed to send OTP')
     }
-  }
+  }, [])
 
   useEffect(() => {
     sendOtp()
@@ -81,7 +87,7 @@ function RouteComponent() {
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [])
+  }, [sendOtp])
 
   const handleResend = () => {
     if (resendCountdown > 0) return
@@ -183,6 +189,7 @@ function RouteComponent() {
         <div className='mt-4 text-center'>
           <Link
             to='/two-factor'
+            search={search.redirect ? { redirect: search.redirect } : undefined}
             className='text-foreground-primary text-sm font-medium transition-colors hover:underline'
           >
             Use authenticator app instead

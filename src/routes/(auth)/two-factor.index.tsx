@@ -1,19 +1,22 @@
-import { createFileRoute, Link, redirect } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { z } from 'zod'
 import { authClient } from '#/guards/auth-client'
-import { getSession } from '#/guards/session'
 import { useAppForm } from '#/hooks/use-form'
+import { getSafeRedirect } from '#/utils/redirect'
 
 export const Route = createFileRoute('/(auth)/two-factor/')({
   component: RouteComponent,
-  beforeLoad: async () => {
-    const session = await getSession()
-    if (!session) {
-      throw redirect({ to: '/signin' })
-    }
-    return { session }
-  }
+  // beforeLoad: async () => {
+  //   const session = await getSession()
+  //   if (!session) {
+  //     throw redirect({ to: '/signin' })
+  //   }
+  //   return { session }
+  // },
+  validateSearch: z.object({
+    redirect: z.string().optional()
+  })
 })
 
 const totpSchema = z.object({
@@ -23,8 +26,11 @@ const totpSchema = z.object({
 
 function RouteComponent() {
   const navigate = Route.useNavigate()
+  const search = Route.useSearch()
   const [error, setError] = useState<string | null>(null)
   const [isVerifying, setIsVerifying] = useState(false)
+
+  const safeRedirect = getSafeRedirect(search.redirect)
 
   const form = useAppForm({
     defaultValues: { code: '', trustDevice: false },
@@ -44,7 +50,7 @@ function RouteComponent() {
           return
         }
 
-        navigate({ to: '/dashboard' })
+        navigate({ to: safeRedirect })
       } catch (err) {
         console.error(err)
         setError('An unexpected error occurred')
@@ -60,7 +66,7 @@ function RouteComponent() {
       if (result.error) {
         setError(result.error.message || 'Failed to send OTP')
       } else {
-        navigate({ to: '/two-factor/otp' })
+        navigate({ to: '/two-factor/otp', search: { redirect: safeRedirect } })
       }
     } catch (err) {
       console.error(err)

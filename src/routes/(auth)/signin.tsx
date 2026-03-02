@@ -36,16 +36,7 @@ function RouteComponent() {
     onSubmit: async ({ value, formApi }) => {
       setError(null)
       try {
-        const result = await authClient.signIn.email(
-          { ...value },
-          {
-            async onSuccess(ctx) {
-              if (ctx.data.twoFactorRedirect) {
-                return navigate({ href: '/two-factor' })
-              }
-            }
-          }
-        )
+        const result = await authClient.signIn.email({ ...value })
 
         if (result.error) {
           setError(result.error.message || 'Sign in failed')
