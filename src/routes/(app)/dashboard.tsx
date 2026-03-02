@@ -33,8 +33,8 @@ function RouteComponent() {
         </div>
 
         <div className='flex items-center gap-3'>
-          {user.image ? (
-            <img src={user.image} alt='' className='h-10 w-10 rounded-lg' />
+          {user.imageURL ? (
+            <img src={user.imageURL} alt={user.name} className='h-10 w-10 rounded-lg' />
           ) : (
             <div className='bg-background-neutral flex h-10 w-10 items-center justify-center rounded-lg'>
               <span className='text-foreground-neutral text-sm font-medium'>

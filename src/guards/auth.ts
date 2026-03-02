@@ -231,7 +231,7 @@ export const auth = betterAuth({
   ...authOptions,
   plugins: [
     customSession(async ({ user, session }) => {
-      return { session, user: { ...user, image: parseAssetUrl(user.image) } }
+      return { session, user: { ...user, imageURL: parseAssetUrl(user.image) } }
     }, authOptions)
   ]
 })
