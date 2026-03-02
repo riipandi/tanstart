@@ -12,12 +12,12 @@ export const authClient = createAuthClient({
         const currentUrl = new URL(window.location.href)
         const redirectParam = currentUrl.searchParams.get('redirect')
         const safeRedirect = getSafeRedirect(redirectParam)
-        
+
         const twoFactorUrl = new URL('/two-factor', window.location.origin)
         if (safeRedirect && safeRedirect !== '/dashboard') {
           twoFactorUrl.searchParams.set('redirect', safeRedirect)
         }
-        
+
         window.location.href = twoFactorUrl.toString()
       }
     }),
