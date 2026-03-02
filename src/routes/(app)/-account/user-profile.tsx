@@ -1,10 +1,17 @@
 import { useRouter } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
-import { useRef, useState, useEffect, Activity } from 'react'
+import { useRef, useState, Activity } from 'react'
+import { z } from 'zod'
 import { Session } from '#/guards/auth-client'
 import { authClient } from '#/guards/auth-client'
 import { removeAvatar, uploadAvatar } from '#/guards/avatar'
+import { useAppForm } from '#/hooks/use-form'
 import { clx } from '#/utils/variant'
+
+const nameSchema = z.object({
+  firstName: z.string().min(1, { error: 'First name is required' }),
+  lastName: z.string().min(1, { error: 'Last name is required' })
+})
 
 export function UserProfile(user: Session['user']) {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -13,58 +20,50 @@ export function UserProfile(user: Session['user']) {
   const [isRemoving, setIsRemoving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Editable name states
   const [isEditingName, setIsEditingName] = useState(false)
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [isSavingName, setIsSavingName] = useState(false)
   const [nameError, setNameError] = useState<string | null>(null)
 
-  // Parse name into first and last name on mount or when user changes
-  useEffect(() => {
-    const nameParts = user.name?.split(' ') || ['', '']
-    setFirstName(nameParts[0] || '')
-    setLastName(nameParts.slice(1).join(' ') || '')
-  }, [user.name])
+  const nameParts = user.name?.split(' ') || ['', '']
+  const initialFirstName = nameParts[0] || ''
+  const initialLastName = nameParts.slice(1).join(' ') || ''
+
+  const nameForm = useAppForm({
+    defaultValues: { firstName: initialFirstName, lastName: initialLastName },
+    validators: { onChangeAsync: nameSchema },
+    onSubmit: async ({ value, formApi }) => {
+      setNameError(null)
+
+      try {
+        const fullName = `${value.firstName.trim()} ${value.lastName.trim()}`
+        const result = await authClient.updateUser({ name: fullName })
+
+        if (result.error) {
+          setNameError(result.error.message || 'Failed to update name')
+          return
+        }
+
+        setIsEditingName(false)
+        formApi.reset()
+        router.invalidate()
+      } catch (err) {
+        console.error(err)
+        setNameError('An unexpected error occurred')
+      }
+    }
+  })
 
   const handleStartEdit = () => {
     setIsEditingName(true)
     setNameError(null)
+    const nameParts = user.name?.split(' ') || ['', '']
+    nameForm.reset({ firstName: nameParts[0] || '', lastName: nameParts.slice(1).join(' ') || '' })
   }
 
   const handleCancelEdit = () => {
-    const nameParts = user.name?.split(' ') || ['', '']
-    setFirstName(nameParts[0] || '')
-    setLastName(nameParts.slice(1).join(' ') || '')
     setIsEditingName(false)
     setNameError(null)
-  }
-
-  const handleSaveName = async () => {
-    if (!firstName.trim() || !lastName.trim()) {
-      setNameError('First name and last name are required')
-      return
-    }
-
-    setIsSavingName(true)
-    setNameError(null)
-
-    try {
-      const fullName = `${firstName.trim()} ${lastName.trim()}`
-      const result = await authClient.updateUser({ name: fullName })
-
-      if (result.error) {
-        throw new Error(result.error.message)
-      }
-
-      setIsEditingName(false)
-      router.invalidate()
-    } catch (err) {
-      setNameError(err instanceof Error ? err.message : 'Failed to update name')
-      console.error(err)
-    } finally {
-      setIsSavingName(false)
-    }
+    const nameParts = user.name?.split(' ') || ['', '']
+    nameForm.reset({ firstName: nameParts[0] || '', lastName: nameParts.slice(1).join(' ') || '' })
   }
 
   const handleAvatarClick = () => {
@@ -203,55 +202,57 @@ export function UserProfile(user: Session['user']) {
 
         <div className='flex-1 space-y-1.5'>
           <Activity mode={isEditingName ? 'visible' : 'hidden'}>
-            <div className='space-y-2'>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                nameForm.handleSubmit()
+              }}
+              className='space-y-2'
+            >
               <div className='grid grid-cols-2 gap-3'>
-                <div>
-                  <label className='text-on-background-neutral mb-1 block text-xs font-medium'>
-                    First Name
-                  </label>
-                  <input
-                    type='text'
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className='border-border-neutral focus:border-foreground-neutral w-full rounded-md border px-3 py-1.5 text-sm focus:outline-none'
-                    placeholder='First Name'
-                    disabled={isSavingName}
-                  />
-                </div>
-                <div>
-                  <label className='text-on-background-neutral mb-1 block text-xs font-medium'>
-                    Last Name
-                  </label>
-                  <input
-                    type='text'
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className='border-border-neutral focus:border-foreground-neutral w-full rounded-md border px-3 py-1.5 text-sm focus:outline-none'
-                    placeholder='Last Name'
-                    disabled={isSavingName}
-                  />
-                </div>
+                <nameForm.AppField
+                  name='firstName'
+                  validators={{
+                    onBlur: ({ value }) => {
+                      if (!value || value.trim().length === 0) {
+                        return 'First name is required'
+                      }
+                      return undefined
+                    }
+                  }}
+                >
+                  {(field) => <field.TextField label='First Name' placeholder='First Name' />}
+                </nameForm.AppField>
+
+                <nameForm.AppField
+                  name='lastName'
+                  validators={{
+                    onBlur: ({ value }) => {
+                      if (!value || value.trim().length === 0) {
+                        return 'Last name is required'
+                      }
+                      return undefined
+                    }
+                  }}
+                >
+                  {(field) => <field.TextField label='Last Name' placeholder='Last Name' />}
+                </nameForm.AppField>
               </div>
               <div className='flex items-center gap-1'>
-                <button
-                  type='button'
-                  onClick={handleSaveName}
-                  disabled={isSavingName}
-                  className='bg-background-primary text-on-background-primary hover:bg-background-primary/80 rounded px-3 py-1 text-xs font-medium transition-colors disabled:opacity-50'
-                >
-                  {isSavingName ? 'Saving...' : 'Save'}
-                </button>
+                <nameForm.AppForm>
+                  <nameForm.SubmitButton label='Save' />
+                </nameForm.AppForm>
                 <button
                   type='button'
                   onClick={handleCancelEdit}
-                  disabled={isSavingName}
-                  className='text-on-background-neutral hover:text-foreground-neutral rounded px-3 py-1 text-xs font-medium transition-colors disabled:opacity-50'
+                  className='text-on-background-neutral hover:text-foreground-neutral rounded px-3 py-1 text-xs font-medium transition-colors'
                 >
                   Cancel
                 </button>
               </div>
               {nameError && <p className='text-foreground-critical text-xs'>{nameError}</p>}
-            </div>
+            </form>
           </Activity>
 
           <Activity mode={!isEditingName ? 'visible' : 'hidden'}>
