@@ -23,7 +23,10 @@ export const Route = createRootRouteWithContext<GlobalContext>()({
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { title: 'Better Start' }
     ],
-    links: [{ rel: 'stylesheet', href: appCss }]
+    links: [
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'preconnect', href: 'https://cdn.jsdelivr.net' }
+    ]
   })
 })
 
