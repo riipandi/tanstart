@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { publicEnv } from '#/config'
 import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
-import { SignInWithSocialProvider } from './-social'
+import { SignInWithSocialProvider } from './-social-buttons'
 
 interface SearchParams {
   redirect?: string

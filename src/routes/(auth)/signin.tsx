@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { publicEnv } from '#/config'
 import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
-import { SignInWithSocialProvider } from './-social'
+import { SignInWithSocialProvider } from './-social-buttons'
 
 interface SearchParams {
   redirect?: string
@@ -36,11 +36,16 @@ function RouteComponent() {
     onSubmit: async ({ value, formApi }) => {
       setError(null)
       try {
-        const result = await authClient.signIn.email({
-          email: value.email,
-          password: value.password,
-          rememberMe: value.rememberMe
-        })
+        const result = await authClient.signIn.email(
+          { ...value },
+          {
+            async onSuccess(ctx) {
+              if (ctx.data.twoFactorRedirect) {
+                return navigate({ href: '/two-factor' })
+              }
+            }
+          }
+        )
 
         if (result.error) {
           setError(result.error.message || 'Sign in failed')

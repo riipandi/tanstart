@@ -6,6 +6,7 @@
  */
 
 import { betterAuth } from 'better-auth'
+import { emailOTP } from 'better-auth/plugins'
 import { twoFactor } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { typeid } from 'typeid-js'
@@ -188,7 +189,38 @@ export const auth = betterAuth({
     }
   },
   experimental: { joins: true },
-  plugins: [tanstackStartCookies(), twoFactor()]
+  plugins: [
+    tanstackStartCookies(),
+    twoFactor({
+      otpOptions: {
+        sendOTP: async ({ user, otp }) => {
+          await sendMail({
+            to: user.email,
+            subject: 'Your 2FA Verification Code',
+            template: 'otp-verification',
+            vars: { otp }
+          })
+        }
+      }
+    }),
+    emailOTP({
+      async sendVerificationOTP({ email, otp, type }) {
+        const subject =
+          type === 'sign-in'
+            ? 'Your Sign-In Verification Code'
+            : type === 'email-verification'
+              ? 'Verify Your Email'
+              : 'Reset Your Password'
+
+        await sendMail({
+          to: email,
+          subject: subject,
+          template: 'otp-verification',
+          vars: { otp }
+        })
+      }
+    })
+  ]
 })
 
 export type Session = typeof auth.$Infer.Session
