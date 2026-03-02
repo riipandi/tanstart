@@ -42,11 +42,21 @@ export const auth = betterAuth({
         }
       })
     },
-    onExistingUserSignUp: async (ctx, request) => {
-      console.info('Sign-up attempt with existing email', { ctx, request })
+    onExistingUserSignUp: async ({ user }) => {
+      await sendMail({
+        to: user.email,
+        subject: 'Sign-up attempt with your email',
+        template: 'email-existing-user',
+        vars: { email: user.email }
+      })
     },
-    onPasswordReset: async (ctx, request) => {
-      console.info('onPasswordReset', { ctx, request })
+    onPasswordReset: async ({ user }) => {
+      await sendMail({
+        to: user.email,
+        subject: 'Your Password Has Been Reset',
+        template: 'password-reset-confirmation',
+        vars: { email: user.email }
+      })
     }
   },
   emailVerification: {
@@ -56,10 +66,10 @@ export const auth = betterAuth({
       await sendMail({
         to: user.email,
         subject: 'Verify Your Email',
-        template: 'password-reset',
+        template: 'email-verification',
         vars: {
           email: user.email,
-          resetLink: url
+          verificationLink: url
         }
       })
     }
@@ -89,14 +99,31 @@ export const auth = betterAuth({
   user: {
     changeEmail: {
       enabled: true,
-      sendChangeEmailConfirmation: async (ctx, request) => {
-        console.info('sendChangeEmailConfirmation', { ctx, request })
+      sendChangeEmailConfirmation: async ({ user, url, newEmail }) => {
+        await sendMail({
+          to: newEmail,
+          subject: 'Confirm Your Email Change',
+          template: 'email-change-request',
+          vars: {
+            newEmail: newEmail,
+            oldEmail: user?.email ?? '',
+            confirmationLink: url
+          }
+        })
       }
     },
     deleteUser: {
-      enabled: false,
-      sendDeleteAccountVerification: async (ctx, request) => {
-        console.info('sendDeleteAccountVerification', { ctx, request })
+      enabled: true,
+      sendDeleteAccountVerification: async ({ user, url }) => {
+        await sendMail({
+          to: user.email,
+          subject: 'Confirm Account Deletion',
+          template: 'delete-account',
+          vars: {
+            email: user.email,
+            deleteLink: url
+          }
+        })
       }
     }
   },
