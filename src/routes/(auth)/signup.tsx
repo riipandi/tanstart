@@ -21,7 +21,8 @@ export const Route = createFileRoute('/(auth)/signup')({
 
 const signupSchema = z
   .object({
-    name: z.string().min(1, { error: 'Name is required' }),
+    firstName: z.string().min(1, { error: 'First name is required' }),
+    lastName: z.string().min(1, { error: 'Last name is required' }),
     email: z.email({ error: 'Please enter a valid email address' }),
     password: z
       .string()
@@ -45,7 +46,7 @@ function RouteComponent() {
   const [success, setSuccess] = useState<string | null>(null)
 
   const form = useAppForm({
-    defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
+    defaultValues: { firstName: '', lastName: '', email: '', password: '', confirmPassword: '' },
     validators: { onChangeAsync: signupSchema },
     onSubmit: async ({ value, formApi }) => {
       setError(null)
@@ -55,9 +56,11 @@ function RouteComponent() {
         const result = await authClient.signUp.email({
           email: value.email,
           password: value.password,
-          name: value.name,
-          callbackURL: search.redirect || '/dashboard'
-        })
+          name: `${value.firstName} ${value.lastName}`,
+          callbackURL: search.redirect || '/dashboard',
+          firstName: value.firstName,
+          lastName: value.lastName
+        } as any)
 
         if (result.error) {
           setError(result.error.message || 'Sign up failed')
@@ -108,19 +111,35 @@ function RouteComponent() {
         </Activity>
 
         <form onSubmit={handleSubmit} className='grid gap-4'>
-          <form.AppField
-            name='name'
-            validators={{
-              onBlur: ({ value }) => {
-                if (!value || value.trim().length === 0) {
-                  return 'Name is required'
+          <div className='grid grid-cols-2 gap-4'>
+            <form.AppField
+              name='firstName'
+              validators={{
+                onBlur: ({ value }) => {
+                  if (!value || value.trim().length === 0) {
+                    return 'First name is required'
+                  }
+                  return undefined
                 }
-                return undefined
-              }
-            }}
-          >
-            {(field) => <field.TextField label='Name' />}
-          </form.AppField>
+              }}
+            >
+              {(field) => <field.TextField label='First Name' />}
+            </form.AppField>
+
+            <form.AppField
+              name='lastName'
+              validators={{
+                onBlur: ({ value }) => {
+                  if (!value || value.trim().length === 0) {
+                    return 'Last name is required'
+                  }
+                  return undefined
+                }
+              }}
+            >
+              {(field) => <field.TextField label='Last Name' />}
+            </form.AppField>
+          </div>
 
           <form.AppField
             name='email'

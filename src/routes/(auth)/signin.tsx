@@ -19,7 +19,8 @@ export const Route = createFileRoute('/(auth)/signin')({
 
 const signinSchema = z.object({
   email: z.email({ error: 'Please enter a valid email address' }),
-  password: z.string().min(1, { error: 'Password is required' })
+  password: z.string().min(1, { error: 'Password is required' }),
+  rememberMe: z.boolean()
 })
 
 function RouteComponent() {
@@ -30,12 +31,16 @@ function RouteComponent() {
   const [error, setError] = useState<string | null>(null)
 
   const form = useAppForm({
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: '', password: '', rememberMe: false },
     validators: { onChangeAsync: signinSchema },
     onSubmit: async ({ value, formApi }) => {
       setError(null)
       try {
-        const result = await authClient.signIn.email(value)
+        const result = await authClient.signIn.email({
+          email: value.email,
+          password: value.password,
+          rememberMe: value.rememberMe
+        })
 
         if (result.error) {
           setError(result.error.message || 'Sign in failed')
@@ -112,7 +117,11 @@ function RouteComponent() {
             {(field) => <field.PasswordField label='Password' />}
           </form.AppField>
 
-          <div className='text-right'>
+          <div className='flex items-center justify-between'>
+            <form.AppField name='rememberMe'>
+              {(field) => <field.CheckboxField label='Remember me' />}
+            </form.AppField>
+
             <Link
               to='/forgot-password'
               className='text-foreground-primary text-sm font-medium transition-colors hover:underline'

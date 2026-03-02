@@ -1,6 +1,28 @@
 import { useStore } from '@tanstack/react-form'
 import { useFieldContext, useFormContext } from '#/hooks/use-form'
 
+export function CheckboxField({ label }: { label: string }) {
+  const field = useFieldContext<boolean>()
+  const errors = useStore(field.store, (state) => state.meta.errors)
+
+  return (
+    <div className='flex items-center gap-2'>
+      <input
+        type='checkbox'
+        id={field.name}
+        checked={field.state.value}
+        onChange={(e) => field.handleChange(e.target.checked)}
+        onBlur={field.handleBlur}
+        className='border-border-neutral text-foreground-primary focus:ring-border-primary h-4 w-4 rounded border focus:ring-2 focus:ring-offset-2'
+      />
+      <label htmlFor={field.name} className='text-foreground-neutral text-sm'>
+        {label}
+      </label>
+      {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
+    </div>
+  )
+}
+
 export function SubmitButton({ label }: { label: string }) {
   const form = useFormContext()
   return (

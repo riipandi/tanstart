@@ -79,12 +79,24 @@ export const auth = betterAuth({
   socialProviders: {
     github: {
       clientId: protectedEnv.AUTH_GITHUB_CLIENT_ID,
-      clientSecret: protectedEnv.AUTH_GITHUB_CLIENT_SECRET
+      clientSecret: protectedEnv.AUTH_GITHUB_CLIENT_SECRET,
+      mapProfileToUser: (profile) => {
+        return {
+          firstName: profile.name.split(' ')[0],
+          lastName: profile.name.split(' ')[1]
+        }
+      }
     },
     google: {
       prompt: 'select_account',
       clientId: protectedEnv.AUTH_GOOGLE_CLIENT_ID,
-      clientSecret: protectedEnv.AUTH_GOOGLE_CLIENT_SECRET
+      clientSecret: protectedEnv.AUTH_GOOGLE_CLIENT_SECRET,
+      mapProfileToUser: (profile) => {
+        return {
+          firstName: profile.given_name,
+          lastName: profile.family_name
+        }
+      }
     }
   },
   session: {
@@ -99,6 +111,18 @@ export const auth = betterAuth({
     accountLinking: { enabled: true, trustedProviders: ['google', 'github'] }
   },
   user: {
+    additionalFields: {
+      firstName: {
+        type: 'string',
+        required: true,
+        fieldName: 'first_name'
+      },
+      lastName: {
+        type: 'string',
+        required: true,
+        fieldName: 'last_name'
+      }
+    },
     changeEmail: {
       enabled: true,
       sendChangeEmailConfirmation: async ({ user, url, newEmail }) => {
