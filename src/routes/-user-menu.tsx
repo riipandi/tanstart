@@ -16,23 +16,23 @@ export default function UserMenu() {
   }
 
   if (isPending) {
-    return <div className='bg-background-neutral h-8 w-8 animate-pulse' />
+    return <div className='bg-background-neutral h-10 w-10 animate-pulse rounded-lg' />
   }
 
   if (session?.user) {
     return (
-      <div className='flex items-center gap-2'>
+      <div className='flex items-center gap-3'>
         {session.user.image ? (
-          <img src={session.user.image} alt='' className='h-8 w-8' />
+          <img src={session.user.image} alt='' className='h-10 w-10 rounded-lg' />
         ) : (
-          <div className='bg-background-neutral flex h-8 w-8 items-center justify-center'>
-            <span className='text-foreground-neutral text-xs font-medium'>
+          <div className='bg-background-neutral flex h-10 w-10 items-center justify-center rounded-lg'>
+            <span className='text-foreground-neutral text-sm font-medium'>
               {session.user.name?.charAt(0).toUpperCase() || 'U'}
             </span>
           </div>
         )}
         <button
-          className='border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded h-9 flex-1 border px-4 text-sm font-medium transition-colors'
+          className='border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded flex-1 rounded-md border px-4 py-2 text-sm font-medium transition-colors'
           onClick={handleSignOut}
         >
           Sign out
@@ -44,7 +44,7 @@ export default function UserMenu() {
   return (
     <Link
       to='/signin'
-      className='border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded inline-flex h-9 items-center border px-4 text-sm font-medium transition-colors'
+      className='border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium transition-colors'
     >
       Sign in
     </Link>

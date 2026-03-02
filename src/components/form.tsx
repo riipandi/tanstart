@@ -24,7 +24,7 @@ function ErrorMessages({ errors }: { errors: Array<string | { message: string }>
       {errors.map((error) => (
         <div
           key={typeof error === 'string' ? error : error.message}
-          className='text-foreground-critical mt-1 font-bold'
+          className='text-foreground-critical mt-1.5 text-sm font-medium'
         >
           {typeof error === 'string' ? error : error.message}
         </div>
@@ -39,14 +39,14 @@ export function TextField({ label, placeholder }: { label: string; placeholder?:
 
   return (
     <div>
-      <label htmlFor={label} className='mb-1 block text-xl font-bold'>
+      <label htmlFor={label} className='text-foreground-neutral mb-1.5 block text-sm font-medium'>
         {label}
         <input
           value={field.state.value}
           placeholder={placeholder}
           onBlur={field.handleBlur}
           onChange={(e) => field.handleChange(e.target.value)}
-          className='border-border-neutral focus:ring-border-primary w-full rounded-md border px-4 py-2 focus:ring-2 focus:outline-none'
+          className='border-border-neutral focus:ring-border-primary mt-1 block w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none'
         />
       </label>
       {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
@@ -60,7 +60,7 @@ export function PasswordField({ label, placeholder }: { label: string; placehold
 
   return (
     <div>
-      <label htmlFor={label} className='mb-1 block text-xl font-bold'>
+      <label htmlFor={label} className='text-foreground-neutral mb-1.5 block text-sm font-medium'>
         {label}
         <input
           type='password'
@@ -68,7 +68,7 @@ export function PasswordField({ label, placeholder }: { label: string; placehold
           placeholder={placeholder}
           onBlur={field.handleBlur}
           onChange={(e) => field.handleChange(e.target.value)}
-          className='border-border-neutral focus:ring-border-primary w-full rounded-md border px-4 py-2 focus:ring-2 focus:outline-none'
+          className='border-border-neutral focus:ring-border-primary mt-1 block w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none'
         />
       </label>
       {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
@@ -82,14 +82,14 @@ export function TextArea({ label, rows = 3 }: { label: string; rows?: number }) 
 
   return (
     <div>
-      <label htmlFor={label} className='mb-1 block text-xl font-bold'>
+      <label htmlFor={label} className='text-foreground-neutral mb-1.5 block text-sm font-medium'>
         {label}
         <textarea
           value={field.state.value}
           onBlur={field.handleBlur}
           rows={rows}
           onChange={(e) => field.handleChange(e.target.value)}
-          className='border-border-neutral focus:ring-border-primary w-full rounded-md border px-4 py-2 focus:ring-2 focus:outline-none'
+          className='border-border-neutral focus:ring-border-primary mt-1 block w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none'
         />
       </label>
       {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
@@ -110,7 +110,7 @@ export function Select({
 
   return (
     <div>
-      <label htmlFor={label} className='mb-1 block text-xl font-bold'>
+      <label htmlFor={label} className='text-foreground-neutral mb-1.5 block text-sm font-medium'>
         {label}
       </label>
       <select
@@ -118,7 +118,7 @@ export function Select({
         value={field.state.value}
         onBlur={field.handleBlur}
         onChange={(e) => field.handleChange(e.target.value)}
-        className='border-border-neutral focus:ring-border-primary w-full rounded-md border px-4 py-2 focus:ring-2 focus:outline-none'
+        className='border-border-neutral focus:ring-border-primary mt-1 block w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none'
       >
         {values.map((value) => (
           <option key={value.value} value={value.value}>

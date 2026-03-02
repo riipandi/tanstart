@@ -88,13 +88,13 @@ function RouteComponent() {
         </p>
 
         <Activity mode={error ? 'visible' : 'hidden'}>
-          <div className='border-border-critical bg-background-critical-faded mb-4 border p-3'>
+          <div className='border-border-critical bg-background-critical-faded mb-4 border-l-4 px-3 py-2.5'>
             <p className='text-foreground-critical text-sm'>{error}</p>
           </div>
         </Activity>
 
         <Activity mode={success ? 'visible' : 'hidden'}>
-          <div className='border-border-positive bg-background-positive-faded mb-4 border p-3'>
+          <div className='border-border-positive bg-background-positive-faded mb-4 border-l-4 px-3 py-2.5'>
             <p className='text-foreground-positive text-sm'>{success}</p>
           </div>
         </Activity>
@@ -185,7 +185,7 @@ function RouteComponent() {
           <Link
             type='button'
             to='/signin'
-            className='text-on-background-neutral hover:text-on-background-neutral text-sm transition-colors'
+            className='text-foreground-primary text-sm font-medium transition-colors hover:underline'
           >
             Already have an account? Sign in
           </Link>

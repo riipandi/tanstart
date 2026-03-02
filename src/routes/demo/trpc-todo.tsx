@@ -32,14 +32,14 @@ function TRPCTodos() {
 
   return (
     <div className='bg-background-page flex min-h-screen items-center justify-center p-4'>
-      <div className='border-sidebar-border/10 bg-sidebar/50 w-full max-w-2xl rounded-xl border-8 p-8 shadow-xl backdrop-blur-md'>
+      <div className='border-sidebar-border/10 bg-sidebar/50 w-full max-w-2xl rounded-xl border-8 p-8 shadow-lg backdrop-blur-md'>
         <h1 className='text-sidebar-foreground mb-4 text-2xl'>tRPC Todos list</h1>
         <ul className='mb-4 space-y-2'>
           {Array.isArray(data) && data.length > 0 ? (
             data.map((t: { id: number; name: string }) => (
               <li
                 key={t.id}
-                className='border-sidebar/30 bg-sidebar/20 rounded-lg border p-3 shadow-md backdrop-blur-sm'
+                className='border-sidebar/30 bg-sidebar/20 rounded-lg border p-3 shadow backdrop-blur-sm'
               >
                 <span className='text-sidebar-foreground text-lg'>{t.name}</span>
               </li>

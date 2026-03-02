@@ -28,18 +28,18 @@ function RouteComponent() {
   }
 
   return (
-    <div className='flex justify-center px-4 py-10'>
+    <div className='flex justify-center px-6 py-10'>
       <div className='w-full max-w-md space-y-6 p-6'>
         <div className='space-y-1.5'>
-          <h1 className='text-lg leading-none font-semibold tracking-tight'>Welcome back</h1>
+          <h1 className='text-foreground-primary text-xl font-semibold'>Welcome back</h1>
           <p className='text-on-background-neutral text-sm'>You're signed in as {user.email}</p>
         </div>
 
         <div className='flex items-center gap-3'>
           {user.image ? (
-            <img src={user.image} alt='' className='h-10 w-10' />
+            <img src={user.image} alt='' className='h-10 w-10 rounded-lg' />
           ) : (
-            <div className='bg-background-neutral flex h-10 w-10 items-center justify-center'>
+            <div className='bg-background-neutral flex h-10 w-10 items-center justify-center rounded-lg'>
               <span className='text-foreground-neutral text-sm font-medium'>
                 {user.name?.charAt(0).toUpperCase() || 'U'}
               </span>
@@ -52,7 +52,8 @@ function RouteComponent() {
         </div>
 
         <button
-          className='border-border-neutral hover:bg-background-neutral-faded h-9 w-full border px-4 text-sm font-medium transition-colors'
+          type='button'
+          className='border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded w-full rounded-md border px-4 py-2 text-sm font-medium transition-colors'
           onClick={handleSignOut}
         >
           Sign out
@@ -64,7 +65,7 @@ function RouteComponent() {
             href='https://better-auth.com'
             target='_blank'
             rel='noopener noreferrer'
-            className='hover:text-foreground-neutral font-medium'
+            className='text-foreground-primary font-medium hover:underline'
           >
             BETTER-AUTH
           </a>
