@@ -70,7 +70,7 @@ export default function Header() {
         <h1 className='ml-4 text-lg font-semibold'>
           <Link to='/'>
             <img
-              src='/tanstack-word-logo-white.svg'
+              src='/images/tanstack-word-logo-white.svg'
               className='h-9 invert-75 dark:invert-0'
               alt='TanStack Logo'
             />

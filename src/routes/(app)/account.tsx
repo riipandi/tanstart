@@ -27,13 +27,13 @@ function RouteComponent() {
 
   return (
     <div className='flex justify-center px-4 py-10'>
-      <div className='w-full max-w-lg space-y-8 p-6'>
+      <div className='w-full max-w-xl space-y-8 p-6'>
         <div>
           <h1 className='text-xl font-semibold'>Account Settings</h1>
           <p className='text-on-background-neutral mt-1 text-sm'>Manage your account security</p>
         </div>
 
-        <UserProfile {...user} />
+        <UserProfile user={user} />
         <TwoFactorSettings {...user} />
         <ChangePassword />
 

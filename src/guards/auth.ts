@@ -6,13 +6,14 @@
  */
 
 import { betterAuth } from 'better-auth'
+import { customSession } from 'better-auth/plugins'
 import { emailOTP } from 'better-auth/plugins'
 import { twoFactor } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { typeid } from 'typeid-js'
 import { protectedEnv } from '#/config'
 import { db } from '#/database/db-client'
-import { sendMail } from '#/mailer/smtp'
+import { sendMail } from '#/libraries/mailer'
 import { passwordHash, passwordVerify } from '#/utils/crypto'
 
 export const auth = betterAuth({
@@ -191,6 +192,26 @@ export const auth = betterAuth({
   experimental: { joins: true },
   plugins: [
     tanstackStartCookies(),
+    customSession(async ({ user }) => {
+      const transformImage = (image: string | null | undefined) => {
+        if (!image) return image
+        if (image.startsWith('http://') || image.startsWith('https://')) {
+          return image
+        }
+
+        const cleanPath = image.replace(/^\//, '')
+
+        if (!protectedEnv.STORAGE_S3_PUBLIC_URL) {
+          const baseUrl = protectedEnv.STORAGE_S3_ENDPOINT_URL.replace(/\/+$/, '')
+          return `${baseUrl}/${protectedEnv.STORAGE_S3_BUCKET_DEFAULT}/${cleanPath}`
+        }
+
+        const baseUrl = protectedEnv.STORAGE_S3_PUBLIC_URL.replace(/\/+$/, '')
+        return `${baseUrl}/${cleanPath}`
+      }
+
+      return { user: { ...user, image: transformImage(user.image) } }
+    }),
     twoFactor({
       otpOptions: {
         sendOTP: async ({ user, otp }) => {

@@ -25,7 +25,7 @@ services:
     mem_limit: 256m # set memory limit
     cpus: 1.0 # set CPUs limit
     # configs:
-    #   - source: pgsql-config
+    #   - source: pgsql_config
     #     target: /var/lib/postgresql/18/docker/postgresql.conf
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
@@ -84,6 +84,22 @@ services:
       timeout: 5s
       retries: 3
 
+  nginx:
+    <<: *common
+    image: nginx:${NGINX_VERSION:-mainline-alpine-slim}
+    hostname: nginx
+    ports: ['9180:9180']
+    configs:
+      - source: nginx_config
+        target: /etc/nginx/templates/default.conf.template
+    healthcheck:
+      test: ['CMD', 'nc', '-vz', '127.0.0.1', '9180']
+      interval: 3s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      minio: { condition: service_started }
+
   redis:
     <<: *common
     image: redis:${REDIS_VERSION:-8-alpine}
@@ -109,13 +125,39 @@ services:
     cpus: 1.0 # set CPUs limit
 
 configs:
-  pgsql-config:
+  nginx_config:
     content: |
-      io_method = 'io_uring'    # Enable async I/O with io_uring
-      shared_buffers = 512M     # Allocate proper buffer space (assume 2GB RAM)
-      io_combine_limit = 512kB  # Increase read-ahead combining
-      effective_io_concurrency = 200
-      maintenance_io_concurrency = 50
+      server {
+          listen 9180;
+          server_name localhost;
+
+          # Security headers
+          add_header X-Frame-Options "SAMEORIGIN" always;
+          add_header X-Content-Type-Options "nosniff" always;
+
+          # CORS headers - wildcard access, all methods
+          add_header Access-Control-Allow-Origin * always;
+          add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, HEAD, OPTIONS" always;
+          add_header Access-Control-Allow-Headers "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization" always;
+          add_header Access-Control-Expose-Headers "Content-Length,Content-Range,ETag" always;
+
+          location / {
+              # Simple proxy pass - nginx handles basic headers automatically
+              proxy_pass http://minio:9100/devbucket/;
+
+              # Pass all request methods
+              proxy_http_version 1.1;
+              proxy_set_header Connection "";
+              proxy_buffering off;
+              proxy_redirect off;
+
+              # Timeouts for large files
+              proxy_connect_timeout 300;
+              proxy_send_timeout 300;
+              proxy_read_timeout 300;
+              send_timeout 300;
+          }
+      }
 
 volumes:
   pgsql_data:
