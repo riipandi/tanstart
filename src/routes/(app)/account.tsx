@@ -3,6 +3,7 @@ import { authClient } from '#/guards/auth-client'
 import { ensureSession } from '#/guards/session'
 import { ChangePassword } from './-account/change-password'
 import { SessionsList } from './-account/sessions-list'
+import { SocialAccounts } from './-account/social-accounts'
 import { TwoFactorSettings } from './-account/two-factor'
 import { UserProfile } from './-account/user-profile'
 
@@ -35,6 +36,7 @@ function RouteComponent() {
         </div>
 
         <UserProfile {...user} />
+        <SocialAccounts />
         <TwoFactorSettings {...user} />
         <ChangePassword />
         <SessionsList />
