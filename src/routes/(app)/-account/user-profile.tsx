@@ -58,11 +58,7 @@ const uploadAvatar = createServerFn({ method: 'POST' })
     return { path: key, url: publicUrl }
   })
 
-interface UserProfileProps {
-  user: Session['user']
-}
-
-export function UserProfile({ user }: UserProfileProps) {
+export function UserProfile(user: Session['user']) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const [isUploading, setIsUploading] = useState(false)

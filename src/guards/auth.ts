@@ -3,20 +3,21 @@
  *
  * @see: https://better-auth.com/docs/concepts/database#programmatic-migrations
  * @see: https://better-auth.com/docs/concepts/database#extending-core-schema
+ * @see: https://better-auth.com/docs/concepts/session-management#customizing-session-response
  */
 
-import { betterAuth } from 'better-auth'
-import { customSession } from 'better-auth/plugins'
-import { emailOTP } from 'better-auth/plugins'
+import { betterAuth, type BetterAuthOptions } from 'better-auth'
+import { customSession, emailOTP } from 'better-auth/plugins'
 import { twoFactor } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { typeid } from 'typeid-js'
 import { protectedEnv } from '#/config'
 import { db } from '#/database/db-client'
 import { sendMail } from '#/libraries/mailer'
+import { parseAssetUrl } from '#/libraries/s3-client'
 import { passwordHash, passwordVerify } from '#/utils/crypto'
 
-export const auth = betterAuth({
+const authOptions = {
   database: {
     db,
     type: 'postgres',
@@ -222,27 +223,16 @@ export const auth = betterAuth({
           vars: { otp }
         })
       }
-    }),
-    customSession(async ({ user, session }) => {
-      const transformImage = (image: string | null | undefined) => {
-        if (!image) return image
-        if (image.startsWith('http://') || image.startsWith('https://')) {
-          return image
-        }
-
-        const cleanPath = image.replace(/^\//, '')
-
-        if (!protectedEnv.STORAGE_S3_PUBLIC_URL) {
-          const baseUrl = protectedEnv.STORAGE_S3_ENDPOINT_URL.replace(/\/+$/, '')
-          return `${baseUrl}/${protectedEnv.STORAGE_S3_BUCKET_DEFAULT}/${cleanPath}`
-        }
-
-        const baseUrl = protectedEnv.STORAGE_S3_PUBLIC_URL.replace(/\/+$/, '')
-        return `${baseUrl}/${cleanPath}`
-      }
-
-      return { session, user: { ...user, image: transformImage(user.image) } }
     })
+  ]
+} satisfies BetterAuthOptions
+
+export const auth = betterAuth({
+  ...authOptions,
+  plugins: [
+    customSession(async ({ user, session }) => {
+      return { session, user: { ...user, image: parseAssetUrl(user.image) } }
+    }, authOptions)
   ]
 })
 

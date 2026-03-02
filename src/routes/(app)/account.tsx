@@ -33,7 +33,7 @@ function RouteComponent() {
           <p className='text-on-background-neutral mt-1 text-sm'>Manage your account security</p>
         </div>
 
-        <UserProfile user={user} />
+        <UserProfile {...user} />
         <TwoFactorSettings {...user} />
         <ChangePassword />
 

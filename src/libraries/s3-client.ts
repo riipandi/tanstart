@@ -10,3 +10,20 @@ export const s3Client = new S3Client({
     secretAccessKey: protectedEnv.STORAGE_S3_SECRET_ACCESS_KEY
   }
 })
+
+export function parseAssetUrl(image: string | null | undefined) {
+  if (!image) return image
+  if (image.startsWith('http://') || image.startsWith('https://')) {
+    return image
+  }
+
+  const cleanPath = image.replace(/^\//, '')
+
+  if (!protectedEnv.STORAGE_S3_PUBLIC_URL) {
+    const baseUrl = protectedEnv.STORAGE_S3_ENDPOINT_URL.replace(/\/+$/, '')
+    return `${baseUrl}/${protectedEnv.STORAGE_S3_BUCKET_DEFAULT}/${cleanPath}`
+  }
+
+  const baseUrl = protectedEnv.STORAGE_S3_PUBLIC_URL.replace(/\/+$/, '')
+  return `${baseUrl}/${cleanPath}`
+}

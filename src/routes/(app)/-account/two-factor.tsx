@@ -19,7 +19,7 @@ const STEPS = ['Method', 'Setup', 'Complete']
 
 export function TwoFactorSettings(user: Session['user']) {
   const navigate = useNavigate()
-  const twoFactorEnabled = user.twoFactorEnable ?? false
+  const twoFactorEnabled = user.twoFactorEnabled ?? false
 
   const [step, setStep] = useState<WizardStep>('idle')
   const [method, setMethod] = useState<SetupMethod>(null)
