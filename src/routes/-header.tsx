@@ -25,8 +25,8 @@ function UserMenu() {
   if (session?.user) {
     return (
       <div className='flex items-center gap-3'>
-        {session.user.imageURL ? (
-          <img src={session.user.imageURL} alt='' className='size-8 rounded-lg' />
+        {session.user.image ? (
+          <img src={session.user.image} alt='' className='size-8 rounded-lg' />
         ) : (
           <div className='bg-background-neutral flex size-8 items-center justify-center rounded-lg'>
             <span className='text-foreground-neutral text-sm font-medium'>

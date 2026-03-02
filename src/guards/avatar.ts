@@ -46,7 +46,7 @@ export const uploadAvatar = createServerFn({ method: 'POST' })
 
     await upload.done()
 
-    const baseUrl = protectedEnv.STORAGE_S3_PUBLIC_URL.replace(/\/+$/, '')
+    const baseUrl = protectedEnv.PUBLIC_S3_ASSET_URL.replace(/\/+$/, '')
     const bucket = protectedEnv.STORAGE_S3_BUCKET_DEFAULT
     const publicUrl = `${baseUrl}/${bucket}/${key}`
 

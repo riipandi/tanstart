@@ -1,7 +1,8 @@
 import { useRouter } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
-import { useRef, useState, Activity } from 'react'
+import { useRef, useState, Activity, useEffect } from 'react'
 import { z } from 'zod'
+import { Avatar, AvatarFallback, AvatarImage } from '#/components/avatar'
 import { Session } from '#/guards/auth-client'
 import { authClient } from '#/guards/auth-client'
 import { removeAvatar, uploadAvatar } from '#/guards/avatar'
@@ -18,6 +19,7 @@ export function UserProfile(user: Session['user']) {
   const router = useRouter()
   const [isUploading, setIsUploading] = useState(false)
   const [isRemoving, setIsRemoving] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
 
   const [isEditingName, setIsEditingName] = useState(false)
@@ -94,7 +96,18 @@ export function UserProfile(user: Session['user']) {
     }
 
     setIsUploading(true)
+    setUploadProgress(0)
     setError(null)
+
+    const progressInterval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 90) {
+          clearInterval(progressInterval)
+          return 90
+        }
+        return prev + 10
+      })
+    }, 100)
 
     try {
       const base64 = await fileToBase64(file)
@@ -107,6 +120,8 @@ export function UserProfile(user: Session['user']) {
         }
       })
 
+      setUploadProgress(100)
+
       const updateResult = await authClient.updateUser({ image: result.path })
 
       if (updateResult.error) {
@@ -118,7 +133,11 @@ export function UserProfile(user: Session['user']) {
       setError(err instanceof Error ? err.message : 'Failed to upload avatar')
       console.error(err)
     } finally {
-      setIsUploading(false)
+      clearInterval(progressInterval)
+      setTimeout(() => {
+        setIsUploading(false)
+        setUploadProgress(0)
+      }, 500)
     }
   }
 
@@ -161,20 +180,43 @@ export function UserProfile(user: Session['user']) {
             }}
             disabled={isUploading}
           >
-            <img
-              src={user.imageURL || '/images/default-avatar.png'}
+            <Avatar
               className={clx(
-                'absolute inset-0 flex size-full items-center justify-center rounded-full bg-white',
-                isUploading && 'opacity-50'
+                'absolute inset-0 flex size-full items-center justify-center rounded-full',
+                isUploading && 'opacity-30'
               )}
-              alt={user.name}
-            />
+            >
+              <AvatarImage src={user.image || '/images/default-avatar.png'} alt={user.name} />
+              <AvatarFallback asInitial>{user.name}</AvatarFallback>
+            </Avatar>
 
-            <div className='absolute inset-0 flex size-full items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
+            <div className='absolute inset-0 flex size-full items-center justify-center rounded-full transition-opacity duration-200'>
               {isUploading ? (
-                <div className='h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent' />
+                <div className='relative flex size-full items-center justify-center'>
+                  <svg className='absolute size-full -rotate-90' viewBox='0 0 36 36'>
+                    <path
+                      className='stroke-black/10'
+                      strokeWidth={3}
+                      fill='none'
+                      d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
+                    />
+                    <path
+                      className='stroke-background-primary transition-all duration-300 ease-out'
+                      strokeWidth={3}
+                      strokeLinecap='round'
+                      strokeDasharray={`${uploadProgress}, 100`}
+                      fill='none'
+                      d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
+                    />
+                  </svg>
+                  <span className='text-foreground-neutral text-xs font-semibold'>
+                    {uploadProgress}%
+                  </span>
+                </div>
               ) : (
-                <Lucide.Camera className='text-white' size={20} />
+                <div className='flex size-full items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
+                  <Lucide.Camera className='text-white' size={20} />
+                </div>
               )}
             </div>
 

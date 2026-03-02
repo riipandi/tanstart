@@ -19,11 +19,11 @@ export function parseAssetUrl(image: string | null | undefined) {
 
   const cleanPath = image.replace(/^\//, '')
 
-  if (!protectedEnv.STORAGE_S3_PUBLIC_URL) {
+  if (!protectedEnv.PUBLIC_S3_ASSET_URL) {
     const baseUrl = protectedEnv.STORAGE_S3_ENDPOINT_URL.replace(/\/+$/, '')
     return `${baseUrl}/${protectedEnv.STORAGE_S3_BUCKET_DEFAULT}/${cleanPath}`
   }
 
-  const baseUrl = protectedEnv.STORAGE_S3_PUBLIC_URL.replace(/\/+$/, '')
+  const baseUrl = protectedEnv.PUBLIC_S3_ASSET_URL.replace(/\/+$/, '')
   return `${baseUrl}/${cleanPath}`
 }

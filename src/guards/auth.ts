@@ -6,18 +6,16 @@
  * @see: https://better-auth.com/docs/concepts/session-management#customizing-session-response
  */
 
-import { betterAuth, type BetterAuthOptions } from 'better-auth'
-import { customSession, emailOTP } from 'better-auth/plugins'
-import { twoFactor } from 'better-auth/plugins'
+import { betterAuth } from 'better-auth'
+import { twoFactor, emailOTP } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { typeid } from 'typeid-js'
 import { protectedEnv } from '#/config'
 import { db } from '#/database/db-client'
 import { sendMail } from '#/libraries/mailer'
-import { parseAssetUrl } from '#/libraries/s3-client'
 import { passwordHash, passwordVerify } from '#/utils/crypto'
 
-const authOptions = {
+export const auth = betterAuth({
   database: {
     db,
     type: 'postgres',
@@ -164,8 +162,8 @@ const authOptions = {
     }
   },
   rateLimit: {
-    enabled: true,
     storage: 'database',
+    enabled: protectedEnv.APP_MODE === 'production',
     max: protectedEnv.PUBLIC_RATE_LIMIT_DEFAULT_MAX, // max requests in the window
     window: protectedEnv.PUBLIC_RATE_LIMIT_DEFAULT_WINDOW, // time window in seconds
     customRules: {
@@ -197,7 +195,6 @@ const authOptions = {
       }
     }
   },
-  experimental: { joins: true },
   plugins: [
     tanstackStartCookies(),
     twoFactor({
@@ -229,15 +226,6 @@ const authOptions = {
         })
       }
     })
-  ]
-} satisfies BetterAuthOptions
-
-export const auth = betterAuth({
-  ...authOptions,
-  plugins: [
-    customSession(async ({ user, session }) => {
-      return { session, user: { ...user, imageURL: parseAssetUrl(user.image) } }
-    }, authOptions)
   ]
 })
 
