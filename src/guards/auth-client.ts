@@ -1,14 +1,15 @@
 import { customSessionClient } from 'better-auth/client/plugins'
+import { inferAdditionalFields } from 'better-auth/client/plugins'
 import { emailOTPClient } from 'better-auth/client/plugins'
 import { twoFactorClient } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/react'
 import { publicEnv } from '#/config'
+import { auth } from '#/guards/auth'
 import { getSafeRedirect } from '#/utils/redirect'
 
 export const authClient = createAuthClient({
   baseURL: publicEnv.PUBLIC_BASE_URL,
   plugins: [
-    customSessionClient(),
     twoFactorClient({
       onTwoFactorRedirect: () => {
         const currentUrl = new URL(window.location.href)
@@ -23,7 +24,9 @@ export const authClient = createAuthClient({
         window.location.href = twoFactorUrl.toString()
       }
     }),
-    emailOTPClient()
+    emailOTPClient(),
+    customSessionClient<typeof auth>(),
+    inferAdditionalFields<typeof auth>()
   ]
 })
 

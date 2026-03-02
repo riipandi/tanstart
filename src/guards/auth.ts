@@ -194,26 +194,6 @@ export const auth = betterAuth({
   experimental: { joins: true },
   plugins: [
     tanstackStartCookies(),
-    customSession(async ({ user }) => {
-      const transformImage = (image: string | null | undefined) => {
-        if (!image) return image
-        if (image.startsWith('http://') || image.startsWith('https://')) {
-          return image
-        }
-
-        const cleanPath = image.replace(/^\//, '')
-
-        if (!protectedEnv.STORAGE_S3_PUBLIC_URL) {
-          const baseUrl = protectedEnv.STORAGE_S3_ENDPOINT_URL.replace(/\/+$/, '')
-          return `${baseUrl}/${protectedEnv.STORAGE_S3_BUCKET_DEFAULT}/${cleanPath}`
-        }
-
-        const baseUrl = protectedEnv.STORAGE_S3_PUBLIC_URL.replace(/\/+$/, '')
-        return `${baseUrl}/${cleanPath}`
-      }
-
-      return { user: { ...user, image: transformImage(user.image) } }
-    }),
     twoFactor({
       otpOptions: {
         sendOTP: async ({ user, otp }) => {
@@ -242,6 +222,26 @@ export const auth = betterAuth({
           vars: { otp }
         })
       }
+    }),
+    customSession(async ({ user, session }) => {
+      const transformImage = (image: string | null | undefined) => {
+        if (!image) return image
+        if (image.startsWith('http://') || image.startsWith('https://')) {
+          return image
+        }
+
+        const cleanPath = image.replace(/^\//, '')
+
+        if (!protectedEnv.STORAGE_S3_PUBLIC_URL) {
+          const baseUrl = protectedEnv.STORAGE_S3_ENDPOINT_URL.replace(/\/+$/, '')
+          return `${baseUrl}/${protectedEnv.STORAGE_S3_BUCKET_DEFAULT}/${cleanPath}`
+        }
+
+        const baseUrl = protectedEnv.STORAGE_S3_PUBLIC_URL.replace(/\/+$/, '')
+        return `${baseUrl}/${cleanPath}`
+      }
+
+      return { session, user: { ...user, image: transformImage(user.image) } }
     })
   ]
 })

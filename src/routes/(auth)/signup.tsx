@@ -60,7 +60,7 @@ function RouteComponent() {
           callbackURL: search.redirect || '/dashboard',
           firstName: value.firstName,
           lastName: value.lastName
-        } as any)
+        })
 
         if (result.error) {
           setError(result.error.message || 'Sign up failed')

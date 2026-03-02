@@ -1,7 +1,7 @@
-import { createAuthClient } from 'better-auth/react'
+import { authClient } from '#/guards/auth-client'
 
 interface SignInWithSocialProviderProps {
-  authClient: ReturnType<typeof createAuthClient>
+  authClient: typeof authClient
   callbackURL: string
 }
 
