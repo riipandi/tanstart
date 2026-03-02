@@ -42,11 +42,7 @@ export function ChangePassword() {
     onSubmit: async ({ value }) => {
       setError(null)
       try {
-        const result = await authClient.changePassword({
-          currentPassword: value.currentPassword,
-          newPassword: value.newPassword,
-          revokeOtherSessions: value.revokeOtherSessions
-        })
+        const result = await authClient.changePassword({ ...value })
 
         if (result.error) {
           setError(result.error.message || 'Failed to change password')
