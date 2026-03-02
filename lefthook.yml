@@ -53,10 +53,10 @@ pre-commit:
 #       tags: frontend security
 #       run: pnpm --silent audit --prod
 
-pre-deploy:
-  parallel: false
-  commands:
-    docker-build:
-      run: |
-        pnpm --silent docker:build
-        pnpm --silent docker:images
+# pre-deploy:
+#   parallel: false
+#   commands:
+#     docker-build:
+#       run: |
+#         pnpm --silent docker:build
+#         pnpm --silent docker:images
