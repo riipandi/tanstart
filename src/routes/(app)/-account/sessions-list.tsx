@@ -178,7 +178,7 @@ export function SessionsList() {
           </div>
         </div>
         <div className='mt-6 flex items-center justify-center py-8'>
-          <div className='h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600' />
+          <div className='border-border-neutral border-t-foreground-neutral h-8 w-8 animate-spin rounded-full border-2' />
         </div>
       </div>
     )

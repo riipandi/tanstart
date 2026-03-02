@@ -1,5 +1,6 @@
 import * as Lucide from 'lucide-react'
 import { useState, useCallback, useEffect } from 'react'
+import { clx } from '#/utils/variant'
 
 interface TwoFactorStepOTPProps {
   onSendOtp: () => Promise<{ error: string | null; success: boolean }>
@@ -103,7 +104,7 @@ export function TwoFactorStepOTP({
           className='text-foreground-neutral flex items-center gap-1 text-sm font-medium transition-colors hover:underline disabled:cursor-not-allowed disabled:no-underline disabled:opacity-50'
         >
           <Lucide.RefreshCw
-            className={`h-3.5 w-3.5 ${!canResend || countdown > 0 ? '' : 'animate-spin'}`}
+            className={clx('size-3.5', !canResend || countdown > 0 ? '' : 'animate-spin')}
           />
           Resend code {countdown > 0 && `(${countdown}s)`}
         </button>

@@ -31,7 +31,7 @@ export function TwoFactorMethodSelection({
               Use an app like Google Authenticator or Authy
             </p>
           </div>
-          <Lucide.ChevronRight className='h-5 w-5 text-gray-400' />
+          <Lucide.ChevronRight className='text-foreground-neutral-faded h-5 w-5' />
         </button>
 
         <button
@@ -46,7 +46,7 @@ export function TwoFactorMethodSelection({
             <h4 className='font-semibold'>Email OTP</h4>
             <p className='text-on-background-neutral text-sm'>Receive a code via email</p>
           </div>
-          <Lucide.ChevronRight className='h-5 w-5 text-gray-400' />
+          <Lucide.ChevronRight className='text-foreground-neutral-faded h-5 w-5' />
         </button>
       </div>
 

@@ -146,13 +146,18 @@ const authOptions = {
     deleteUser: {
       enabled: true,
       sendDeleteAccountVerification: async ({ user, url }) => {
+        // Create cancel link that redirects back to account page
+        const baseUrl = process.env.PUBLIC_BASE_URL || 'http://localhost:3000'
+        const cancelLink = `${baseUrl}/account?deleteCancelled=true`
+
         await sendMail({
           to: user.email,
           subject: 'Confirm Account Deletion',
           template: 'delete-account',
           vars: {
             email: user.email,
-            deleteLink: url
+            deleteLink: url,
+            cancelLink: cancelLink
           }
         })
       }

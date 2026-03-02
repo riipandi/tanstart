@@ -2,6 +2,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
 import { useState } from 'react'
 import { authClient } from '#/guards/auth-client'
+import { clx } from '#/utils/variant'
 
 function UserMenu() {
   const { data: session, isPending } = authClient.useSession()
@@ -79,9 +80,11 @@ export default function Header() {
       </header>
 
       <aside
-        className={`bg-sidebar text-sidebar-foreground shadow-overlay fixed top-0 left-0 z-50 flex h-full w-80 transform flex-col transition-transform duration-300 ease-in-out ${
+        className={clx(
+          'bg-sidebar text-sidebar-foreground shadow-overlay fixed top-0 left-0 z-50 flex h-full w-80',
+          'transform flex-col transition-transform duration-300 ease-in-out',
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        )}
       >
         <div className='border-sidebar-border flex items-center justify-between border-b p-4'>
           <h2 className='text-base font-semibold'>Navigation</h2>

@@ -49,7 +49,7 @@ export function TwoFactorStepTOTP({
       >
         {qrCodeSvg ? (
           <div
-            className='rounded-md bg-white p-2'
+            className='bg-background-page border-border-neutral rounded-md border p-2'
             style={{ width: '200px', height: '200px' }}
             // eslint-disable-next-line react/no-danger -- SVG from trusted uqr library with server-generated TOTP URI
             dangerouslySetInnerHTML={{ __html: qrCodeSvg }}
@@ -90,11 +90,11 @@ export function TwoFactorStepTOTP({
               type='button'
               onClick={handleCopySecret}
               disabled={!secretKey || copied}
-              className='border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded flex w-12 items-center justify-center rounded-md border transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+              className='border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded focus-visible:bg-background-neutral-faded focus-visible:ring-foreground-primary flex w-12 items-center justify-center rounded-md border transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
               title={copied ? 'Copied!' : 'Copy secret key'}
             >
               {copied ? (
-                <Lucide.Check className='h-5 w-5 text-green-600' />
+                <Lucide.Check className='text-foreground-positive h-5 w-5' />
               ) : (
                 <Lucide.Copy className='h-5 w-5' />
               )}
@@ -150,7 +150,7 @@ export function TwoFactorStepTOTP({
           type='button'
           onClick={handleVerify}
           disabled={isVerifying || code.length !== 6}
-          className='bg-background-primary hover:bg-background-primary/80 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+          className='bg-background-primary hover:bg-background-primary/80 focus-visible:bg-background-primary/90 text-on-background-primary focus-visible:ring-foreground-primary rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
         >
           {isVerifying ? 'Verifying...' : 'Verify & Enable'}
         </button>
