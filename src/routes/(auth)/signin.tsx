@@ -13,7 +13,7 @@ interface SearchParams {
 export const Route = createFileRoute('/(auth)/signin')({
   component: RouteComponent,
   loader: () => {
-    return { enableSignUp: publicEnv.PUBLIC_ENABLE_SIGNUP }
+    return { disableSignUp: publicEnv.PUBLIC_DISABLE_SIGNUP }
   }
 })
 
@@ -131,7 +131,7 @@ function RouteComponent() {
           </form.AppForm>
         </form>
 
-        <Activity mode={loaderData.enableSignUp ? 'visible' : 'hidden'}>
+        <Activity mode={loaderData.disableSignUp ? 'hidden' : 'visible'}>
           <div className='mt-4 text-center'>
             <Link
               type='button'

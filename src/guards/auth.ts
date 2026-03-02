@@ -29,6 +29,8 @@ export const auth = betterAuth({
   appName: protectedEnv.PUBLIC_IDENTIFIER, // It'll be used as an issuer for 2FA.
   emailAndPassword: {
     enabled: true,
+    autoSignIn: false,
+    disableSignUp: protectedEnv.PUBLIC_DISABLE_SIGNUP,
     requireEmailVerification: true,
     revokeSessionsOnPasswordReset: true,
     password: {

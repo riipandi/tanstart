@@ -13,7 +13,7 @@ interface SearchParams {
 export const Route = createFileRoute('/(auth)/signup')({
   component: RouteComponent,
   beforeLoad: () => {
-    if (!publicEnv.PUBLIC_ENABLE_SIGNUP) {
+    if (publicEnv.PUBLIC_DISABLE_SIGNUP) {
       throw notFound()
     }
   }

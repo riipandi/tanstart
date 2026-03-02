@@ -18,7 +18,7 @@ export const publicEnv = {
   PUBLIC_BASE_URL: setEnv(env.PUBLIC_BASE_URL, 'http://localhost:3000'),
   PUBLIC_SITE_DOMAIN: setEnv(env.PUBLIC_SITE_DOMAIN, 'example.com'),
   PUBLIC_CORS_ORIGINS: setEnvArray(env.PUBLIC_CORS_ORIGINS, ['*']),
-  PUBLIC_ENABLE_SIGNUP: setEnv<boolean>(env.PUBLIC_ENABLE_SIGNUP, true),
+  PUBLIC_DISABLE_SIGNUP: setEnv<boolean>(env.PUBLIC_DISABLE_SIGNUP, false),
   PUBLIC_IDENTIFIER: setEnv(env.PUBLIC_IDENTIFIER, pkg.name),
   PUBLIC_RATE_LIMIT_DEFAULT_MAX: setEnv(env.PUBLIC_RATE_LIMIT_DEFAULT_MAX, 100), // default 100 requests
   PUBLIC_RATE_LIMIT_DEFAULT_WINDOW: setEnv(env.PUBLIC_RATE_LIMIT_DEFAULT_WINDOW, 900) // default 15 minutes
