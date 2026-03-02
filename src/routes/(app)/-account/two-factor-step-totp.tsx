@@ -1,7 +1,7 @@
 import * as Lucide from 'lucide-react'
 import { useState } from 'react'
-import { extractSecretFromUri } from './two-factor-utils'
-import { useCopyToClipboard } from './two-factor-utils'
+import { extractSecretFromUri } from '#/hooks/use-two-factor'
+import { useCopyToClipboard } from '#/hooks/use-two-factor'
 
 interface TwoFactorStepTOTPProps {
   totpUri: string
@@ -57,7 +57,7 @@ export function TwoFactorStepTOTP({
           />
         ) : (
           <div
-            className='bg-background-neutral h-[200px] w-[200px] animate-pulse rounded-md'
+            className='bg-background-neutral size-50 animate-pulse rounded-md'
             aria-hidden='true'
           />
         )}

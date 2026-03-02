@@ -1,6 +1,7 @@
 import { useNavigate } from '@tanstack/react-router'
 import { useState, useCallback, useEffect } from 'react'
 import { Session } from '#/guards/auth-client'
+import { useTwoFactorSetup, useQRCode } from '#/hooks/use-two-factor'
 import { TwoFactorBackupCodes } from './two-factor-backup-codes'
 import { TwoFactorDisable } from './two-factor-disable'
 import { TwoFactorPasswordInput } from './two-factor-password-input'
@@ -10,7 +11,6 @@ import { TwoFactorStepOTP } from './two-factor-step-otp'
 import { TwoFactorStepSuccess } from './two-factor-step-success'
 import { TwoFactorStepTOTP } from './two-factor-step-totp'
 import { TwoFactorStepper } from './two-factor-stepper'
-import { useTwoFactorSetup, useQRCode } from './two-factor-utils'
 
 type WizardStep = 'idle' | 'method' | 'password' | 'setup' | 'success'
 type SetupMethod = 'totp' | 'otp' | null

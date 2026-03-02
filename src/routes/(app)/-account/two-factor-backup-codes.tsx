@@ -1,6 +1,6 @@
 import * as Lucide from 'lucide-react'
 import { useState } from 'react'
-import { useCopyToClipboard } from './two-factor-utils'
+import { useCopyToClipboard } from '#/hooks/use-two-factor'
 
 interface TwoFactorBackupCodesProps {
   codes: string[]
