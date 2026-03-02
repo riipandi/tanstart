@@ -2,7 +2,9 @@
 @import 'tw-animate-css';
 @import './theme.css';
 
-@variant dark (&:where([data-theme="dark"] *));
+@variant dark
+(
+&:where([data-theme="dark"] *));
 
 /* Custom motion animations */
 @theme inline {

@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
 import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch'
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
 import { trpcRouter } from '#/trpc/router'
 
 function createContext(opts: FetchCreateContextFnOptions) {

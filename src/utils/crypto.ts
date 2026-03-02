@@ -86,7 +86,11 @@ function formatHash(
 ): string {
   const saltB64 = Buffer.from(salt).toString('base64url')
   const hashB64 = Buffer.from(hash).toString('base64url')
-  const profileChar: Record<HashProfile, string> = { low: 'l', medium: 'm', high: 'h' }
+  const profileChar: Record<HashProfile, string> = {
+    low: 'l',
+    medium: 'm',
+    high: 'h'
+  }
   const paramString = Object.entries(params)
     .map(([k, v]) => `${k}${v}`)
     .join('')
@@ -115,7 +119,11 @@ function parseHash(hashed: string): {
   if (algo !== 'scrypt' && algo !== 'argon2id') return null
   if (profileChar !== 'l' && profileChar !== 'm' && profileChar !== 'h') return null
 
-  const profileMap: Record<string, HashProfile> = { l: 'low', m: 'medium', h: 'high' }
+  const profileMap: Record<string, HashProfile> = {
+    l: 'low',
+    m: 'medium',
+    h: 'high'
+  }
 
   // Parse compact params like "N16384r8p1" or "t4m98304p2"
   const params: Record<string, number> = {}

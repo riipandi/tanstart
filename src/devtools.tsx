@@ -1,5 +1,5 @@
 import { TanStackDevtools, type TanStackDevtoolsReactInit } from '@tanstack/react-devtools'
-import { QueryClient } from '@tanstack/react-query'
+import type { QueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 

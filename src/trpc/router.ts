@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { createTRPCRouter, publicProcedure, protectedProcedure } from './init'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from './init'
 
 const todos = [
   { id: 1, name: 'Get groceries' },
@@ -13,7 +13,11 @@ function defineTodosRouter() {
   return {
     list: publicProcedure.query(() => todos),
     add: protectedProcedure.input(TodoAddSchema).mutation(({ input, ctx }) => {
-      const newTodo = { id: todos.length + 1, name: input.name, userId: ctx.session.user.id }
+      const newTodo = {
+        id: todos.length + 1,
+        name: input.name,
+        userId: ctx.session.user.id
+      }
       todos.push(newTodo)
       return newTodo
     })

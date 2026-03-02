@@ -10,6 +10,7 @@ import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { typeid } from 'typeid-js'
 import { protectedEnv } from '#/config'
 import { db } from '#/database/db-client'
+import { sendMail } from '#/mailer/smtp'
 import { passwordHash, passwordVerify } from '#/utils/crypto'
 
 export const auth = betterAuth({
@@ -30,8 +31,16 @@ export const auth = betterAuth({
       hash: async (password) => await passwordHash(password, { algo: 'scrypt' }),
       verify: async ({ password, hash }) => await passwordVerify(password, hash)
     },
-    sendResetPassword: async (ctx, request) => {
-      console.info('sendResetPassword', { ctx, request })
+    sendResetPassword: async ({ user, url }) => {
+      await sendMail({
+        to: user.email,
+        subject: 'Password Reset Instruction',
+        template: 'password-reset',
+        vars: {
+          email: user.email,
+          resetLink: url
+        }
+      })
     },
     onExistingUserSignUp: async (ctx, request) => {
       console.info('Sign-up attempt with existing email', { ctx, request })
@@ -43,8 +52,16 @@ export const auth = betterAuth({
   emailVerification: {
     expiresIn: 3600,
     sendOnSignUp: true,
-    sendVerificationEmail: async (ctx, request) => {
-      console.info('sendVerificationEmail', { ctx, request })
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendMail({
+        to: user.email,
+        subject: 'Verify Your Email',
+        template: 'password-reset',
+        vars: {
+          email: user.email,
+          resetLink: url
+        }
+      })
     }
   },
   socialProviders: {

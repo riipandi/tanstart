@@ -1,4 +1,4 @@
-import { Kysely, PostgresDialect, CamelCasePlugin } from 'kysely'
+import { CamelCasePlugin, Kysely, PostgresDialect } from 'kysely'
 import { Pool } from 'pg'
 import { protectedEnv } from '#/config'
 
