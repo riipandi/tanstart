@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute('/(home)/')({ component: App })
 
 function App() {
   const features = [

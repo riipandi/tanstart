@@ -1,14 +1,11 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { authClient } from '#/guards/auth-client'
-import { getSession } from '#/guards/session'
+import { ensureSession } from '#/guards/session'
 
 export const Route = createFileRoute('/(app)/dashboard')({
   component: RouteComponent,
   beforeLoad: async () => {
-    const session = await getSession()
-    if (!session) {
-      throw redirect({ to: '/signin' })
-    }
+    const session = await ensureSession()
     return { ...session }
   }
 })
