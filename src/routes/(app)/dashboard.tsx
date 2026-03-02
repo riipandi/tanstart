@@ -32,41 +32,39 @@ function RouteComponent() {
       <div className='w-full max-w-md space-y-6 p-6'>
         <div className='space-y-1.5'>
           <h1 className='text-lg leading-none font-semibold tracking-tight'>Welcome back</h1>
-          <p className='text-sm text-neutral-500 dark:text-neutral-400'>
-            You're signed in as {user.email}
-          </p>
+          <p className='text-on-background-neutral text-sm'>You're signed in as {user.email}</p>
         </div>
 
         <div className='flex items-center gap-3'>
           {user.image ? (
             <img src={user.image} alt='' className='h-10 w-10' />
           ) : (
-            <div className='flex h-10 w-10 items-center justify-center bg-neutral-200 dark:bg-neutral-800'>
-              <span className='text-sm font-medium text-neutral-600 dark:text-neutral-400'>
+            <div className='bg-background-neutral flex h-10 w-10 items-center justify-center'>
+              <span className='text-foreground-neutral text-sm font-medium'>
                 {user.name?.charAt(0).toUpperCase() || 'U'}
               </span>
             </div>
           )}
           <div className='min-w-0 flex-1'>
             <p className='truncate text-sm font-medium'>{user.name}</p>
-            <p className='truncate text-xs text-neutral-500 dark:text-neutral-400'>{user.email}</p>
+            <p className='text-on-background-neutral truncate text-xs'>{user.email}</p>
           </div>
         </div>
 
         <button
-          className='h-9 w-full border border-neutral-300 px-4 text-sm font-medium transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800'
+          className='border-border-neutral hover:bg-background-neutral-faded h-9 w-full border px-4 text-sm font-medium transition-colors'
           onClick={handleSignOut}
         >
           Sign out
         </button>
 
-        <p className='text-center text-xs text-neutral-400 dark:text-neutral-500'>
+        <p className='text-on-background-neutral text-center text-xs'>
           Built with{' '}
           <a
             href='https://better-auth.com'
             target='_blank'
             rel='noopener noreferrer'
-            className='font-medium hover:text-neutral-600 dark:hover:text-neutral-300'
+            className='hover:text-foreground-neutral font-medium'
           >
             BETTER-AUTH
           </a>

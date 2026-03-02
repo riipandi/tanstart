@@ -6,37 +6,37 @@ export const Route = createFileRoute('/')({ component: App })
 function App() {
   const features = [
     {
-      icon: <Lucide.Zap className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Zap className='text-sidebar-primary h-12 w-12' />,
       title: 'Powerful Server Functions',
       description:
         'Write server-side code that seamlessly integrates with your client components. Type-safe, secure, and simple.'
     },
     {
-      icon: <Lucide.Server className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Server className='text-sidebar-primary h-12 w-12' />,
       title: 'Flexible Server Side Rendering',
       description:
         'Full-document SSR, streaming, and progressive enhancement out of the box. Control exactly what renders where.'
     },
     {
-      icon: <Lucide.Route className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Route className='text-sidebar-primary h-12 w-12' />,
       title: 'API Routes',
       description:
         'Build type-safe API endpoints alongside your application. No separate backend needed.'
     },
     {
-      icon: <Lucide.Shield className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Shield className='text-sidebar-primary h-12 w-12' />,
       title: 'Strongly Typed Everything',
       description:
         'End-to-end type safety from server to client. Catch errors before they reach production.'
     },
     {
-      icon: <Lucide.Waves className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Waves className='text-sidebar-primary h-12 w-12' />,
       title: 'Full Streaming Support',
       description:
         'Stream data from server to client progressively. Perfect for AI applications and real-time updates.'
     },
     {
-      icon: <Lucide.Sparkles className='h-12 w-12 text-cyan-400' />,
+      icon: <Lucide.Sparkles className='text-sidebar-primary h-12 w-12' />,
       title: 'Next Generation Ready',
       description:
         'Built from the ground up for modern web applications. Deploy anywhere JavaScript runs.'
@@ -44,9 +44,9 @@ function App() {
   ]
 
   return (
-    <div className='min-h-screen bg-linear-to-b from-slate-900 via-slate-800 to-slate-900'>
+    <div className='bg-background-page min-h-screen'>
       <section className='relative overflow-hidden px-6 py-20 text-center'>
-        <div className='absolute inset-0 bg-linear-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10'></div>
+        <div className='from-background-primary-faded/10 via-background-primary/10 to-background-positive-faded/10 absolute inset-0 bg-linear-to-r'></div>
         <div className='relative mx-auto max-w-5xl'>
           <div className='mb-6 flex items-center justify-center gap-6'>
             <img
@@ -54,17 +54,17 @@ function App() {
               alt='TanStack Logo'
               className='h-24 w-24 md:h-32 md:w-32'
             />
-            <h1 className='text-6xl font-black tracking-[-0.08em] text-white md:text-7xl'>
-              <span className='text-gray-300'>TANSTACK</span>{' '}
-              <span className='bg-linear-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent'>
+            <h1 className='text-sidebar-foreground text-6xl font-black tracking-[-0.08em] md:text-7xl'>
+              <span className='text-on-background-neutral'>TANSTACK</span>{' '}
+              <span className='from-background-primary to-background-positive bg-linear-to-r bg-clip-text text-transparent'>
                 START
               </span>
             </h1>
           </div>
-          <p className='mb-4 text-2xl font-light text-gray-300 md:text-3xl'>
+          <p className='text-on-background-neutral mb-4 text-2xl font-light md:text-3xl'>
             The framework for next generation AI applications
           </p>
-          <p className='mx-auto mb-8 max-w-3xl text-lg text-gray-400'>
+          <p className='text-on-background-neutral mx-auto mb-8 max-w-3xl text-lg'>
             Full-stack framework powered by TanStack Router for React and Solid. Build modern
             applications with server functions, streaming, and type safety.
           </p>
@@ -73,13 +73,13 @@ function App() {
               href='https://tanstack.com/start'
               target='_blank'
               rel='noopener noreferrer'
-              className='rounded-lg bg-cyan-500 px-8 py-3 font-semibold text-white shadow-lg shadow-cyan-500/50 transition-colors hover:bg-cyan-600'
+              className='bg-background-primary text-on-brand shadow-background-primary/30 hover:bg-background-primary/80 rounded-lg px-8 py-3 font-semibold shadow-lg transition-colors'
             >
               Documentation
             </a>
-            <p className='mt-2 text-sm text-gray-400'>
+            <p className='text-on-background-neutral mt-2 text-sm'>
               Begin your TanStack Start journey by editing{' '}
-              <code className='rounded bg-slate-700 px-2 py-1 text-cyan-400'>
+              <code className='bg-sidebar-accent text-background-primary rounded px-2 py-1'>
                 /src/routes/index.tsx
               </code>
             </p>
@@ -92,11 +92,13 @@ function App() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className='rounded-xl border border-slate-700 bg-slate-800/50 p-6 backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10'
+              className='border-sidebar-border bg-sidebar hover:border-background-primary hover:shadow-background-primary/10 rounded-xl border p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-lg'
             >
               <div className='mb-4'>{feature.icon}</div>
-              <h3 className='mb-3 text-xl font-semibold text-white'>{feature.title}</h3>
-              <p className='leading-relaxed text-gray-400'>{feature.description}</p>
+              <h3 className='text-sidebar-foreground mb-3 text-xl font-semibold'>
+                {feature.title}
+              </h3>
+              <p className='text-on-background-neutral leading-relaxed'>{feature.description}</p>
             </div>
           ))}
         </div>

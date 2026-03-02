@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { Activity, useState } from 'react'
 import { z } from 'zod'
+import { publicEnv } from '#/config'
 import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
 
@@ -9,7 +10,12 @@ interface SearchParams {
 }
 
 export const Route = createFileRoute('/(auth)/signup')({
-  component: RouteComponent
+  component: RouteComponent,
+  beforeLoad: () => {
+    if (!publicEnv.PUBLIC_ENABLE_SIGNUP) {
+      throw notFound()
+    }
+  }
 })
 
 const signupSchema = z
@@ -68,7 +74,7 @@ function RouteComponent() {
   if (isPending) {
     return (
       <div className='flex items-center justify-center py-10'>
-        <div className='h-5 w-5 animate-spin rounded-full border-2 border-neutral-200 border-t-neutral-900 dark:border-neutral-800 dark:border-t-neutral-100' />
+        <div className='border-border-neutral-faded border-t-foreground-neutral h-5 w-5 animate-spin rounded-full border-2' />
       </div>
     )
   }
@@ -77,19 +83,19 @@ function RouteComponent() {
     <div className='flex justify-center px-4 py-10'>
       <div className='w-full max-w-md p-6'>
         <h1 className='text-lg leading-none font-semibold tracking-tight'>Create an account</h1>
-        <p className='mt-2 mb-6 text-sm text-neutral-500 dark:text-neutral-400'>
+        <p className='text-on-background-neutral mt-2 mb-6 text-sm'>
           Enter your details below to create your account
         </p>
 
         <Activity mode={error ? 'visible' : 'hidden'}>
-          <div className='mb-4 border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20'>
-            <p className='text-sm text-red-600 dark:text-red-400'>{error}</p>
+          <div className='border-border-critical bg-background-critical-faded mb-4 border p-3'>
+            <p className='text-foreground-critical text-sm'>{error}</p>
           </div>
         </Activity>
 
         <Activity mode={success ? 'visible' : 'hidden'}>
-          <div className='mb-4 border border-green-200 bg-green-50 p-3 dark:border-green-800 dark:bg-green-900/20'>
-            <p className='text-sm text-green-600 dark:text-green-400'>{success}</p>
+          <div className='border-border-positive bg-background-positive-faded mb-4 border p-3'>
+            <p className='text-foreground-positive text-sm'>{success}</p>
           </div>
         </Activity>
 
@@ -179,19 +185,19 @@ function RouteComponent() {
           <Link
             type='button'
             to='/signin'
-            className='text-sm text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100'
+            className='text-on-background-neutral hover:text-on-background-neutral text-sm transition-colors'
           >
             Already have an account? Sign in
           </Link>
         </div>
 
-        <p className='mt-6 text-center text-xs text-neutral-400 dark:text-neutral-500'>
+        <p className='text-on-background-neutral mt-6 text-center text-xs'>
           Built with{' '}
           <a
             href='https://better-auth.com'
             target='_blank'
             rel='noopener noreferrer'
-            className='font-medium hover:text-neutral-600 dark:hover:text-neutral-300'
+            className='hover:text-foreground-neutral font-medium'
           >
             BETTER-AUTH
           </a>

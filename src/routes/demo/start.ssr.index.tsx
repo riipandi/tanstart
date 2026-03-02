@@ -6,14 +6,8 @@ export const Route = createFileRoute('/demo/start/ssr/')({
 
 function RouteComponent() {
   return (
-    <div
-      className='flex min-h-screen items-center justify-center bg-linear-to-br from-zinc-900 to-black p-4 text-white'
-      style={{
-        backgroundImage:
-          'radial-gradient(50% 50% at 20% 60%, #1a1a1a 0%, #0a0a0a 50%, #000000 100%)'
-      }}
-    >
-      <div className='w-full max-w-2xl rounded-xl border-8 border-black/10 bg-black/50 p-8 shadow-xl backdrop-blur-md'>
+    <div className='bg-background-page flex min-h-screen items-center justify-center p-4'>
+      <div className='border-sidebar-border/10 bg-sidebar/50 w-full max-w-2xl rounded-xl border-8 p-8 shadow-xl backdrop-blur-md'>
         <h1 className='mb-8 bg-linear-to-r from-pink-500 via-purple-500 to-green-400 bg-clip-text text-center text-4xl font-bold text-transparent'>
           SSR Demos
         </h1>

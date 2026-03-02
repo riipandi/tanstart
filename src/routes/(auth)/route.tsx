@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { GlobalNotFound } from '#/components/boundaries'
 import { getSession } from '#/guards/session'
 
 interface BeforeLoadParams {
@@ -7,6 +8,7 @@ interface BeforeLoadParams {
 
 export const Route = createFileRoute('/(auth)')({
   component: RouteComponent,
+  notFoundComponent: GlobalNotFound,
   beforeLoad: async ({ search }: BeforeLoadParams) => {
     const session = await getSession()
     if (session) {

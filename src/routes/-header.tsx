@@ -9,31 +9,35 @@ export default function Header() {
 
   return (
     <>
-      <header className='flex items-center bg-gray-800 p-4 text-white shadow-lg'>
+      <header className='bg-sidebar text-sidebar-foreground flex items-center p-4 shadow-lg'>
         <button
           onClick={() => setIsOpen(true)}
-          className='rounded-lg p-2 transition-colors hover:bg-gray-700'
+          className='hover:bg-sidebar-accent rounded-lg p-2 transition-colors'
           aria-label='Open menu'
         >
           <Lucide.Menu size={24} />
         </button>
         <h1 className='ml-4 text-xl font-semibold'>
           <Link to='/'>
-            <img src='/tanstack-word-logo-white.svg' alt='TanStack Logo' className='h-10' />
+            <img
+              src='/tanstack-word-logo-white.svg'
+              className='h-10 invert-75 dark:invert-0'
+              alt='TanStack Logo'
+            />
           </Link>
         </h1>
       </header>
 
       <aside
-        className={`fixed top-0 left-0 z-50 flex h-full w-80 transform flex-col bg-gray-900 text-white shadow-2xl transition-transform duration-300 ease-in-out ${
+        className={`bg-sidebar text-sidebar-foreground fixed top-0 left-0 z-50 flex h-full w-80 transform flex-col shadow-2xl transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className='flex items-center justify-between border-b border-gray-700 p-4'>
+        <div className='border-sidebar-border flex items-center justify-between border-b p-4'>
           <h2 className='text-xl font-bold'>Navigation</h2>
           <button
             onClick={() => setIsOpen(false)}
-            className='rounded-lg p-2 transition-colors hover:bg-gray-800'
+            className='hover:bg-sidebar-accent rounded-lg p-2 transition-colors'
             aria-label='Close menu'
           >
             <Lucide.X size={24} />
@@ -44,10 +48,10 @@ export default function Header() {
           <Link
             to='/'
             onClick={() => setIsOpen(false)}
-            className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
+            className='hover:bg-sidebar-accent mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors'
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
+                'flex items-center gap-3 p-3 rounded-lg bg-sidebar-primary text-bg-on-background-primary hover:bg-sidebar-primary transition-colors mb-2'
             }}
           >
             <Lucide.Home size={20} />
@@ -59,10 +63,10 @@ export default function Header() {
           <Link
             to='/demo/start/server-funcs'
             onClick={() => setIsOpen(false)}
-            className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
+            className='hover:bg-sidebar-accent mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors'
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
+                'flex items-center gap-3 p-3 rounded-lg bg-sidebar-primary hover:bg-sidebar-primary transition-colors mb-2'
             }}
           >
             <Lucide.SquareFunction size={20} />
@@ -73,17 +77,17 @@ export default function Header() {
             <Link
               to='/demo/start/ssr'
               onClick={() => setIsOpen(false)}
-              className='mb-2 flex flex-1 items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
+              className='hover:bg-sidebar-accent mb-2 flex flex-1 items-center gap-3 rounded-lg p-3 transition-colors'
               activeProps={{
                 className:
-                  'flex-1 flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
+                  'flex-1 flex items-center gap-3 p-3 rounded-lg bg-sidebar-primary hover:bg-sidebar-primary transition-colors mb-2'
               }}
             >
               <Lucide.StickyNote size={20} />
               <span className='font-medium'>Start - SSR Demos</span>
             </Link>
             <button
-              className='rounded-lg p-2 transition-colors hover:bg-gray-800'
+              className='hover:bg-sidebar-accent rounded-lg p-2 transition-colors'
               onClick={() =>
                 setGroupedExpanded((prev) => ({
                   ...prev,
@@ -103,10 +107,10 @@ export default function Header() {
               <Link
                 to='/demo/start/ssr/spa-mode'
                 onClick={() => setIsOpen(false)}
-                className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
+                className='hover:bg-sidebar-accent mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors'
                 activeProps={{
                   className:
-                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
+                    'flex items-center gap-3 p-3 rounded-lg bg-sidebar-primary hover:bg-sidebar-primary transition-colors mb-2'
                 }}
               >
                 <Lucide.StickyNote size={20} />
@@ -116,10 +120,10 @@ export default function Header() {
               <Link
                 to='/demo/start/ssr/full-ssr'
                 onClick={() => setIsOpen(false)}
-                className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
+                className='hover:bg-sidebar-accent mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors'
                 activeProps={{
                   className:
-                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
+                    'flex items-center gap-3 p-3 rounded-lg bg-sidebar-primary hover:bg-sidebar-primary transition-colors mb-2'
                 }}
               >
                 <Lucide.StickyNote size={20} />
@@ -129,10 +133,10 @@ export default function Header() {
               <Link
                 to='/demo/start/ssr/data-only'
                 onClick={() => setIsOpen(false)}
-                className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
+                className='hover:bg-sidebar-accent mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors'
                 activeProps={{
                   className:
-                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
+                    'flex items-center gap-3 p-3 rounded-lg bg-sidebar-primary hover:bg-sidebar-primary transition-colors mb-2'
                 }}
               >
                 <Lucide.StickyNote size={20} />
@@ -144,10 +148,10 @@ export default function Header() {
           <Link
             to='/demo/table'
             onClick={() => setIsOpen(false)}
-            className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
+            className='hover:bg-sidebar-accent mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors'
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
+                'flex items-center gap-3 p-3 rounded-lg bg-sidebar-primary hover:bg-sidebar-primary transition-colors mb-2'
             }}
           >
             <Lucide.Table size={20} />
@@ -157,10 +161,10 @@ export default function Header() {
           <Link
             to='/demo/tanstack-query'
             onClick={() => setIsOpen(false)}
-            className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
+            className='hover:bg-sidebar-accent mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors'
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
+                'flex items-center gap-3 p-3 rounded-lg bg-sidebar-primary hover:bg-sidebar-primary transition-colors mb-2'
             }}
           >
             <Lucide.Network size={20} />
@@ -170,10 +174,10 @@ export default function Header() {
           <Link
             to='/demo/trpc-todo'
             onClick={() => setIsOpen(false)}
-            className='mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800'
+            className='hover:bg-sidebar-accent mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors'
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2'
+                'flex items-center gap-3 p-3 rounded-lg bg-sidebar-primary hover:bg-sidebar-primary transition-colors mb-2'
             }}
           >
             <Lucide.Network size={20} />
@@ -183,7 +187,7 @@ export default function Header() {
           {/* Demo Links End */}
         </nav>
 
-        <div className='flex flex-col gap-2 border-t border-gray-700 bg-gray-800 p-4'>
+        <div className='border-sidebar-border bg-sidebar flex flex-col gap-2 border-t p-4'>
           <UserMenu />
         </div>
       </aside>
