@@ -1,8 +1,9 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { Session } from '#/guards/auth-client'
 import { useTwoFactorSetup, useQRCode } from '#/hooks/use-two-factor'
 import { TwoFactorBackupCodes } from './two-factor-backup-codes'
+import { TwoFactorBackupPassword } from './two-factor-backup-password'
 import { TwoFactorDisable } from './two-factor-disable'
 import { TwoFactorPasswordInput } from './two-factor-password-input'
 import { TwoFactorStatus } from './two-factor-status'
@@ -12,7 +13,7 @@ import { TwoFactorStepSuccess } from './two-factor-step-success'
 import { TwoFactorStepTOTP } from './two-factor-step-totp'
 import { TwoFactorStepper } from './two-factor-stepper'
 
-type WizardStep = 'idle' | 'method' | 'password' | 'setup' | 'success'
+type WizardStep = 'idle' | 'method' | 'password' | 'verify-for-backup' | 'setup' | 'success'
 type SetupMethod = 'totp' | 'otp' | null
 
 const STEPS = ['Method', 'Setup', 'Complete']
@@ -24,6 +25,7 @@ export function TwoFactorSettings(user: Session['user']) {
   const [step, setStep] = useState<WizardStep>('idle')
   const [method, setMethod] = useState<SetupMethod>(null)
   const [pendingPassword, setPendingPassword] = useState('')
+  const [backupPassword, setBackupPassword] = useState('')
   const [totpUri, setTotpUri] = useState<string | null>(null)
   const [backupCodes, setBackupCodes] = useState<string[] | null>(null)
   const [generatedBackupCodes, setGeneratedBackupCodes] = useState<string[] | null>(null)
@@ -47,6 +49,7 @@ export function TwoFactorSettings(user: Session['user']) {
       case 'method':
         return 1
       case 'password':
+      case 'verify-for-backup':
       case 'setup':
         return 2
       case 'success':
@@ -60,6 +63,7 @@ export function TwoFactorSettings(user: Session['user']) {
     setStep('idle')
     setMethod(null)
     setPendingPassword('')
+    setBackupPassword('')
     setTotpUri(null)
     setBackupCodes(null)
     clearQRCode()
@@ -67,11 +71,22 @@ export function TwoFactorSettings(user: Session['user']) {
     clearError()
   }, [clearQRCode, clearStoredBackupCodes, clearError])
 
-  const handleGenerateBackupCodes = async () => {
-    const result = await generateBackupCodesAction(pendingPassword)
+  const handleGenerateBackupCodesClick = () => {
+    setStep('verify-for-backup')
+  }
+
+  const handleBackupPasswordSubmit = async () => {
+    if (!backupPassword) return
+
+    const result = await generateBackupCodesAction(backupPassword)
+    if (result.error) return
+
     if (result.data?.backupCodes) {
       setGeneratedBackupCodes(result.data.backupCodes)
     }
+
+    setBackupPassword('')
+    setStep('idle')
   }
 
   const handleEnableStart = () => {
@@ -144,12 +159,6 @@ export function TwoFactorSettings(user: Session['user']) {
     return await sendOtp()
   }
 
-  useEffect(() => {
-    if (step === 'idle') {
-      setGeneratedBackupCodes(null)
-    }
-  }, [step])
-
   return (
     <div className='border-border-neutral rounded-lg border p-6'>
       <div className='flex items-center justify-between'>
@@ -181,7 +190,7 @@ export function TwoFactorSettings(user: Session['user']) {
               <>
                 <button
                   type='button'
-                  onClick={handleGenerateBackupCodes}
+                  onClick={handleGenerateBackupCodesClick}
                   disabled={isVerifying}
                   className='border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded rounded-md border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50'
                 >
@@ -221,6 +230,16 @@ export function TwoFactorSettings(user: Session['user']) {
           <TwoFactorDisable
             isVerifying={isVerifying}
             onDisable={handleDisable}
+            onCancel={resetWizard}
+          />
+        )}
+
+        {step === 'verify-for-backup' && (
+          <TwoFactorBackupPassword
+            password={backupPassword}
+            onPasswordChange={setBackupPassword}
+            onSubmit={handleBackupPasswordSubmit}
+            isVerifying={isVerifying}
             onCancel={resetWizard}
           />
         )}
