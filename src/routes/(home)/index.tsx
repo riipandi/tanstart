@@ -1,9 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
 
-export const Route = createFileRoute('/(home)/')({ component: App })
+export const Route = createFileRoute('/(home)/')({
+  component: RouteComponent
+})
 
-function App() {
+function RouteComponent() {
   const features = [
     {
       icon: <Lucide.Zap className='text-sidebar-primary h-10 w-10' />,
