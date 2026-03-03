@@ -251,89 +251,91 @@ export function UserProfile(user: Session['user']) {
             )}
           </div>
 
-          <div className='flex-1 space-y-1'>
-            <Activity mode={isEditingName ? 'visible' : 'hidden'}>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  nameForm.handleSubmit()
-                }}
-                className='space-y-3'
-              >
-                <div className='grid grid-cols-2 gap-4'>
-                  <nameForm.AppField
-                    name='firstName'
-                    validators={{
-                      onBlur: ({ value }) => {
-                        if (!value || value.trim().length === 0) {
-                          return 'First name is required'
+          <div className='flex-1'>
+            <div className='w-full space-y-1'>
+              <Activity mode={isEditingName ? 'visible' : 'hidden'}>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    nameForm.handleSubmit()
+                  }}
+                  className='space-y-3'
+                >
+                  <div className='grid grid-cols-2 gap-4'>
+                    <nameForm.AppField
+                      name='firstName'
+                      validators={{
+                        onBlur: ({ value }) => {
+                          if (!value || value.trim().length === 0) {
+                            return 'First name is required'
+                          }
+                          return undefined
                         }
-                        return undefined
-                      }
-                    }}
-                  >
-                    {(field) => <field.TextField label='First Name' placeholder='First Name' />}
-                  </nameForm.AppField>
+                      }}
+                    >
+                      {(field) => <field.TextField label='First Name' placeholder='First Name' />}
+                    </nameForm.AppField>
 
-                  <nameForm.AppField
-                    name='lastName'
-                    validators={{
-                      onBlur: ({ value }) => {
-                        if (!value || value.trim().length === 0) {
-                          return 'Last name is required'
+                    <nameForm.AppField
+                      name='lastName'
+                      validators={{
+                        onBlur: ({ value }) => {
+                          if (!value || value.trim().length === 0) {
+                            return 'Last name is required'
+                          }
+                          return undefined
                         }
-                        return undefined
-                      }
-                    }}
-                  >
-                    {(field) => <field.TextField label='Last Name' placeholder='Last Name' />}
-                  </nameForm.AppField>
-                </div>
-                <div className='flex items-center gap-2'>
-                  <nameForm.AppForm>
-                    <nameForm.SubmitButton label='Save' size='xs' />
-                  </nameForm.AppForm>
-                  <Button size='xs' variant='outline' onClick={handleCancelEdit}>
-                    Cancel
-                  </Button>
-                </div>
-                {nameError && <p className='text-foreground-critical text-xs'>{nameError}</p>}
-              </form>
-            </Activity>
+                      }}
+                    >
+                      {(field) => <field.TextField label='Last Name' placeholder='Last Name' />}
+                    </nameForm.AppField>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <nameForm.AppForm>
+                      <nameForm.SubmitButton label='Save' size='sm' />
+                    </nameForm.AppForm>
+                    <Button size='sm' variant='outline' onClick={handleCancelEdit}>
+                      Cancel
+                    </Button>
+                  </div>
+                  {nameError && <p className='text-foreground-critical text-xs'>{nameError}</p>}
+                </form>
+              </Activity>
 
-            <Activity mode={!isEditingName ? 'visible' : 'hidden'}>
-              <div>
-                <div className='group flex items-center gap-2'>
-                  <span className='text-on-background-neutral hover:text-foreground-neutral text-left text-lg font-semibold transition-colors'>
-                    {user.name}
-                  </span>
-                  <Button
-                    type='button'
-                    variant='ghost'
-                    mode='icon'
-                    size='xs'
-                    onClick={handleStartEdit}
-                    className='opacity-0 group-hover:opacity-100'
-                    title='Edit name'
-                  >
-                    <Lucide.Pencil size={14} />
-                  </Button>
+              <Activity mode={!isEditingName ? 'visible' : 'hidden'}>
+                <div>
+                  <div className='group flex items-center gap-2'>
+                    <span className='text-on-background-neutral hover:text-foreground-neutral text-left text-lg font-semibold transition-colors'>
+                      {user.name}
+                    </span>
+                    <Button
+                      type='button'
+                      variant='ghost'
+                      mode='icon'
+                      size='xs'
+                      onClick={handleStartEdit}
+                      className='opacity-0 group-hover:opacity-100'
+                      title='Edit name'
+                    >
+                      <Lucide.Pencil size={14} />
+                    </Button>
+                  </div>
+                  <p className='text-sm font-medium'>{user.email}</p>
                 </div>
-                <p className='text-sm font-medium'>{user.email}</p>
-              </div>
-            </Activity>
+              </Activity>
 
-            <span className='text-xs'>Member since {user.createdAt.toLocaleDateString()}</span>
-
-            {error && (
-              <Alert variant='danger'>
-                <Lucide.AlertCircle className='size-4' />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+              <span className='text-xs'>Member since {user.createdAt.toLocaleDateString()}</span>
+            </div>
           </div>
         </div>
+
+        {error && (
+          <Alert variant='danger' className='mt-4'>
+            <Lucide.AlertCircle className='size-4' />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
       </CardBody>
     </Card>
   )

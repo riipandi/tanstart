@@ -1,10 +1,8 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { z } from 'zod'
+import { createFileRoute } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
+import { z } from 'zod'
 import { Alert, AlertDescription } from '#/components/alert'
-import { Button } from '#/components/button'
-import { Separator } from '#/components/separator'
-import { authClient } from '#/guards/auth-client'
+import { Copy } from '#/components/copy'
 import { ensureSession } from '#/guards/session'
 import { ChangePassword } from './-account/change-password'
 import { DeleteAccount } from './-account/delete-account'
@@ -25,20 +23,11 @@ export const Route = createFileRoute('/(app)/account')({
 })
 
 function RouteComponent() {
-  const navigate = Route.useNavigate()
   const { user } = Route.useRouteContext()
+  const search = Route.useSearch()
 
   // Check if user cancelled the deletion
-  const search = Route.useSearch()
   const deleteCancelled = search.deleteCancelled === true || search.deleteCancelled === 'true'
-
-  const handleSignOut = async () => {
-    const result = await authClient.signOut()
-    if (result.error) {
-      console.error(result.error)
-    }
-    return navigate({ to: '/signin', search: { logout: true } })
-  }
 
   return (
     <div className='flex justify-center px-4 py-10'>
@@ -55,7 +44,10 @@ function RouteComponent() {
 
         <div>
           <h1 className='text-xl font-semibold'>Account Settings</h1>
-          <p className='text-on-background-neutral mt-1 text-sm'>Manage your account security</p>
+          <p className='text-on-background-neutral mt-1 space-x-1 text-sm'>
+            <span>User ID:</span>
+            <Copy content={user.id}>{user.id}</Copy>
+          </p>
         </div>
 
         <UserProfile {...user} />
@@ -64,19 +56,6 @@ function RouteComponent() {
         <ChangePassword />
         <SessionsList />
         <DeleteAccount />
-
-        <Separator />
-
-        <div className='flex justify-between pt-4'>
-          <Link to='/dashboard'>
-            <Button variant='ghost' mode='link' size='sm'>
-              Back to Dashboard
-            </Button>
-          </Link>
-          <Button variant='danger' mode='link' size='sm' onClick={handleSignOut}>
-            Sign Out
-          </Button>
-        </div>
       </div>
     </div>
   )

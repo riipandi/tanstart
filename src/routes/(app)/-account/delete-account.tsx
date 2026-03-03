@@ -1,9 +1,16 @@
 import { useAsyncRateLimiter } from '@tanstack/react-pacer'
 import * as Lucide from 'lucide-react'
-import { Activity, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Alert, AlertDescription } from '#/components/alert'
 import { Button } from '#/components/button'
-import { Card, CardBody, CardHeader, CardTitle, CardDescription } from '#/components/card'
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardHeaderAction
+} from '#/components/card'
 import {
   Dialog,
   DialogTrigger,
@@ -29,14 +36,6 @@ export function DeleteAccount() {
 
   // Cooldown period: 10s for DEV, 60s for other environments
   const cooldownPeriod = import.meta.env.DEV ? 10_000 : 60_000
-
-  const handleOpenDialog = () => {
-    setShowDialog(true)
-    setError(null)
-    setPassword('')
-    setEmailSent(false)
-    setInitialSubmitTime(null)
-  }
 
   const handleCloseDialog = () => {
     if (!isSubmitting) {
@@ -148,23 +147,11 @@ export function DeleteAccount() {
   const isCooldown = remainingSeconds > 0
 
   return (
-    <Card>
+    <Card className='bg-background-critical-faded'>
       <CardHeader>
         <CardTitle className='text-foreground-critical'>Delete Account</CardTitle>
-        <CardDescription>Permanently delete your account and all associated data</CardDescription>
-      </CardHeader>
-      <CardBody>
-        <Alert variant='warning'>
-          <Lucide.AlertTriangle className='size-5' />
-          <AlertDescription className='px-2'>
-            <strong>Warning: This action cannot be undone</strong>
-            <br />
-            Deleting your account will permanently remove all your data, including your profile,
-            linked social accounts, active sessions, and two-factor authentication settings.
-          </AlertDescription>
-        </Alert>
-
-        <div className='mt-4'>
+        <CardDescription>Permanently delete your account</CardDescription>
+        <CardHeaderAction>
           <Dialog open={showDialog} onOpenChange={setShowDialog}>
             <DialogTrigger render={<Button type='button' variant='danger' />}>
               Delete Account
@@ -305,7 +292,18 @@ export function DeleteAccount() {
               )}
             </DialogPopup>
           </Dialog>
-        </div>
+        </CardHeaderAction>
+      </CardHeader>
+      <CardBody>
+        <Alert variant='danger'>
+          <Lucide.AlertTriangle className='size-6' />
+          <AlertDescription className='my-1 px-2'>
+            <strong>Warning: This action cannot be undone</strong>
+            <br />
+            Deleting your account will permanently remove all your data, including your profile,
+            linked social accounts, active sessions, and two-factor authentication settings.
+          </AlertDescription>
+        </Alert>
       </CardBody>
     </Card>
   )
