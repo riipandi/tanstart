@@ -24,7 +24,7 @@ export function TwoFactorBackupCodes({ codes, onHide }: TwoFactorBackupCodesProp
     <div className='bg-background-warning-faded mt-6 rounded-md p-4'>
       <div className='mb-2 flex items-center justify-between'>
         <div className='flex items-center gap-2'>
-          <Lucide.Shield className='text-foreground-warning h-4 w-4' />
+          <Lucide.Shield className='text-foreground-warning size-4' />
           <h3 className='text-foreground-warning text-sm font-semibold'>Backup Codes</h3>
         </div>
         <div className='flex items-center gap-2'>

@@ -1,6 +1,18 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link as RouterLink } from '@tanstack/react-router'
 import { Activity, useState } from 'react'
 import { z } from 'zod'
+import { Alert } from '#/components/alert'
+import {
+  Card,
+  CardBody,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '#/components/card'
+import { Form } from '#/components/form'
+import { Link } from '#/components/link'
+import { Separator } from '#/components/separator'
 import { publicEnv } from '#/config'
 import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
@@ -72,97 +84,79 @@ function RouteComponent() {
   }
 
   return (
-    <div className='flex justify-center px-4 py-10'>
-      <div className='w-full max-w-md p-6'>
-        <h1 className='text-lg leading-none font-semibold tracking-tight'>Sign in</h1>
-        <p className='text-on-background-neutral mt-2 mb-6 text-sm'>
-          Enter your email below to login to your account
-        </p>
+    <div className='w-full max-w-md space-y-8 p-8'>
+      <Card className='w-full min-w-sm'>
+        <CardHeader>
+          <CardTitle>Sign in to your account</CardTitle>
+          <CardDescription className='text-sm'>
+            Enter your credentials to access your account
+          </CardDescription>
+        </CardHeader>
+        <CardBody>
+          <Activity mode={error ? 'visible' : 'hidden'}>
+            <div className='mb-6'>{error ? <Alert variant='danger'>{error}</Alert> : null}</div>
+          </Activity>
 
-        <Activity mode={error ? 'visible' : 'hidden'}>
-          <div className='border-border-critical bg-background-critical-faded mb-6 border-l-4 px-3 py-2.5'>
-            <p className='text-foreground-critical text-sm'>{error}</p>
-          </div>
-        </Activity>
+          <SignInWithSocialProvider
+            authClient={authClient}
+            callbackURL={search.redirect || '/dashboard'}
+          />
 
-        <SignInWithSocialProvider
-          authClient={authClient}
-          callbackURL={search.redirect || '/dashboard'}
-        />
+          <Separator className='my-8' contentSide='center'>
+            Or, continue with
+          </Separator>
 
-        <div className='relative my-6'>
-          <div className='absolute inset-0 flex items-center'>
-            <div className='border-border-neutral-faded w-full border-t' />
-          </div>
-          <div className='relative flex justify-center text-xs uppercase'>
-            <span className='bg-background-page text-foreground-neutral px-2 font-medium'>
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className='grid gap-4'>
-          <form.AppField
-            name='email'
-            validators={{
-              onBlur: ({ value }) => {
-                if (!value || value.trim().length === 0) {
-                  return 'Email is required'
+          <Form onSubmit={handleSubmit} className='-mt-2 grid gap-4'>
+            <form.AppField
+              name='email'
+              validators={{
+                onBlur: ({ value }) => {
+                  if (!value || value.trim().length === 0) {
+                    return 'Email is required'
+                  }
+                  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+                    return 'Invalid email address'
+                  }
+                  return undefined
                 }
-                if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-                  return 'Invalid email address'
-                }
-                return undefined
-              }
-            }}
-          >
-            {(field) => <field.TextField label='Email' />}
-          </form.AppField>
-
-          <form.AppField
-            name='password'
-            validators={{
-              onBlur: ({ value }) => {
-                if (!value || value.trim().length === 0) {
-                  return 'Password is required'
-                }
-                return undefined
-              }
-            }}
-          >
-            {(field) => <field.PasswordField label='Password' />}
-          </form.AppField>
-
-          <div className='flex items-center justify-between'>
-            <form.AppField name='rememberMe'>
-              {(field) => <field.CheckboxField label='Remember me' />}
+              }}
+            >
+              {(field) => <field.TextField label='Email' />}
             </form.AppField>
 
-            <Link
-              to='/forgot-password'
-              className='text-foreground-primary text-sm font-medium transition-colors hover:underline'
+            <form.AppField
+              name='password'
+              validators={{
+                onBlur: ({ value }) => {
+                  if (!value || value.trim().length === 0) {
+                    return 'Password is required'
+                  }
+                  return undefined
+                }
+              }}
             >
-              Forgot password?
-            </Link>
-          </div>
+              {(field) => <field.PasswordField label='Password' />}
+            </form.AppField>
 
-          <form.AppForm>
-            <form.SubmitButton label='Sign In' />
-          </form.AppForm>
-        </form>
+            <div className='flex items-center justify-between'>
+              <form.AppField name='rememberMe'>
+                {(field) => <field.CheckboxField label='Remember me' />}
+              </form.AppField>
 
-        <Activity mode={loaderData.disableSignUp ? 'hidden' : 'visible'}>
-          <div className='mt-4 text-center'>
-            <Link
-              type='button'
-              to='/signup'
-              className='text-foreground-primary text-sm font-medium transition-colors hover:underline'
-            >
-              Don't have an account? Sign up
-            </Link>
-          </div>
-        </Activity>
-      </div>
+              <Link render={<RouterLink to='/forgot-password' />}>Forgot password?</Link>
+            </div>
+
+            <form.AppForm>
+              <form.SubmitButton label='Sign In' />
+            </form.AppForm>
+          </Form>
+        </CardBody>
+        <CardFooter className='debug w-full items-center justify-center text-center'>
+          <Activity mode={loaderData.disableSignUp ? 'hidden' : 'visible'}>
+            <Link render={<RouterLink to='/signup' />}>Don't have an account? Sign up</Link>
+          </Activity>
+        </CardFooter>
+      </Card>
     </div>
   )
 }

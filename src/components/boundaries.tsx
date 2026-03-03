@@ -18,7 +18,7 @@ export function GlobalNotFound() {
           to='/'
           className='bg-background-primary text-on-brand hover:bg-background-primary/80 focus:ring-border-primary inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-colors focus:ring-2 focus:outline-none'
         >
-          <Lucide.Home className='h-4 w-4' />
+          <Lucide.Home className='size-4' />
           Back to Home
         </Link>
       </div>

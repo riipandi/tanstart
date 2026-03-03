@@ -1,4 +1,13 @@
 import { useStore } from '@tanstack/react-form'
+import { Button, type ButtonProps } from '#/components/button'
+import { Checkbox } from '#/components/checkbox'
+import { Field, FieldError, FieldLabel } from '#/components/field'
+import { Input, type InputProps } from '#/components/input'
+import { InputPassword, type InputPasswordProps } from '#/components/input-password'
+import { Label } from '#/components/label'
+import { Select as SelectBase, SelectItem, SelectList } from '#/components/select'
+import { SelectPopup, SelectTrigger, SelectValue } from '#/components/select'
+import { Textarea, type TextareaProps } from '#/components/text-area'
 import { useFieldContext, useFormContext } from '#/hooks/use-form'
 
 export function CheckboxField({ label }: { label: string }) {
@@ -6,149 +15,133 @@ export function CheckboxField({ label }: { label: string }) {
   const errors = useStore(field.store, (state) => state.meta.errors)
 
   return (
-    <div className='flex items-center gap-2'>
-      <input
-        type='checkbox'
-        id={field.name}
-        checked={field.state.value}
-        onChange={(e) => field.handleChange(e.target.checked)}
-        onBlur={field.handleBlur}
-        className='border-border-neutral text-foreground-primary focus:ring-border-primary h-4 w-4 rounded border focus:ring-2 focus:ring-offset-2'
-      />
-      <label htmlFor={field.name} className='text-foreground-neutral text-sm'>
-        {label}
-      </label>
-      {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
-    </div>
+    <Field>
+      <div className='flex items-center gap-2'>
+        <Checkbox
+          id={field.name}
+          checked={field.state.value}
+          onCheckedChange={(checked) => field.handleChange(checked)}
+        />
+        <Label htmlFor={field.name}>{label}</Label>
+      </div>
+      <FieldError match={field.state.meta.isTouched}>
+        {errors.map((error) => (typeof error === 'string' ? error : error.message)).join(', ')}
+      </FieldError>
+    </Field>
   )
 }
 
-export function SubmitButton({ label }: { label: string }) {
+export function SubmitButton({ label, ...props }: ButtonProps & { label: string }) {
   const form = useFormContext()
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
       {(isSubmitting) => (
-        <button
-          type='submit'
-          disabled={isSubmitting}
-          className='bg-background-primary hover:bg-background-primary/80 focus:ring-border-primary rounded-md px-6 py-2 text-white transition-colors focus:ring-2 focus:outline-none disabled:opacity-50'
-        >
+        <Button type='submit' disabled={isSubmitting} progress={isSubmitting} {...props}>
           {label}
-        </button>
+        </Button>
       )}
     </form.Subscribe>
   )
 }
 
-function ErrorMessages({ errors }: { errors: Array<string | { message: string }> }) {
-  return (
-    <>
-      {errors.map((error) => (
-        <div
-          key={typeof error === 'string' ? error : error.message}
-          className='text-foreground-critical mt-1.5 text-sm font-medium'
-        >
-          {typeof error === 'string' ? error : error.message}
-        </div>
-      ))}
-    </>
-  )
-}
-
-export function TextField({ label, placeholder }: { label: string; placeholder?: string }) {
+export function TextField({ label, ...props }: InputProps & { label: string }) {
   const field = useFieldContext<string>()
   const errors = useStore(field.store, (state) => state.meta.errors)
 
   return (
-    <div>
-      <label htmlFor={label} className='text-foreground-neutral mb-1.5 block text-sm font-medium'>
-        {label}
-        <input
-          value={field.state.value}
-          placeholder={placeholder}
-          onBlur={field.handleBlur}
-          onChange={(e) => field.handleChange(e.target.value)}
-          className='border-border-neutral focus:ring-border-primary mt-1 block w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none'
-        />
-      </label>
-      {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
-    </div>
-  )
-}
-
-export function PasswordField({ label, placeholder }: { label: string; placeholder?: string }) {
-  const field = useFieldContext<string>()
-  const errors = useStore(field.store, (state) => state.meta.errors)
-
-  return (
-    <div>
-      <label htmlFor={label} className='text-foreground-neutral mb-1.5 block text-sm font-medium'>
-        {label}
-        <input
-          type='password'
-          value={field.state.value}
-          placeholder={placeholder}
-          onBlur={field.handleBlur}
-          onChange={(e) => field.handleChange(e.target.value)}
-          className='border-border-neutral focus:ring-border-primary mt-1 block w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none'
-        />
-      </label>
-      {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
-    </div>
-  )
-}
-
-export function TextArea({ label, rows = 3 }: { label: string; rows?: number }) {
-  const field = useFieldContext<string>()
-  const errors = useStore(field.store, (state) => state.meta.errors)
-
-  return (
-    <div>
-      <label htmlFor={label} className='text-foreground-neutral mb-1.5 block text-sm font-medium'>
-        {label}
-        <textarea
-          value={field.state.value}
-          onBlur={field.handleBlur}
-          rows={rows}
-          onChange={(e) => field.handleChange(e.target.value)}
-          className='border-border-neutral focus:ring-border-primary mt-1 block w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none'
-        />
-      </label>
-      {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
-    </div>
-  )
-}
-
-export function Select({
-  label,
-  values
-}: {
-  label: string
-  values: Array<{ label: string; value: string }>
-  placeholder?: string
-}) {
-  const field = useFieldContext<string>()
-  const errors = useStore(field.store, (state) => state.meta.errors)
-
-  return (
-    <div>
-      <label htmlFor={label} className='text-foreground-neutral mb-1.5 block text-sm font-medium'>
-        {label}
-      </label>
-      <select
-        name={field.name}
+    <Field>
+      <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+      <Input
+        id={field.name}
         value={field.state.value}
         onBlur={field.handleBlur}
         onChange={(e) => field.handleChange(e.target.value)}
-        className='border-border-neutral focus:ring-border-primary mt-1 block w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none'
+        {...props}
+      />
+      <FieldError match={field.state.meta.isTouched}>
+        {errors.map((error) => (typeof error === 'string' ? error : error.message)).join(', ')}
+      </FieldError>
+    </Field>
+  )
+}
+
+export function PasswordField({ label, ...props }: InputPasswordProps & { label: string }) {
+  const field = useFieldContext<string>()
+  const errors = useStore(field.store, (state) => state.meta.errors)
+
+  return (
+    <Field>
+      <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+      <InputPassword
+        id={field.name}
+        value={field.state.value}
+        onBlur={field.handleBlur}
+        onChange={(e) => field.handleChange(e.target.value)}
+        {...props}
+      />
+      <FieldError match={field.state.meta.isTouched}>
+        {errors.map((error) => (typeof error === 'string' ? error : error.message)).join(', ')}
+      </FieldError>
+    </Field>
+  )
+}
+
+export function TextArea({ label, size = 'md', ...props }: TextareaProps & { label: string }) {
+  const field = useFieldContext<string>()
+  const errors = useStore(field.store, (state) => state.meta.errors)
+
+  return (
+    <Field>
+      <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+      <Textarea
+        id={field.name}
+        size={size}
+        value={field.state.value}
+        onBlur={field.handleBlur}
+        onChange={(e) => field.handleChange(e.target.value)}
+        {...props}
+      />
+      <FieldError match={field.state.meta.isTouched}>
+        {errors.map((error) => (typeof error === 'string' ? error : error.message)).join(', ')}
+      </FieldError>
+    </Field>
+  )
+}
+
+interface FormSelectProps {
+  label: string
+  values: Array<{ label: string; value: string }>
+  placeholder?: string
+}
+
+export function Select({ label, placeholder, values }: FormSelectProps) {
+  const field = useFieldContext<string>()
+  const errors = useStore(field.store, (state) => state.meta.errors)
+
+  return (
+    <Field>
+      <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+      <SelectBase
+        name={field.name}
+        value={field.state.value}
+        onValueChange={(value) => field.handleChange(value as string)}
       >
-        {values.map((value) => (
-          <option key={value.value} value={value.value}>
-            {value.label}
-          </option>
-        ))}
-      </select>
-      {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
-    </div>
+        <SelectTrigger>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectPopup>
+          <SelectList>
+            {values.map((value) => (
+              <SelectItem key={value.value} value={value.value}>
+                {value.label}
+              </SelectItem>
+            ))}
+          </SelectList>
+        </SelectPopup>
+      </SelectBase>
+      <FieldError match={field.state.meta.isTouched}>
+        {errors.map((error) => (typeof error === 'string' ? error : error.message)).join(', ')}
+      </FieldError>
+    </Field>
   )
 }

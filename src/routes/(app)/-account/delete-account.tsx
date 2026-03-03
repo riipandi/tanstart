@@ -210,7 +210,7 @@ export function DeleteAccount() {
                 {/* Error Message */}
                 <Activity mode={error ? 'visible' : 'hidden'}>
                   <div className='border-border-critical bg-background-critical-faded mb-4 flex items-start gap-2 rounded-md border-l-4 p-3'>
-                    <Lucide.AlertCircle className='text-foreground-critical mt-0.5 h-4 w-4 shrink-0' />
+                    <Lucide.AlertCircle className='text-foreground-critical mt-0.5 size-4 shrink-0' />
                     <p className='text-foreground-critical text-sm'>{error}</p>
                   </div>
                 </Activity>
@@ -260,7 +260,7 @@ export function DeleteAccount() {
                   >
                     {isSubmitting ? (
                       <span className='flex items-center justify-center gap-2'>
-                        <Lucide.Loader2 className='h-4 w-4 animate-spin' />
+                        <Lucide.Loader2 className='size-4 animate-spin' />
                         Sending...
                       </span>
                     ) : (
@@ -325,7 +325,7 @@ export function DeleteAccount() {
                 {/* Error on resend */}
                 <Activity mode={error && emailSent ? 'visible' : 'hidden'}>
                   <div className='border-border-critical bg-background-critical-faded mb-4 flex items-start gap-2 rounded-md border-l-4 p-3'>
-                    <Lucide.AlertCircle className='text-foreground-critical mt-0.5 h-4 w-4 shrink-0' />
+                    <Lucide.AlertCircle className='text-foreground-critical mt-0.5 size-4 shrink-0' />
                     <p className='text-foreground-critical text-sm'>{error}</p>
                   </div>
                 </Activity>

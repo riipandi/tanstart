@@ -8,7 +8,6 @@ import { AppDevTools } from '#/devtools'
 import { getContext, RootProvider } from '#/provider'
 import type { TRPCRouter } from '#/trpc/router'
 import appCss from '../styles/globals.css?url'
-import Header from './-header'
 
 export interface GlobalContext {
   queryClient: QueryClient
@@ -50,7 +49,6 @@ function RootDocument({ children }: React.PropsWithChildren) {
             <HeadContent />
           </head>
           <body>
-            <Header />
             <UIProvider>{children}</UIProvider>
             <AppDevTools queryClient={queryClient} />
             <Scripts />

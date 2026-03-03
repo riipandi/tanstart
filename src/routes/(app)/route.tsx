@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { getSession } from '#/guards/session'
+import Header from '#/routes/-header'
 
 export const Route = createFileRoute('/(app)')({
   component: RouteComponent,
@@ -16,5 +17,10 @@ export const Route = createFileRoute('/(app)')({
 })
 
 function RouteComponent() {
-  return <Outlet />
+  return (
+    <>
+      <Header />
+      <Outlet />
+    </>
+  )
 }

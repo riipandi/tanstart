@@ -69,7 +69,7 @@
   --ui-shadow-overlay: 0px 5px 10px 0px rgba(0, 0, 0, 0.05), 0px 15px 25px 0px rgba(0, 0, 0, 0.07);
 
   /* Border Radius */
-  --ui-radius: 0.5rem; /* Base radius 8px */
+  --ui-radius: 0.375rem; /* Base radius 6px */
   --ui-radius-xs: max(0.375rem, calc(var(--ui-radius) - 0.25rem));
   --ui-radius-sm: calc(var(--ui-radius) + 0.05rem);
   --ui-radius-md: var(--ui-radius);

@@ -3,6 +3,7 @@ import * as Lucide from 'lucide-react'
 import { useRef, useState, Activity } from 'react'
 import { z } from 'zod'
 import { Avatar, AvatarFallback, AvatarImage } from '#/components/avatar'
+import { Button } from '#/components/button'
 import { Session } from '#/guards/auth-client'
 import { authClient } from '#/guards/auth-client'
 import { removeAvatar, uploadAvatar } from '#/guards/avatar'
@@ -281,17 +282,13 @@ export function UserProfile(user: Session['user']) {
                   {(field) => <field.TextField label='Last Name' placeholder='Last Name' />}
                 </nameForm.AppField>
               </div>
-              <div className='flex items-center gap-1'>
+              <div className='flex items-center gap-2'>
                 <nameForm.AppForm>
-                  <nameForm.SubmitButton label='Save' />
+                  <nameForm.SubmitButton label='Save' size='xs' />
                 </nameForm.AppForm>
-                <button
-                  type='button'
-                  onClick={handleCancelEdit}
-                  className='text-on-background-neutral hover:text-foreground-neutral rounded px-3 py-1 text-xs font-medium transition-colors'
-                >
+                <Button size='xs' variant='outline' onClick={handleCancelEdit}>
                   Cancel
-                </button>
+                </Button>
               </div>
               {nameError && <p className='text-foreground-critical text-xs'>{nameError}</p>}
             </form>
