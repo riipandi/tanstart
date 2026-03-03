@@ -2,8 +2,11 @@ import { useRouter } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
 import { useRef, useState, Activity } from 'react'
 import { z } from 'zod'
+import { Alert, AlertDescription } from '#/components/alert'
 import { Avatar, AvatarFallback, AvatarImage } from '#/components/avatar'
+import { Badge } from '#/components/badge'
 import { Button } from '#/components/button'
+import { Card, CardBody, CardHeader, CardTitle, CardDescription } from '#/components/card'
 import { Session } from '#/guards/auth-client'
 import { authClient } from '#/guards/auth-client'
 import { removeAvatar, uploadAvatar } from '#/guards/avatar'
@@ -166,161 +169,172 @@ export function UserProfile(user: Session['user']) {
   }
 
   return (
-    <div className='border-border-neutral rounded-lg border p-6'>
-      <div className='flex items-start justify-start gap-6'>
-        <div className='flex flex-col items-center gap-2'>
-          <button
-            type='button'
-            className='group border-border-neutral relative size-14 cursor-pointer rounded-full border bg-white p-2'
-            onClick={handleAvatarClick}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                handleAvatarClick()
-              }
-            }}
-            disabled={isUploading}
-          >
-            <Avatar
-              className={clx(
-                'absolute inset-0 flex size-full items-center justify-center rounded-full',
-                isUploading && 'opacity-30'
-              )}
-            >
-              <AvatarImage src={user.image || '/images/default-avatar.png'} alt={user.name} />
-              <AvatarFallback asInitial>{user.name}</AvatarFallback>
-            </Avatar>
-
-            <div className='absolute inset-0 flex size-full items-center justify-center rounded-full transition-opacity duration-200'>
-              {isUploading ? (
-                <div className='relative flex size-full items-center justify-center'>
-                  <svg className='absolute size-full -rotate-90' viewBox='0 0 36 36'>
-                    <path
-                      className='stroke-black/10'
-                      strokeWidth={3}
-                      fill='none'
-                      d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
-                    />
-                    <path
-                      className='stroke-background-primary transition-all duration-300 ease-out'
-                      strokeWidth={3}
-                      strokeLinecap='round'
-                      strokeDasharray={`${uploadProgress}, 100`}
-                      fill='none'
-                      d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
-                    />
-                  </svg>
-                  <span className='text-foreground-neutral text-xs font-semibold'>
-                    {uploadProgress}%
-                  </span>
-                </div>
-              ) : (
-                <div className='flex size-full items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
-                  <Lucide.Camera className='text-white' size={20} />
-                </div>
-              )}
-            </div>
-
-            <input
-              ref={fileInputRef}
-              type='file'
-              accept='image/*'
-              onChange={handleFileChange}
-              className='hidden'
-              disabled={isUploading}
-            />
-          </button>
-
-          {user.image && (
+    <Card>
+      <CardBody>
+        <div className='flex items-start justify-center gap-6 px-1'>
+          <div className='flex flex-col items-center gap-2 pt-1.5'>
             <button
               type='button'
-              onClick={handleRemoveAvatar}
-              className='text-foreground-critical cursor-pointer text-xs font-semibold transition-colors hover:underline disabled:opacity-50'
-              disabled={isRemoving}
-            >
-              {isRemoving ? 'Removing...' : 'Remove'}
-            </button>
-          )}
-        </div>
-
-        <div className='flex-1 space-y-1.5'>
-          <Activity mode={isEditingName ? 'visible' : 'hidden'}>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                nameForm.handleSubmit()
+              className='group border-border-neutral relative size-14 cursor-pointer rounded-full border bg-white p-2'
+              onClick={handleAvatarClick}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  handleAvatarClick()
+                }
               }}
-              className='space-y-2'
+              disabled={isUploading}
             >
-              <div className='grid grid-cols-2 gap-3'>
-                <nameForm.AppField
-                  name='firstName'
-                  validators={{
-                    onBlur: ({ value }) => {
-                      if (!value || value.trim().length === 0) {
-                        return 'First name is required'
-                      }
-                      return undefined
-                    }
-                  }}
-                >
-                  {(field) => <field.TextField label='First Name' placeholder='First Name' />}
-                </nameForm.AppField>
+              <Avatar
+                className={clx(
+                  'absolute inset-0 flex size-full items-center justify-center rounded-full',
+                  isUploading && 'opacity-30'
+                )}
+              >
+                <AvatarImage
+                  src={user.image || '/images/default-avatar.png'}
+                  alt={user.name || 'User avatar'}
+                />
+                <AvatarFallback asInitial>{user.name}</AvatarFallback>
+              </Avatar>
 
-                <nameForm.AppField
-                  name='lastName'
-                  validators={{
-                    onBlur: ({ value }) => {
-                      if (!value || value.trim().length === 0) {
-                        return 'Last name is required'
-                      }
-                      return undefined
-                    }
-                  }}
-                >
-                  {(field) => <field.TextField label='Last Name' placeholder='Last Name' />}
-                </nameForm.AppField>
+              <div className='absolute inset-0 flex size-full items-center justify-center rounded-full transition-opacity duration-200'>
+                {isUploading ? (
+                  <div className='relative flex size-full items-center justify-center'>
+                    <svg className='absolute size-full -rotate-90' viewBox='0 0 36 36'>
+                      <path
+                        className='stroke-black/10'
+                        strokeWidth={3}
+                        fill='none'
+                        d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
+                      />
+                      <path
+                        className='stroke-background-primary transition-all duration-300 ease-out'
+                        strokeWidth={3}
+                        strokeLinecap='round'
+                        strokeDasharray={`${uploadProgress}, 100`}
+                        fill='none'
+                        d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
+                      />
+                    </svg>
+                    <span className='text-foreground-neutral text-xs font-semibold'>
+                      {uploadProgress}%
+                    </span>
+                  </div>
+                ) : (
+                  <div className='flex size-full items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
+                    <Lucide.Camera className='text-white' size={20} />
+                  </div>
+                )}
               </div>
-              <div className='flex items-center gap-2'>
-                <nameForm.AppForm>
-                  <nameForm.SubmitButton label='Save' size='xs' />
-                </nameForm.AppForm>
-                <Button size='xs' variant='outline' onClick={handleCancelEdit}>
-                  Cancel
-                </Button>
-              </div>
-              {nameError && <p className='text-foreground-critical text-xs'>{nameError}</p>}
-            </form>
-          </Activity>
 
-          <Activity mode={!isEditingName ? 'visible' : 'hidden'}>
-            <div>
-              <div className='group flex items-center gap-2'>
-                <span className='text-on-background-neutral hover:text-foreground-neutral text-left font-medium transition-colors'>
-                  {user.name}
-                </span>
-                <button
-                  type='button'
-                  onClick={handleStartEdit}
-                  className='text-on-background-neutral hover:text-foreground-neutral mb-0.5 cursor-pointer opacity-0 transition-opacity group-hover:opacity-100'
-                  title='Edit name'
-                >
-                  <Lucide.Pencil size={14} />
-                </button>
-              </div>
-              <p className='text-sm font-medium'>{user.email}</p>
-            </div>
-          </Activity>
+              <input
+                ref={fileInputRef}
+                type='file'
+                accept='image/*'
+                onChange={handleFileChange}
+                className='hidden'
+                disabled={isUploading}
+              />
+            </button>
 
-          <div>
-            <p className='text-xs font-medium'>
-              Member since {user.createdAt.toLocaleDateString()}
-            </p>
+            {user.image && (
+              <Button
+                type='button'
+                variant='ghost'
+                size='xs'
+                onClick={handleRemoveAvatar}
+                disabled={isRemoving}
+              >
+                {isRemoving ? 'Removing...' : 'Remove'}
+              </Button>
+            )}
           </div>
-          {error && <p className='text-foreground-critical mt-1 text-xs'>{error}</p>}
+
+          <div className='flex-1 space-y-1'>
+            <Activity mode={isEditingName ? 'visible' : 'hidden'}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  nameForm.handleSubmit()
+                }}
+                className='space-y-3'
+              >
+                <div className='grid grid-cols-2 gap-4'>
+                  <nameForm.AppField
+                    name='firstName'
+                    validators={{
+                      onBlur: ({ value }) => {
+                        if (!value || value.trim().length === 0) {
+                          return 'First name is required'
+                        }
+                        return undefined
+                      }
+                    }}
+                  >
+                    {(field) => <field.TextField label='First Name' placeholder='First Name' />}
+                  </nameForm.AppField>
+
+                  <nameForm.AppField
+                    name='lastName'
+                    validators={{
+                      onBlur: ({ value }) => {
+                        if (!value || value.trim().length === 0) {
+                          return 'Last name is required'
+                        }
+                        return undefined
+                      }
+                    }}
+                  >
+                    {(field) => <field.TextField label='Last Name' placeholder='Last Name' />}
+                  </nameForm.AppField>
+                </div>
+                <div className='flex items-center gap-2'>
+                  <nameForm.AppForm>
+                    <nameForm.SubmitButton label='Save' size='xs' />
+                  </nameForm.AppForm>
+                  <Button size='xs' variant='outline' onClick={handleCancelEdit}>
+                    Cancel
+                  </Button>
+                </div>
+                {nameError && <p className='text-foreground-critical text-xs'>{nameError}</p>}
+              </form>
+            </Activity>
+
+            <Activity mode={!isEditingName ? 'visible' : 'hidden'}>
+              <div>
+                <div className='group flex items-center gap-2'>
+                  <span className='text-on-background-neutral hover:text-foreground-neutral text-left text-lg font-semibold transition-colors'>
+                    {user.name}
+                  </span>
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    mode='icon'
+                    size='xs'
+                    onClick={handleStartEdit}
+                    className='opacity-0 group-hover:opacity-100'
+                    title='Edit name'
+                  >
+                    <Lucide.Pencil size={14} />
+                  </Button>
+                </div>
+                <p className='text-sm font-medium'>{user.email}</p>
+              </div>
+            </Activity>
+
+            <span className='text-xs'>Member since {user.createdAt.toLocaleDateString()}</span>
+
+            {error && (
+              <Alert variant='danger'>
+                <Lucide.AlertCircle className='size-4' />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
+      </CardBody>
+    </Card>
   )
 }

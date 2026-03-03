@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Activity } from 'react'
 import { z } from 'zod'
+import * as Lucide from 'lucide-react'
+import { Alert, AlertDescription } from '#/components/alert'
+import { Button } from '#/components/button'
+import { Separator } from '#/components/separator'
 import { authClient } from '#/guards/auth-client'
 import { ensureSession } from '#/guards/session'
 import { ChangePassword } from './-account/change-password'
@@ -40,14 +43,15 @@ function RouteComponent() {
   return (
     <div className='flex justify-center px-4 py-10'>
       <div className='w-full max-w-2xl space-y-8 p-6'>
-        <Activity mode={deleteCancelled ? 'visible' : 'hidden'}>
-          <div className='border-border-positive bg-background-positive-faded border-l-4 px-4 py-3'>
-            <p className='text-foreground-positive text-sm'>
+        {deleteCancelled && (
+          <Alert variant='success'>
+            <Lucide.Check className='size-4' />
+            <AlertDescription>
               <strong>Account deletion cancelled.</strong> Your account remains active and no data
               has been deleted.
-            </p>
-          </div>
-        </Activity>
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div>
           <h1 className='text-xl font-semibold'>Account Settings</h1>
@@ -61,20 +65,17 @@ function RouteComponent() {
         <SessionsList />
         <DeleteAccount />
 
+        <Separator />
+
         <div className='flex justify-between pt-4'>
-          <Link
-            to='/dashboard'
-            className='text-foreground-primary text-sm font-medium transition-colors hover:underline'
-          >
-            Back to Dashboard
+          <Link to='/dashboard'>
+            <Button variant='ghost' mode='link' size='sm'>
+              Back to Dashboard
+            </Button>
           </Link>
-          <button
-            type='button'
-            onClick={handleSignOut}
-            className='text-foreground-critical text-sm font-medium transition-colors hover:underline'
-          >
+          <Button variant='danger' mode='link' size='sm' onClick={handleSignOut}>
             Sign Out
-          </button>
+          </Button>
         </div>
       </div>
     </div>

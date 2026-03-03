@@ -1,5 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState, Activity } from 'react'
+import * as Lucide from 'lucide-react'
+import { useState } from 'react'
+import { Alert, AlertDescription } from '#/components/alert'
+import { Badge } from '#/components/badge'
+import { Button } from '#/components/button'
+import { Card, CardBody, CardHeader, CardTitle, CardDescription } from '#/components/card'
+import { Skeleton } from '#/components/skeleton'
 import { authClient } from '#/guards/auth-client'
 import { clx } from '#/utils/variant'
 
@@ -135,109 +141,96 @@ export function SocialAccounts() {
   const errorMessage = queryError?.message || unlinkMutation.error?.message
 
   return (
-    <div className='border-border-neutral rounded-lg border p-6'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h2 className='text-base font-semibold'>Connected Accounts</h2>
-          <p className='text-on-background-neutral mt-1 text-sm'>
-            Manage your linked social accounts
-          </p>
-        </div>
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Connected Accounts</CardTitle>
+        <CardDescription>Manage your linked social accounts</CardDescription>
+      </CardHeader>
+      <CardBody>
+        {errorMessage && (
+          <Alert variant='danger'>
+            <Lucide.AlertCircle className='size-4' />
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
 
-      <Activity mode={errorMessage ? 'visible' : 'hidden'}>
-        <div className='border-border-critical bg-background-critical-faded mt-4 border-l-4 px-3 py-2.5'>
-          <p className='text-foreground-critical text-sm'>{errorMessage}</p>
-        </div>
-      </Activity>
+        {isLoading ? (
+          <div className='space-y-3'>
+            <Skeleton className='h-16 w-full' />
+            <Skeleton className='h-16 w-full' />
+          </div>
+        ) : (
+          <div className='space-y-3'>
+            {availableProviders.map((providerId) => {
+              const config = providerConfig[providerId]
+              if (!config) return null
 
-      {/* Loading state */}
-      <Activity mode={isLoading ? 'visible' : 'hidden'}>
-        <div className='mt-6 flex items-center justify-center py-8'>
-          <div className='border-border-neutral-faded border-t-foreground-neutral h-8 w-8 animate-spin rounded-full border-2' />
-        </div>
-      </Activity>
+              const linked = isProviderLinked(providerId)
+              const account = getLinkedAccount(providerId)
+              const isProcessing = unlinkMutation.isPending || isLinking === providerId
 
-      {/* Main content - shown when not loading */}
-      <Activity mode={!isLoading ? 'visible' : 'hidden'}>
-        <div className='mt-6 space-y-3'>
-          {availableProviders.map((providerId) => {
-            const config = providerConfig[providerId]
-            // Skip rendering if provider config is not available
-            if (!config) return null
-
-            const linked = isProviderLinked(providerId)
-            const account = getLinkedAccount(providerId)
-            const isProcessing = unlinkMutation.isPending || isLinking === providerId
-
-            return (
-              <div
-                key={providerId}
-                className={clx(
-                  'flex items-center justify-between rounded-lg border p-4',
-                  linked
-                    ? 'border-border-neutral bg-background-neutral-faded/30'
-                    : 'border-border-neutral-faded'
-                )}
-              >
-                <div className='flex items-center gap-3'>
-                  <div
-                    className={clx(
-                      'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
-                      linked ? 'bg-background-neutral' : 'bg-background-neutral-faded'
-                    )}
-                  >
-                    {config.icon}
-                  </div>
-
-                  <div>
-                    <div className='flex items-center gap-2'>
-                      <span className='font-medium'>{config.name}</span>
-                      {linked && (
-                        <span className='bg-background-success/10 text-foreground-success rounded-full px-2 py-0.5 text-xs font-medium'>
-                          Connected
-                        </span>
+              return (
+                <div
+                  key={providerId}
+                  className={clx(
+                    'flex items-center justify-between rounded-lg border p-4',
+                    linked
+                      ? 'border-border-neutral bg-background-neutral-faded/30'
+                      : 'border-border-neutral-faded'
+                  )}
+                >
+                  <div className='flex items-center gap-3'>
+                    <div
+                      className={clx(
+                        'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
+                        linked ? 'bg-background-neutral' : 'bg-background-neutral-faded'
                       )}
+                    >
+                      {config.icon}
                     </div>
-                    <p className='text-on-background-neutral text-xs'>
-                      {linked
-                        ? `Connected on ${account?.createdAt.toLocaleDateString()}`
-                        : `Connect your ${config.name} account`}
-                    </p>
+
+                    <div>
+                      <div className='flex items-center gap-2'>
+                        <span className='font-medium'>{config.name}</span>
+                        {linked && (
+                          <Badge variant='success' size='sm'>
+                            Connected
+                          </Badge>
+                        )}
+                      </div>
+                      <p className='text-on-background-neutral text-xs'>
+                        {linked
+                          ? `Connected on ${account?.createdAt.toLocaleDateString()}`
+                          : `Connect your ${config.name} account`}
+                      </p>
+                    </div>
                   </div>
+
+                  {linked && account ? (
+                    <Button
+                      size='sm'
+                      variant='danger'
+                      onClick={() => handleUnlinkAccount(account.providerId, account.accountId)}
+                      disabled={isProcessing}
+                    >
+                      {unlinkMutation.isPending ? 'Unlinking...' : 'Unlink'}
+                    </Button>
+                  ) : (
+                    <Button
+                      size='sm'
+                      variant='outline'
+                      onClick={() => handleLinkAccount(providerId)}
+                      disabled={isProcessing}
+                    >
+                      {isLinking === providerId ? 'Connecting...' : 'Connect'}
+                    </Button>
+                  )}
                 </div>
-
-                {linked && account ? (
-                  <button
-                    type='button'
-                    onClick={() => handleUnlinkAccount(account.providerId, account.accountId)}
-                    disabled={isProcessing}
-                    className='text-foreground-critical hover:bg-background-critical-faded rounded-md px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50'
-                  >
-                    {unlinkMutation.isPending ? 'Unlinking...' : 'Unlink'}
-                  </button>
-                ) : (
-                  <button
-                    type='button'
-                    onClick={() => handleLinkAccount(providerId)}
-                    disabled={isProcessing}
-                    className='bg-background-primary text-on-background-primary hover:bg-background-primary/80 rounded-md px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50'
-                  >
-                    {isLinking === providerId ? 'Connecting...' : 'Connect'}
-                  </button>
-                )}
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Empty state - shown when no accounts are linked */}
-        <Activity mode={accounts.length === 0 ? 'visible' : 'hidden'}>
-          <p className='text-on-background-neutral mt-4 py-4 text-center text-sm'>
-            No social accounts connected yet
-          </p>
-        </Activity>
-      </Activity>
-    </div>
+              )
+            })}
+          </div>
+        )}
+      </CardBody>
+    </Card>
   )
 }

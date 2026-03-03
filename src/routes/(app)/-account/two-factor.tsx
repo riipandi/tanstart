@@ -1,5 +1,21 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useState, useCallback } from 'react'
+import * as Lucide from 'lucide-react'
+import { useState, useCallback, Activity } from 'react'
+import { Alert, AlertDescription } from '#/components/alert'
+import { Badge } from '#/components/badge'
+import { Button } from '#/components/button'
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardHeaderAction,
+  CardFooter
+} from '#/components/card'
+import { Label } from '#/components/label'
+import { Switch } from '#/components/switch'
+import { Toggle } from '#/components/toggle'
 import { Session } from '#/guards/auth-client'
 import { useTwoFactorSetup, useQRCode } from '#/hooks/use-two-factor'
 import { TwoFactorBackupCodes } from './two-factor-backup-codes'
@@ -160,124 +176,145 @@ export function TwoFactorSettings(user: Session['user']) {
   }
 
   return (
-    <div className='border-border-neutral rounded-lg border p-6'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h2 className='text-base font-semibold'>Two-Factor Authentication</h2>
-          <p className='text-on-background-neutral mt-1 text-sm'>
-            {twoFactorEnabled
-              ? 'Your account is protected with 2FA'
-              : 'Add an extra layer of security to your account'}
-          </p>
-        </div>
-        <TwoFactorStatus enabled={twoFactorEnabled} />
-      </div>
-
-      {error && (
-        <div className='border-border-critical bg-background-critical-faded mt-4 border-l-4 px-3 py-2.5'>
-          <p className='text-foreground-critical text-sm'>{error}</p>
-        </div>
-      )}
-
-      {step !== 'idle' && step !== 'success' && (
-        <TwoFactorStepper currentStep={getStepNumber()} steps={STEPS} />
-      )}
-
-      <div className='mt-6'>
-        {step === 'idle' && (
-          <div className='flex gap-3'>
-            {twoFactorEnabled ? (
-              <>
-                <button
-                  type='button'
-                  onClick={handleGenerateBackupCodesClick}
-                  disabled={isVerifying}
-                  className='border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded rounded-md border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-                >
-                  {isVerifying ? 'Generating...' : 'Generate Backup Codes'}
-                </button>
-                <button
-                  type='button'
-                  onClick={handleDisableStart}
-                  className='border-border-critical text-foreground-critical hover:bg-background-critical-faded rounded-md border px-4 py-2 text-sm font-medium transition-colors'
-                >
-                  Disable 2FA
-                </button>
-              </>
-            ) : (
-              <button
-                type='button'
-                onClick={handleEnableStart}
-                className='bg-background-primary hover:bg-background-primary/80 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors'
-              >
-                Enable 2FA
-              </button>
-            )}
+    <Card>
+      <CardHeader>
+        <div className='flex items-center justify-between'>
+          <div>
+            <CardTitle>Two-Factor Authentication</CardTitle>
+            <CardDescription>
+              {twoFactorEnabled
+                ? 'Your account is protected with 2FA'
+                : 'Add an extra layer of security to your account'}
+            </CardDescription>
           </div>
+          {step === 'idle' && twoFactorEnabled ? (
+            <CardHeaderAction>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={handleGenerateBackupCodesClick}
+                disabled={isVerifying}
+              >
+                {isVerifying ? 'Generating...' : 'Generate Backup Codes'}
+              </Button>
+            </CardHeaderAction>
+          ) : null}
+        </div>
+      </CardHeader>
+      <CardBody>
+        {error && (
+          <Alert variant='danger'>
+            <Lucide.AlertCircle className='size-4' />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
-        {step === 'password' && !twoFactorEnabled && (
-          <TwoFactorPasswordInput
-            password={pendingPassword}
-            onPasswordChange={setPendingPassword}
-            onSubmit={handlePasswordSubmit}
-            isVerifying={isVerifying}
-            onCancel={resetWizard}
-          />
+        {step !== 'idle' && step !== 'success' && (
+          <TwoFactorStepper currentStep={getStepNumber()} steps={STEPS} />
         )}
 
-        {step === 'password' && twoFactorEnabled && (
-          <TwoFactorDisable
-            isVerifying={isVerifying}
-            onDisable={handleDisable}
-            onCancel={resetWizard}
-          />
+        <div className='space-y-3'>
+          <Activity mode={step === 'idle' && twoFactorEnabled ? 'visible' : 'hidden'}>
+            <div className='border-border-neutral-faded flex items-center justify-between rounded-lg border p-4 pr-5'>
+              <div className='flex items-center gap-3'>
+                <div className='bg-background-neutral-faded flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
+                  <Lucide.ShieldCheck />
+                </div>
+                <div>
+                  <div className='flex items-center gap-2'>
+                    <span className='font-medium'>Authenticator Device</span>
+                  </div>
+                  <p className='text-on-background-neutral text-xs'>Enabled since: dd/mm/yyyy</p>
+                </div>
+              </div>
+              <Label>
+                <Switch />
+                <span className='sr-only'>Toggle 2FA</span>
+              </Label>
+            </div>
+
+            <div className='border-border-neutral-faded flex items-center justify-between rounded-lg border p-4 pr-5'>
+              <div className='flex items-center gap-3'>
+                <div className='bg-background-neutral-faded flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
+                  <Lucide.ShieldCheck />
+                </div>
+                <div>
+                  <div className='flex items-center gap-2'>
+                    <span className='font-medium'>Email OTP</span>
+                  </div>
+                  <p className='text-on-background-neutral text-xs'>Enabled since: dd/mm/yyyy</p>
+                </div>
+              </div>
+              <Label>
+                <Switch />
+                <span className='sr-only'>Toggle 2FA</span>
+              </Label>
+            </div>
+          </Activity>
+
+          {step === 'password' && !twoFactorEnabled && (
+            <TwoFactorPasswordInput
+              password={pendingPassword}
+              onPasswordChange={setPendingPassword}
+              onSubmit={handlePasswordSubmit}
+              isVerifying={isVerifying}
+              onCancel={resetWizard}
+            />
+          )}
+
+          {step === 'password' && twoFactorEnabled && (
+            <TwoFactorDisable
+              isVerifying={isVerifying}
+              onDisable={handleDisable}
+              onCancel={resetWizard}
+            />
+          )}
+
+          {step === 'verify-for-backup' && (
+            <TwoFactorBackupPassword
+              password={backupPassword}
+              onPasswordChange={setBackupPassword}
+              onSubmit={handleBackupPasswordSubmit}
+              isVerifying={isVerifying}
+              onCancel={resetWizard}
+            />
+          )}
+
+          {step === 'method' && (
+            <TwoFactorMethodSelection onSelectMethod={handleMethodSelect} onCancel={resetWizard} />
+          )}
+
+          {step === 'setup' && method === 'totp' && totpUri && (
+            <TwoFactorStepTOTP
+              totpUri={totpUri}
+              qrCodeSvg={qrCodeSvg}
+              isVerifying={isVerifying}
+              onVerify={handleVerifyTotp}
+              onCancel={resetWizard}
+            />
+          )}
+
+          {step === 'setup' && method === 'otp' && (
+            <TwoFactorStepOTP
+              onSendOtp={handleResendOtp}
+              onVerify={handleVerifyOtp}
+              onCancel={resetWizard}
+              isVerifying={isVerifying}
+              error={error}
+            />
+          )}
+
+          {step === 'success' && backupCodes && (
+            <TwoFactorStepSuccess backupCodes={backupCodes} onComplete={handleSuccessComplete} />
+          )}
+        </div>
+
+        {generatedBackupCodes && generatedBackupCodes.length > 0 && (
+          <TwoFactorBackupCodes codes={generatedBackupCodes} />
         )}
 
-        {step === 'verify-for-backup' && (
-          <TwoFactorBackupPassword
-            password={backupPassword}
-            onPasswordChange={setBackupPassword}
-            onSubmit={handleBackupPasswordSubmit}
-            isVerifying={isVerifying}
-            onCancel={resetWizard}
-          />
-        )}
-
-        {step === 'method' && (
-          <TwoFactorMethodSelection onSelectMethod={handleMethodSelect} onCancel={resetWizard} />
-        )}
-
-        {step === 'setup' && method === 'totp' && totpUri && (
-          <TwoFactorStepTOTP
-            totpUri={totpUri}
-            qrCodeSvg={qrCodeSvg}
-            isVerifying={isVerifying}
-            onVerify={handleVerifyTotp}
-            onCancel={resetWizard}
-          />
-        )}
-
-        {step === 'setup' && method === 'otp' && (
-          <TwoFactorStepOTP
-            onSendOtp={handleResendOtp}
-            onVerify={handleVerifyOtp}
-            onCancel={resetWizard}
-            isVerifying={isVerifying}
-            error={error}
-          />
-        )}
-
-        {step === 'success' && backupCodes && (
-          <TwoFactorStepSuccess backupCodes={backupCodes} onComplete={handleSuccessComplete} />
-        )}
-      </div>
-
-      {generatedBackupCodes && generatedBackupCodes.length > 0 && (
-        <TwoFactorBackupCodes codes={generatedBackupCodes} />
-      )}
-
-      {backupCodes && step === 'idle' && <TwoFactorBackupCodes codes={backupCodes} />}
-    </div>
+        {backupCodes && step === 'idle' && <TwoFactorBackupCodes codes={backupCodes} />}
+      </CardBody>
+    </Card>
   )
 }
