@@ -1,9 +1,8 @@
-import { ThemeProvider } from '@lonik/themer'
 import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, HeadContent, Scripts } from '@tanstack/react-router'
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
 import { GlobalNotFound } from '#/components/boundaries'
-import { UIProvider } from '#/components/provider'
+import { UIProvider, ThemeProvider } from '#/components/provider'
 import { AppDevTools } from '#/devtools'
 import { getContext, RootProvider } from '#/provider'
 import type { TRPCRouter } from '#/trpc/router'
@@ -35,15 +34,7 @@ function RootDocument({ children }: React.PropsWithChildren) {
 
   return (
     <RootProvider queryClient={queryClient}>
-      <ThemeProvider
-        themes={['light', 'dark']}
-        attribute='data-theme'
-        defaultTheme='system'
-        disableTransitionOnChange={true}
-        enableColorScheme={false}
-        enableSystem={true}
-        storage='cookie'
-      >
+      <ThemeProvider>
         <html lang='en' suppressHydrationWarning>
           <head>
             <HeadContent />

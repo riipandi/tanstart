@@ -1,6 +1,8 @@
+import { useTheme } from '@lonik/themer'
 import { Link, useNavigate, type LinkProps } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
 import { useState } from 'react'
+import { ThemeSelector } from '#/components/theme-selector'
 import { authClient } from '#/guards/auth-client'
 import { clx } from '#/utils/variant'
 
@@ -159,12 +161,13 @@ function NavigationGroup({ item, onClose, isExpanded, onToggle }: NavigationGrou
 }
 
 export default function Header() {
+  const { themes, theme, setTheme } = useTheme()
   const [isOpen, setIsOpen] = useState(false)
   const [groupedExpanded, setGroupedExpanded] = useState<Record<string, boolean>>({})
 
   return (
     <>
-      <header className='bg-sidebar text-sidebar-foreground shadow-raised flex items-center p-4'>
+      <header className='bg-sidebar text-sidebar-foreground shadow-raised flex items-center p-4 pr-8'>
         <button
           onClick={() => setIsOpen(true)}
           className='hover:bg-sidebar-accent rounded-lg p-2 transition-colors'
@@ -181,6 +184,13 @@ export default function Header() {
             />
           </Link>
         </h1>
+        <ThemeSelector
+          value={theme}
+          themes={themes}
+          onChange={setTheme}
+          triggerVariant='ghost'
+          className='ml-auto'
+        />
       </header>
 
       <aside
