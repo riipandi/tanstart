@@ -326,7 +326,11 @@ export function UserProfile(user: Session['user']) {
     <Card>
       <CardBody className='relative'>
         {!isEditingName && (
-          <Dialog open={showChangeEmailDialog} onOpenChange={setShowChangeEmailDialog}>
+          <Dialog
+            open={showChangeEmailDialog}
+            onOpenChange={setShowChangeEmailDialog}
+            disablePointerDismissal
+          >
             <DialogTrigger
               render={
                 <Button
