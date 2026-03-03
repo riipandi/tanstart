@@ -1,4 +1,7 @@
+import { passkeyClient } from '@better-auth/passkey/client'
+import { adminClient } from 'better-auth/client/plugins'
 import { inferAdditionalFields } from 'better-auth/client/plugins'
+import { magicLinkClient } from 'better-auth/client/plugins'
 import { emailOTPClient, twoFactorClient } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/react'
 import { publicEnv } from '#/config'
@@ -23,6 +26,9 @@ export const authClient = createAuthClient({
       }
     }),
     emailOTPClient(),
+    magicLinkClient(),
+    passkeyClient(),
+    adminClient(),
     inferAdditionalFields<typeof auth>()
   ]
 })

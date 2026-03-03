@@ -6,8 +6,11 @@
  * @see: https://better-auth.com/docs/concepts/session-management#customizing-session-response
  */
 
+import { passkey } from '@better-auth/passkey'
 import { betterAuth, type BetterAuthOptions } from 'better-auth'
+import { admin } from 'better-auth/plugins'
 import { twoFactor, emailOTP } from 'better-auth/plugins'
+import { magicLink } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { typeid } from 'typeid-js'
 import { protectedEnv } from '#/config'
@@ -62,7 +65,18 @@ export const authOptions = {
         template: 'password-reset-confirmation',
         vars: { email: user.email }
       })
-    }
+    },
+    // @see: https://better-auth.com/docs/plugins/admin#email-enumeration-protection
+    customSyntheticUser: ({ coreFields, additionalFields, id }) => ({
+      ...coreFields,
+      // Admin plugin fields (in schema order)
+      role: 'user', // or your configured defaultRole
+      banned: false,
+      banReason: null,
+      banExpires: null,
+      ...additionalFields,
+      id
+    })
   },
   emailVerification: {
     expiresIn: 3600,
@@ -225,7 +239,15 @@ export const authOptions = {
           vars: { otp }
         })
       }
-    })
+    }),
+    magicLink({
+      sendMagicLink: async ({ email, token, url }) => {
+        // send email to user
+        console.info(email, token, url)
+      }
+    }),
+    passkey(),
+    admin()
   ]
 } satisfies BetterAuthOptions
 
