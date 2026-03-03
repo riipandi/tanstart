@@ -1,6 +1,6 @@
 import { useAsyncRateLimiter } from '@tanstack/react-pacer'
 import * as Lucide from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Activity, useEffect, useState } from 'react'
 import { Alert, AlertDescription } from '#/components/alert'
 import { Button } from '#/components/button'
 import {
@@ -22,6 +22,9 @@ import {
   DialogFooter,
   DialogClose
 } from '#/components/dialog'
+import { Field } from '#/components/field'
+import { InputPassword } from '#/components/input-password'
+import { Label } from '#/components/label'
 import { authClient } from '#/guards/auth-client'
 
 export function DeleteAccount() {
@@ -122,7 +125,6 @@ export function DeleteAccount() {
   )
 
   const handleResendEmail = () => resendLimiter.maybeExecute()
-
   const resendState = resendLimiter.state
 
   // Force re-render for countdown
@@ -136,10 +138,6 @@ export function DeleteAccount() {
     }
   }, [initialSubmitTime, resendState.isExceeded, resendState.executionTimes.length])
 
-  const handleGotIt = () => {
-    handleCloseDialog()
-  }
-
   // Calculate resend cooldown
   const cooldownEnd =
     Math.max(initialSubmitTime ?? 0, resendState.executionTimes[0] ?? 0) + cooldownPeriod
@@ -152,144 +150,139 @@ export function DeleteAccount() {
         <CardTitle className='text-foreground-critical'>Delete Account</CardTitle>
         <CardDescription>Permanently delete your account</CardDescription>
         <CardHeaderAction>
-          <Dialog open={showDialog} onOpenChange={setShowDialog}>
+          <Dialog open={showDialog} onOpenChange={setShowDialog} disablePointerDismissal>
             <DialogTrigger render={<Button type='button' variant='danger' />}>
               Delete Account
             </DialogTrigger>
             <DialogPopup>
               {/* Step 1: Password Form */}
-              {!emailSent && (
-                <>
-                  <DialogHeader>
-                    <div className='flex items-center gap-3'>
-                      <div className='bg-background-critical/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
-                        <Lucide.AlertTriangle className='text-foreground-critical h-5 w-5' />
-                      </div>
-                      <div>
-                        <DialogTitle>Delete Account?</DialogTitle>
-                        <DialogDescription>This action cannot be undone</DialogDescription>
-                      </div>
+              <Activity mode={!emailSent ? 'visible' : 'hidden'}>
+                <DialogHeader>
+                  <div className='flex items-center gap-3'>
+                    <div className='bg-background-critical/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
+                      <Lucide.AlertTriangle className='text-foreground-critical h-5 w-5' />
                     </div>
-                  </DialogHeader>
-                  <DialogBody>
-                    <p className='text-on-background-neutral text-sm'>
-                      To confirm deletion, please enter your password. We&apos;ll send you an email
-                      with a confirmation link to complete this process.
-                    </p>
-                    {error && (
-                      <Alert variant='danger' className='mt-4'>
-                        <Lucide.AlertCircle className='size-4' />
-                        <AlertDescription>{error}</AlertDescription>
-                      </Alert>
+                    <div>
+                      <DialogTitle>Delete Account?</DialogTitle>
+                      <DialogDescription>This action cannot be undone</DialogDescription>
+                    </div>
+                  </div>
+                  <DialogClose
+                    className='ml-auto'
+                    onClick={handleCloseDialog}
+                    disabled={isSubmitting}
+                  >
+                    <Lucide.XIcon className='size-4' strokeWidth={2.0} />
+                  </DialogClose>
+                </DialogHeader>
+                <DialogBody>
+                  <p className='text-on-background-neutral text-sm'>
+                    To confirm deletion, please enter your password. We&apos;ll send you an email
+                    with a confirmation link to complete this process.
+                  </p>
+                  {error && (
+                    <Alert variant='danger' className='mt-4'>
+                      <Lucide.AlertCircle className='size-4' />
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+                  <Field className='mt-4'>
+                    <Label htmlFor='delete-password'>Enter your password</Label>
+                    <InputPassword
+                      id='delete-password'
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value)
+                        if (error) setError(null)
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && password.trim() && !isSubmitting) {
+                          handleSubmit()
+                        }
+                      }}
+                      disabled={isSubmitting}
+                      placeholder='Your password'
+                      autoFocus
+                    />
+                  </Field>
+                </DialogBody>
+                <DialogFooter>
+                  <DialogClose render={<Button variant='outline' disabled={isSubmitting} />}>
+                    Cancel
+                  </DialogClose>
+                  <Button
+                    variant='danger'
+                    disabled={!password.trim() || isSubmitting}
+                    onClick={handleSubmit}
+                  >
+                    {isSubmitting ? (
+                      <span className='flex items-center justify-center gap-2'>
+                        <Lucide.Loader2 className='size-4 animate-spin' />
+                        Sending...
+                      </span>
+                    ) : (
+                      'Delete Account'
                     )}
-                    <div className='mt-4'>
-                      <label
-                        htmlFor='delete-password'
-                        className='text-foreground-neutral mb-1.5 block text-sm font-medium'
-                      >
-                        Enter your password
-                      </label>
-                      <input
-                        id='delete-password'
-                        type='password'
-                        value={password}
-                        onChange={(e) => {
-                          setPassword(e.target.value)
-                          if (error) setError(null)
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && password.trim() && !isSubmitting) {
-                            handleSubmit()
-                          }
-                        }}
-                        disabled={isSubmitting}
-                        className='border-border-neutral focus:border-foreground-primary focus:ring-foreground-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:opacity-50'
-                        placeholder='Your password'
-                      />
+                  </Button>
+                </DialogFooter>
+              </Activity>
+
+              {/* Step 2: Email Sent */}
+              <Activity mode={emailSent ? 'visible' : 'hidden'}>
+                <DialogHeader>
+                  <DialogClose className='ml-auto' onClick={handleCloseDialog}>
+                    <Lucide.XIcon className='size-4' strokeWidth={2.0} />
+                  </DialogClose>
+                </DialogHeader>
+                <DialogBody className='-mt-8'>
+                  <div className='mb-4 flex flex-col items-center text-center'>
+                    <div className='bg-background-primary-faded mb-3 flex size-14 items-center justify-center rounded-full'>
+                      <Lucide.Mail className='text-foreground-primary size-7' />
                     </div>
-                  </DialogBody>
-                  <DialogFooter>
-                    <DialogClose render={<Button variant='outline' disabled={isSubmitting} />}>
-                      Cancel
-                    </DialogClose>
+                    <DialogTitle>Check Your Email</DialogTitle>
+                    <DialogDescription>
+                      We've sent a confirmation link to your email.
+                    </DialogDescription>
+                  </div>
+
+                  <Alert variant='info'>
+                    <AlertDescription className='text-sm'>
+                      Check your email inbox for a confirmation message. <br />
+                      Click the link in that email to complete your account deletion. The link
+                      expires in <strong>1 hour</strong>.
+                    </AlertDescription>
+                  </Alert>
+
+                  <div className='my-5 space-y-4 text-center'>
+                    <p className='text-on-background-neutral text-sm'>
+                      Didn&apos;t receive the email?
+                    </p>
                     <Button
-                      variant='danger'
-                      disabled={!password.trim() || isSubmitting}
-                      onClick={handleSubmit}
+                      size='sm'
+                      variant='outline'
+                      onClick={handleResendEmail}
+                      disabled={isCooldown || isSubmitting}
                     >
                       {isSubmitting ? (
-                        <span className='flex items-center justify-center gap-2'>
-                          <Lucide.Loader2 className='size-4 animate-spin' />
-                          Sending...
+                        <span className='flex items-center justify-center gap-1'>
+                          <Lucide.Loader2 className='h-3 w-3 animate-spin' />
+                          Resending...
                         </span>
+                      ) : isCooldown ? (
+                        `Resend in ${remainingSeconds}s`
                       ) : (
-                        'Delete Account'
+                        'Resend email'
                       )}
                     </Button>
-                  </DialogFooter>
-                </>
-              )}
-              {/* Step 2: Email Sent */}
-              {emailSent && (
-                <>
-                  <DialogHeader>
-                    <div className='mb-6 flex flex-col items-center text-center'>
-                      <div className='bg-background-primary-faded mb-3 flex h-14 w-14 items-center justify-center rounded-full'>
-                        <Lucide.Mail className='text-foreground-primary h-7 w-7' />
-                      </div>
-                      <DialogTitle>Check Your Email</DialogTitle>
-                      <DialogDescription>
-                        We've sent a confirmation link to your email
-                      </DialogDescription>
-                    </div>
-                  </DialogHeader>
-                  <DialogBody>
-                    <Alert variant='info'>
-                      <AlertDescription>
-                        Please check your inbox and click the confirmation link to complete the
-                        account deletion.
-                        <br />
-                        <strong>Important:</strong> This link will expire in 1 hour.
-                      </AlertDescription>
+                  </div>
+                  {error && (
+                    <Alert variant='danger'>
+                      <Lucide.AlertCircle className='size-4' />
+                      <AlertDescription>{error}</AlertDescription>
                     </Alert>
-                    <div className='mb-6 text-center'>
-                      <p className='text-on-background-neutral text-sm'>
-                        Didn&apos;t receive the email?
-                      </p>
-                      <Button
-                        type='button'
-                        variant='primary'
-                        mode='link'
-                        size='sm'
-                        onClick={handleResendEmail}
-                        disabled={isCooldown || isSubmitting}
-                      >
-                        {isSubmitting ? (
-                          <span className='flex items-center justify-center gap-1'>
-                            <Lucide.Loader2 className='h-3 w-3 animate-spin' />
-                            Resending...
-                          </span>
-                        ) : isCooldown ? (
-                          `Resend in ${remainingSeconds}s`
-                        ) : (
-                          'Resend email'
-                        )}
-                      </Button>
-                    </div>
-                    {error && (
-                      <Alert variant='danger'>
-                        <Lucide.AlertCircle className='size-4' />
-                        <AlertDescription>{error}</AlertDescription>
-                      </Alert>
-                    )}
-                  </DialogBody>
-                  <DialogFooter>
-                    <Button variant='primary' onClick={handleGotIt}>
-                      Got it
-                    </Button>
-                  </DialogFooter>
-                </>
-              )}
+                  )}
+                </DialogBody>
+              </Activity>
             </DialogPopup>
           </Dialog>
         </CardHeaderAction>

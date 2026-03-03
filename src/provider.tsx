@@ -1,4 +1,3 @@
-import { PacerProvider } from '@tanstack/react-pacer'
 import { QueryClient } from '@tanstack/react-query'
 import { createTRPCClient, httpBatchStreamLink } from '@trpc/client'
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query'
@@ -48,15 +47,7 @@ interface ProviderProps {
 export function RootProvider({ children, queryClient }: ProviderProps) {
   return (
     <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-      <PacerProvider
-        defaultOptions={{
-          debouncer: { wait: 1000 },
-          rateLimiter: { limit: 5, window: 60_000 },
-          queuer: { maxSize: 4 }
-        }}
-      >
-        {children}
-      </PacerProvider>
+      {children}
     </TRPCProvider>
   )
 }
