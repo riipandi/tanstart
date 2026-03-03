@@ -175,8 +175,9 @@ export function TwoFactorSettings(user: Session['user']) {
                 : 'Add an extra layer of security to your account'}
             </CardDescription>
           </div>
-          {step === 'idle' && twoFactorEnabled ? (
-            <CardHeaderAction>
+
+          <CardHeaderAction>
+            <Activity mode={step === 'idle' && twoFactorEnabled ? 'visible' : 'hidden'}>
               <Button
                 type='button'
                 variant='outline'
@@ -185,10 +186,22 @@ export function TwoFactorSettings(user: Session['user']) {
               >
                 {isVerifying ? 'Generating...' : 'Generate Backup Codes'}
               </Button>
-            </CardHeaderAction>
-          ) : null}
+            </Activity>
+
+            <Activity mode={step === 'idle' && !twoFactorEnabled ? 'visible' : 'hidden'}>
+              <Button
+                type='button'
+                variant='primary'
+                onClick={handleGenerateBackupCodesClick}
+                disabled={isVerifying}
+              >
+                Enable 2FA
+              </Button>
+            </Activity>
+          </CardHeaderAction>
         </div>
       </CardHeader>
+
       <CardBody>
         {error && (
           <Alert variant='danger'>
@@ -202,7 +215,7 @@ export function TwoFactorSettings(user: Session['user']) {
         )}
 
         <div className='space-y-3'>
-          <Activity mode={step === 'idle' && twoFactorEnabled ? 'visible' : 'hidden'}>
+          <Activity mode={step === 'idle' ? 'visible' : 'hidden'}>
             <div className='border-border-neutral-faded flex items-center justify-between rounded-lg border p-4 pr-5'>
               <div className='flex items-center gap-3'>
                 <div className='bg-background-neutral-faded flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
@@ -216,7 +229,7 @@ export function TwoFactorSettings(user: Session['user']) {
                 </div>
               </div>
               <Label>
-                <Switch />
+                <Switch readOnly disabled />
                 <span className='sr-only'>Toggle 2FA</span>
               </Label>
             </div>
@@ -234,13 +247,13 @@ export function TwoFactorSettings(user: Session['user']) {
                 </div>
               </div>
               <Label>
-                <Switch />
+                <Switch readOnly disabled />
                 <span className='sr-only'>Toggle 2FA</span>
               </Label>
             </div>
           </Activity>
 
-          {step === 'password' && !twoFactorEnabled && (
+          <Activity mode={step === 'password' && !twoFactorEnabled ? 'visible' : 'hidden'}>
             <TwoFactorPasswordInput
               password={pendingPassword}
               onPasswordChange={setPendingPassword}
@@ -248,17 +261,17 @@ export function TwoFactorSettings(user: Session['user']) {
               isVerifying={isVerifying}
               onCancel={resetWizard}
             />
-          )}
+          </Activity>
 
-          {step === 'password' && twoFactorEnabled && (
+          <Activity mode={step === 'password' && twoFactorEnabled ? 'visible' : 'hidden'}>
             <TwoFactorDisable
               isVerifying={isVerifying}
               onDisable={handleDisable}
               onCancel={resetWizard}
             />
-          )}
+          </Activity>
 
-          {step === 'verify-for-backup' && (
+          <Activity mode={step === 'verify-for-backup' ? 'visible' : 'hidden'}>
             <TwoFactorBackupPassword
               password={backupPassword}
               onPasswordChange={setBackupPassword}
@@ -266,23 +279,23 @@ export function TwoFactorSettings(user: Session['user']) {
               isVerifying={isVerifying}
               onCancel={resetWizard}
             />
-          )}
+          </Activity>
 
-          {step === 'method' && (
+          <Activity mode={step === 'method' ? 'visible' : 'hidden'}>
             <TwoFactorMethodSelection onSelectMethod={handleMethodSelect} onCancel={resetWizard} />
-          )}
+          </Activity>
 
-          {step === 'setup' && method === 'totp' && totpUri && (
+          <Activity mode={step === 'setup' && method === 'totp' && totpUri ? 'visible' : 'hidden'}>
             <TwoFactorStepTOTP
-              totpUri={totpUri}
+              totpUri={totpUri || ''}
               qrCodeSvg={qrCodeSvg}
               isVerifying={isVerifying}
               onVerify={handleVerifyTotp}
               onCancel={resetWizard}
             />
-          )}
+          </Activity>
 
-          {step === 'setup' && method === 'otp' && (
+          <Activity mode={step === 'setup' && method === 'otp' ? 'visible' : 'hidden'}>
             <TwoFactorStepOTP
               onSendOtp={handleResendOtp}
               onVerify={handleVerifyOtp}
@@ -290,18 +303,25 @@ export function TwoFactorSettings(user: Session['user']) {
               isVerifying={isVerifying}
               error={error}
             />
-          )}
+          </Activity>
 
-          {step === 'success' && backupCodes && (
-            <TwoFactorStepSuccess backupCodes={backupCodes} onComplete={handleSuccessComplete} />
-          )}
+          <Activity mode={step === 'success' && backupCodes ? 'visible' : 'hidden'}>
+            <TwoFactorStepSuccess
+              backupCodes={backupCodes || []}
+              onComplete={handleSuccessComplete}
+            />
+          </Activity>
         </div>
 
-        {generatedBackupCodes && generatedBackupCodes.length > 0 && (
-          <TwoFactorBackupCodes codes={generatedBackupCodes} />
-        )}
+        <Activity
+          mode={generatedBackupCodes && generatedBackupCodes.length > 0 ? 'visible' : 'hidden'}
+        >
+          <TwoFactorBackupCodes codes={generatedBackupCodes || []} />
+        </Activity>
 
-        {backupCodes && step === 'idle' && <TwoFactorBackupCodes codes={backupCodes} />}
+        <Activity mode={backupCodes && step === 'idle' ? 'visible' : 'hidden'}>
+          <TwoFactorBackupCodes codes={backupCodes || []} />
+        </Activity>
       </CardBody>
     </Card>
   )
