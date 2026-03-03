@@ -13,7 +13,6 @@
 import { Avatar as BaseAvatar } from '@base-ui/react/avatar'
 import * as Lucide from 'lucide-react'
 import * as React from 'react'
-import { publicEnv } from '#/config'
 import { clx, tv, type VariantProps } from '#/utils/variant'
 
 export const avatarStyles = tv({

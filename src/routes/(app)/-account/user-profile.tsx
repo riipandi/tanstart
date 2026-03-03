@@ -1,6 +1,6 @@
 import { useRouter } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
-import { useRef, useState, Activity, useEffect } from 'react'
+import { useRef, useState, Activity } from 'react'
 import { z } from 'zod'
 import { Avatar, AvatarFallback, AvatarImage } from '#/components/avatar'
 import { Session } from '#/guards/auth-client'
