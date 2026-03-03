@@ -207,13 +207,11 @@ export function DeleteAccount() {
                   </Field>
                 </DialogBody>
                 <DialogFooter>
-                  <DialogClose render={<Button variant='outline' disabled={isSubmitting} />}>
-                    Cancel
-                  </DialogClose>
                   <Button
                     variant='danger'
                     disabled={!password.trim() || isSubmitting}
                     onClick={handleSubmit}
+                    block
                   >
                     {isSubmitting ? (
                       <span className='flex items-center justify-center gap-2'>

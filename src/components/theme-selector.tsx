@@ -71,7 +71,6 @@ export function ThemeSelector({
   }, [value, themeList])
 
   const handleThemeChange = (theme: string) => {
-    console.info('Changing theme:', theme)
     onChange?.(theme)
   }
 

@@ -1,21 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
-import { UAParser } from 'ua-parser-js'
 import { Alert, AlertDescription } from '#/components/alert'
 import { Badge } from '#/components/badge'
 import { Button } from '#/components/button'
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardHeaderAction
-} from '#/components/card'
+import { Card, CardBody, CardHeader } from '#/components/card'
+import { CardTitle, CardDescription, CardHeaderAction } from '#/components/card'
+import { PromptDialog, PromptDialogTrigger, PromptDialogContent } from '#/components/prompt-dialog'
 import { Skeleton } from '#/components/skeleton'
 import { authClient } from '#/guards/auth-client'
 import { formatRelativeTime, formatShortRelativeTime } from '#/utils/humanize'
+import { parseUserAgent } from '#/utils/parser'
 import { clx } from '#/utils/variant'
 
 interface UserSession {
@@ -24,21 +19,6 @@ interface UserSession {
   updatedAt: Date
   ipAddress?: string | null
   userAgent?: string | null
-}
-
-interface ParsedUA {
-  device: string
-  browser: string
-  os: string
-}
-
-function parseUserAgent(userAgent: string): ParsedUA {
-  const parser = new UAParser(userAgent)
-  const browser = parser.getBrowser().name || 'Unknown'
-  const os = parser.getOS().name || 'Unknown'
-  const deviceType = parser.getDevice().type
-  const device = deviceType ? deviceType.charAt(0).toUpperCase() + deviceType.slice(1) : 'Desktop'
-  return { device, browser, os }
 }
 
 function getDeviceIcon(device: string) {
@@ -85,7 +65,7 @@ export function SessionsList() {
       }
       return []
     },
-    staleTime: 30 * 1000 // 30 seconds
+    staleTime: 60_000 // 60 seconds
   })
 
   // Mutation to revoke single session (other session)
@@ -147,22 +127,6 @@ export function SessionsList() {
     }
   })
 
-  const handleRevokeSession = (sessionId: string) => {
-    revokeSessionMutation.mutate(sessionId)
-  }
-
-  const handleSignOutCurrent = () => {
-    signOutCurrentMutation.mutate()
-  }
-
-  const handleRevokeOtherSessions = () => {
-    revokeOtherSessionsMutation.mutate()
-  }
-
-  const handleSignOutEverywhere = () => {
-    signOutEverywhereMutation.mutate()
-  }
-
   const currentSessionId = currentSessionData || null
 
   const errorMessage =
@@ -206,27 +170,55 @@ export function SessionsList() {
           </div>
           <CardHeaderAction>
             {sessions.length > 1 && (
-              <Button
-                type='button'
-                variant='outline'
-                size='sm'
-                onClick={handleRevokeOtherSessions}
-                disabled={isAnyMutationPending}
-              >
-                {revokeOtherSessionsMutation.isPending ? 'Signing out...' : 'Revoke others'}
-              </Button>
+              <PromptDialog>
+                <PromptDialogTrigger
+                  render={
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      disabled={isAnyMutationPending}
+                    />
+                  }
+                >
+                  {revokeOtherSessionsMutation.isPending ? 'Signing out...' : 'Revoke others'}
+                </PromptDialogTrigger>
+                <PromptDialogContent
+                  className='w-sm'
+                  variant='confirmation'
+                  title='Revoke Other Sessions?'
+                  description='This will sign you out from all other devices, keeping only this session.'
+                  cancelText='Cancel'
+                  confirmText='Revoke Others'
+                  onConfirm={() => revokeOtherSessionsMutation.mutate()}
+                />
+              </PromptDialog>
             )}
 
             {sessions.length > 0 && (
-              <Button
-                type='button'
-                variant='danger'
-                size='sm'
-                onClick={handleSignOutEverywhere}
-                disabled={isAnyMutationPending}
-              >
-                {signOutEverywhereMutation.isPending ? 'Signing out...' : 'Revoke all'}
-              </Button>
+              <PromptDialog>
+                <PromptDialogTrigger
+                  render={
+                    <Button
+                      type='button'
+                      variant='danger'
+                      size='sm'
+                      disabled={isAnyMutationPending}
+                    />
+                  }
+                >
+                  {signOutEverywhereMutation.isPending ? 'Signing out...' : 'Revoke all'}
+                </PromptDialogTrigger>
+                <PromptDialogContent
+                  className='w-sm'
+                  variant='danger'
+                  title='Revoke All Sessions?'
+                  description='This will sign you out from all devices, including this one. You will need to sign in again.'
+                  cancelText='Cancel'
+                  confirmText='Revoke All'
+                  onConfirm={() => signOutEverywhereMutation.mutate()}
+                />
+              </PromptDialog>
             )}
           </CardHeaderAction>
         </div>
@@ -300,24 +292,38 @@ export function SessionsList() {
                   {/* Actions per session */}
                   <div className='flex items-center gap-1'>
                     {isCurrent ? (
-                      <Button
-                        type='button'
-                        variant='ghost'
-                        mode='icon'
-                        size='sm'
-                        onClick={handleSignOutCurrent}
-                        disabled={signOutCurrentMutation.isPending}
-                        title='Sign out from this device'
-                      >
-                        <Lucide.LogOut className='size-4' />
-                      </Button>
+                      <PromptDialog>
+                        <PromptDialogTrigger
+                          render={
+                            <Button
+                              type='button'
+                              variant='ghost'
+                              mode='icon'
+                              size='sm'
+                              disabled={signOutCurrentMutation.isPending}
+                              title='Sign out from this device'
+                            />
+                          }
+                        >
+                          <Lucide.LogOut className='size-4' />
+                        </PromptDialogTrigger>
+                        <PromptDialogContent
+                          className='w-sm'
+                          variant='danger'
+                          title='Sign Out from This Device?'
+                          description='This will sign you out from this device and you will need to sign in again.'
+                          cancelText='Cancel'
+                          confirmText='Sign Out'
+                          onConfirm={() => signOutCurrentMutation.mutate()}
+                        />
+                      </PromptDialog>
                     ) : (
                       <Button
                         type='button'
                         variant='ghost'
                         mode='icon'
                         size='sm'
-                        onClick={() => handleRevokeSession(session.id)}
+                        onClick={() => revokeSessionMutation.mutate(session.id)}
                         disabled={
                           revokeSessionMutation.isPending &&
                           revokeSessionMutation.variables === session.id
