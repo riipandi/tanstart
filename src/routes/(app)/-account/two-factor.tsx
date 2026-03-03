@@ -2,7 +2,6 @@ import { useNavigate } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
 import { useState, useCallback, Activity } from 'react'
 import { Alert, AlertDescription } from '#/components/alert'
-import { Badge } from '#/components/badge'
 import { Button } from '#/components/button'
 import {
   Card,
@@ -10,19 +9,16 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardHeaderAction,
-  CardFooter
+  CardHeaderAction
 } from '#/components/card'
 import { Label } from '#/components/label'
 import { Switch } from '#/components/switch'
-import { Toggle } from '#/components/toggle'
 import { Session } from '#/guards/auth-client'
 import { useTwoFactorSetup, useQRCode } from '#/hooks/use-two-factor'
 import { TwoFactorBackupCodes } from './two-factor-backup-codes'
 import { TwoFactorBackupPassword } from './two-factor-backup-password'
 import { TwoFactorDisable } from './two-factor-disable'
 import { TwoFactorPasswordInput } from './two-factor-password-input'
-import { TwoFactorStatus } from './two-factor-status'
 import { TwoFactorMethodSelection } from './two-factor-step-method'
 import { TwoFactorStepOTP } from './two-factor-step-otp'
 import { TwoFactorStepSuccess } from './two-factor-step-success'
@@ -105,10 +101,6 @@ export function TwoFactorSettings(user: Session['user']) {
     setStep('idle')
   }
 
-  const handleEnableStart = () => {
-    setStep('password')
-  }
-
   const handlePasswordSubmit = async () => {
     if (!pendingPassword) return
 
@@ -157,10 +149,6 @@ export function TwoFactorSettings(user: Session['user']) {
   const handleSuccessComplete = () => {
     resetWizard()
     navigate({ to: '/account' })
-  }
-
-  const handleDisableStart = () => {
-    setStep('password')
   }
 
   const handleDisable = async (password: string) => {
