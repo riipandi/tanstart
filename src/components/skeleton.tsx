@@ -5,7 +5,7 @@ export function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='skeleton'
-      className={clx('bg-background-primary-faded animate-pulse rounded-lg', className)}
+      className={clx('bg-background-neutral-faded/60 animate-pulse rounded-lg', className)}
       {...props}
     />
   )

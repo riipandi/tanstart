@@ -65,8 +65,9 @@ function App() {
             The framework for next generation AI applications
           </p>
           <p className='text-on-background-neutral mx-auto mb-8 max-w-3xl text-base'>
-            Full-stack framework powered by TanStack Router for React and Solid. Build modern
-            applications with server functions, streaming, and type safety.
+            Full-stack framework powered by TanStack Router for React and Solid.{' '}
+            <br className='hidden md:block' />
+            Build modern applications with server functions, streaming, and type safety.
           </p>
           <div className='flex flex-col items-center gap-4'>
             <a
