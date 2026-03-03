@@ -6,6 +6,17 @@ import { Alert, AlertDescription } from '#/components/alert'
 import { Avatar, AvatarFallback, AvatarImage } from '#/components/avatar'
 import { Button } from '#/components/button'
 import { Card, CardBody } from '#/components/card'
+import {
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogPopup,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '#/components/dialog'
 import { Session } from '#/guards/auth-client'
 import { authClient } from '#/guards/auth-client'
 import { removeAvatar, uploadAvatar } from '#/guards/avatar'
@@ -167,9 +178,44 @@ export function UserProfile(user: Session['user']) {
     }
   }
 
+  const handleChangeEmail = () => {
+    // TODO: Open change email dialog
+  }
+
   return (
     <Card>
-      <CardBody>
+      <CardBody className='relative'>
+        {!isEditingName && (
+          <Dialog>
+            <DialogTrigger
+              render={
+                <Button
+                  variant='ghost'
+                  size='xs'
+                  onClick={handleChangeEmail}
+                  className='absolute top-4 right-4 text-xs'
+                  title='Change email'
+                />
+              }
+            >
+              <Lucide.Mail size={14} />
+              <span className='ml-1 hidden sm:inline'>Change</span>
+            </DialogTrigger>
+            <DialogPopup>
+              <DialogHeader>
+                <DialogTitle>Send Owl</DialogTitle>
+              </DialogHeader>
+              <DialogBody>
+                <DialogDescription>Send your message via owl post to Hogwarts.</DialogDescription>
+                HHHHH
+              </DialogBody>
+              <DialogFooter>
+                <DialogClose>Close</DialogClose>
+                <DialogClose render={<Button size='sm' />}>Send Owl</DialogClose>
+              </DialogFooter>
+            </DialogPopup>
+          </Dialog>
+        )}
         <div className='flex items-start justify-center gap-6 px-1'>
           <div className='flex flex-col items-center gap-2 pt-1.5'>
             <button
@@ -321,10 +367,11 @@ export function UserProfile(user: Session['user']) {
                     </Button>
                   </div>
                   <p className='text-sm font-medium'>{user.email}</p>
+                  <span className='text-xs'>
+                    Member since {user.createdAt.toLocaleDateString()}
+                  </span>
                 </div>
               </Activity>
-
-              <span className='text-xs'>Member since {user.createdAt.toLocaleDateString()}</span>
             </div>
           </div>
         </div>
