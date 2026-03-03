@@ -1,6 +1,18 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link as RouterLink } from '@tanstack/react-router'
 import { Activity, useState } from 'react'
 import { z } from 'zod'
+import { Alert } from '#/components/alert'
+import { Button } from '#/components/button'
+import {
+  Card,
+  CardBody,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '#/components/card'
+import { Form } from '#/components/form'
+import { Link } from '#/components/link'
 import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
 
@@ -71,124 +83,102 @@ function RouteComponent() {
 
   if (!token) {
     return (
-      <div className='flex justify-center px-4 py-10'>
-        <div className='w-full max-w-md p-6'>
-          <div className='flex flex-col items-center text-center'>
-            <h1 className='text-lg leading-none font-semibold tracking-tight'>Invalid Link</h1>
-            <p className='text-on-background-neutral mt-2 mb-6 text-sm'>
+      <div className='w-full max-w-md space-y-8 p-8'>
+        <Card className='w-full min-w-sm'>
+          <CardHeader>
+            <CardTitle>Invalid Link</CardTitle>
+            <CardDescription className='text-sm'>
               This password reset link is invalid or has expired.
-            </p>
-            <Link
-              to='/forgot-password'
-              className='bg-foreground-primary text-background-primary hover:bg-foreground-primary/90 focus-visible:outline-foreground-primary inline-flex h-10 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2'
-            >
-              Request New Link
-            </Link>
-          </div>
-        </div>
+            </CardDescription>
+          </CardHeader>
+          <CardBody className='flex flex-col items-center text-center' />
+          <CardFooter className='w-full items-center justify-center'>
+            <Link render={<RouterLink to='/forgot-password' />}>Request New Link</Link>
+          </CardFooter>
+        </Card>
       </div>
     )
   }
 
   if (success) {
     return (
-      <div className='flex justify-center px-4 py-10'>
-        <div className='w-full max-w-md p-6'>
-          <div className='flex flex-col items-center text-center'>
-            <div className='bg-background-success/10 mb-4 flex h-12 w-12 items-center justify-center rounded-full'>
-              <svg
-                className='text-foreground-success h-6 w-6'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                aria-hidden='true'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M5 13l4 4L19 7'
-                />
-              </svg>
-            </div>
-            <h1 className='text-lg leading-none font-semibold tracking-tight'>
-              Password Reset Complete
-            </h1>
-            <p className='text-on-background-neutral mt-2 mb-6 text-sm'>
-              Your password has been successfully reset. You can now sign in with your new password.
-            </p>
-            <Link
-              to='/signin'
-              className='bg-foreground-primary text-background-primary hover:bg-foreground-primary/90 focus-visible:outline-foreground-primary inline-flex h-10 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2'
-            >
+      <div className='w-full max-w-md space-y-8 p-8'>
+        <Card className='w-full min-w-sm'>
+          <CardHeader>
+            <CardTitle>Password Reset Complete</CardTitle>
+            <CardDescription className='text-sm'>
+              Your password has been successfully reset.
+            </CardDescription>
+          </CardHeader>
+          <CardBody>
+            <Alert variant='success'>
+              Your password has been reset successfully! <br />
+              You can now use your new password to sign in to your account.
+            </Alert>
+          </CardBody>
+          <CardFooter className='w-full items-center justify-center text-center'>
+            <Button block render={<RouterLink to='/signin' />}>
               Sign In
-            </Link>
-          </div>
-        </div>
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     )
   }
 
   return (
-    <div className='flex justify-center px-4 py-10'>
-      <div className='w-full max-w-md p-6'>
-        <h1 className='text-lg leading-none font-semibold tracking-tight'>Reset Password</h1>
-        <p className='text-on-background-neutral mt-2 mb-6 text-sm'>
-          Enter your new password below.
-        </p>
+    <div className='w-full max-w-md space-y-8 p-8'>
+      <Card className='w-full min-w-sm'>
+        <CardHeader>
+          <CardTitle>Reset Password</CardTitle>
+          <CardDescription className='text-sm'>Enter your new password below.</CardDescription>
+        </CardHeader>
+        <CardBody>
+          <Activity mode={error ? 'visible' : 'hidden'}>
+            <div className='mb-6'>{error ? <Alert variant='danger'>{error}</Alert> : null}</div>
+          </Activity>
 
-        <Activity mode={error ? 'visible' : 'hidden'}>
-          <div className='border-border-critical bg-background-critical-faded mb-4 border-l-4 px-3 py-2.5'>
-            <p className='text-foreground-critical text-sm'>{error}</p>
-          </div>
-        </Activity>
-
-        <form onSubmit={handleSubmit} className='grid gap-4'>
-          <form.AppField
-            name='password'
-            validators={{
-              onBlur: ({ value }) => {
-                if (!value || value.trim().length === 0) {
-                  return 'Password is required'
+          <Form onSubmit={handleSubmit} className='grid gap-4'>
+            <form.AppField
+              name='password'
+              validators={{
+                onBlur: ({ value }) => {
+                  if (!value || value.trim().length === 0) {
+                    return 'Password is required'
+                  }
+                  if (value.length < 8) {
+                    return 'Password must be at least 8 characters'
+                  }
+                  return undefined
                 }
-                if (value.length < 8) {
-                  return 'Password must be at least 8 characters'
+              }}
+            >
+              {(field) => <field.PasswordField label='New Password' />}
+            </form.AppField>
+
+            <form.AppField
+              name='confirmPassword'
+              validators={{
+                onBlur: ({ value }) => {
+                  if (!value || value.trim().length === 0) {
+                    return 'Please confirm your password'
+                  }
+                  return undefined
                 }
-                return undefined
-              }
-            }}
-          >
-            {(field) => <field.PasswordField label='New Password' />}
-          </form.AppField>
+              }}
+            >
+              {(field) => <field.PasswordField label='Confirm Password' />}
+            </form.AppField>
 
-          <form.AppField
-            name='confirmPassword'
-            validators={{
-              onBlur: ({ value }) => {
-                if (!value || value.trim().length === 0) {
-                  return 'Please confirm your password'
-                }
-                return undefined
-              }
-            }}
-          >
-            {(field) => <field.PasswordField label='Confirm Password' />}
-          </form.AppField>
-
-          <form.AppForm>
-            <form.SubmitButton label='Reset Password' />
-          </form.AppForm>
-        </form>
-
-        <div className='mt-4 text-center'>
-          <Link
-            to='/signin'
-            className='text-foreground-primary text-sm font-medium transition-colors hover:underline'
-          >
-            Back to Sign In
-          </Link>
-        </div>
-      </div>
+            <form.AppForm>
+              <form.SubmitButton label='Reset Password' />
+            </form.AppForm>
+          </Form>
+        </CardBody>
+        <CardFooter className='w-full items-center justify-center text-center'>
+          <Link render={<RouterLink to='/signin' />}>Back to Sign In</Link>
+        </CardFooter>
+      </Card>
     </div>
   )
 }

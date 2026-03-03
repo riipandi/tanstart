@@ -1,6 +1,18 @@
-import { createFileRoute, Link, notFound } from '@tanstack/react-router'
+import { createFileRoute, Link as RouterLink, notFound } from '@tanstack/react-router'
 import { Activity, useState } from 'react'
 import { z } from 'zod'
+import { Alert } from '#/components/alert'
+import {
+  Card,
+  CardBody,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '#/components/card'
+import { Form } from '#/components/form'
+import { Link } from '#/components/link'
+import { Separator } from '#/components/separator'
 import { publicEnv } from '#/config'
 import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
@@ -91,149 +103,122 @@ function RouteComponent() {
   }
 
   return (
-    <div className='flex justify-center px-4 py-10'>
-      <div className='w-full max-w-md p-6'>
-        <h1 className='text-lg leading-none font-semibold tracking-tight'>Create an account</h1>
-        <p className='text-on-background-neutral mt-2 mb-6 text-sm'>
-          Enter your details below to create your account
-        </p>
+    <div className='w-full max-w-lg space-y-8 p-8'>
+      <Card className='w-full min-w-sm'>
+        <CardHeader>
+          <CardTitle>Create an account</CardTitle>
+          <CardDescription className='text-sm'>
+            Enter your details below to create your account
+          </CardDescription>
+        </CardHeader>
+        <CardBody>
+          <Activity mode={error ? 'visible' : 'hidden'}>
+            <div className='mb-6'>{error ? <Alert variant='danger'>{error}</Alert> : null}</div>
+          </Activity>
 
-        <Activity mode={error ? 'visible' : 'hidden'}>
-          <div className='border-border-critical bg-background-critical-faded mb-4 border-l-4 px-3 py-2.5'>
-            <p className='text-foreground-critical text-sm'>{error}</p>
-          </div>
-        </Activity>
+          <Activity mode={success ? 'visible' : 'hidden'}>
+            <div className='mb-6'>
+              {success ? <Alert variant='success'>{success}</Alert> : null}
+            </div>
+          </Activity>
 
-        <Activity mode={success ? 'visible' : 'hidden'}>
-          <div className='border-border-positive bg-background-positive-faded mb-6 border-l-4 px-3 py-2.5'>
-            <p className='text-foreground-positive text-sm'>{success}</p>
-          </div>
-        </Activity>
+          <SignInWithSocialProvider
+            authClient={authClient}
+            callbackURL={search.redirect || '/dashboard'}
+          />
 
-        <SignInWithSocialProvider
-          authClient={authClient}
-          callbackURL={search.redirect || '/dashboard'}
-        />
+          <Separator className='my-8' contentSide='center'>
+            Or continue with
+          </Separator>
 
-        <div className='relative my-6'>
-          <div className='absolute inset-0 flex items-center'>
-            <div className='border-border-neutral-faded w-full border-t' />
-          </div>
-          <div className='relative flex justify-center text-xs uppercase'>
-            <span className='bg-background-page text-foreground-neutral px-2 font-medium'>
-              Or continue with
-            </span>
-          </div>
-        </div>
+          <Form onSubmit={handleSubmit} className='-mt-2 grid gap-4'>
+            <div className='grid grid-cols-2 gap-4'>
+              <form.AppField
+                name='firstName'
+                validators={{
+                  onBlur: ({ value }) => {
+                    if (!value || value.trim().length === 0) {
+                      return 'First name is required'
+                    }
+                    return undefined
+                  }
+                }}
+              >
+                {(field) => <field.TextField label='First Name' />}
+              </form.AppField>
 
-        <form onSubmit={handleSubmit} className='grid gap-4'>
-          <div className='grid grid-cols-2 gap-4'>
+              <form.AppField
+                name='lastName'
+                validators={{
+                  onBlur: ({ value }) => {
+                    if (!value || value.trim().length === 0) {
+                      return 'Last name is required'
+                    }
+                    return undefined
+                  }
+                }}
+              >
+                {(field) => <field.TextField label='Last Name' />}
+              </form.AppField>
+            </div>
+
             <form.AppField
-              name='firstName'
+              name='email'
               validators={{
                 onBlur: ({ value }) => {
                   if (!value || value.trim().length === 0) {
-                    return 'First name is required'
+                    return 'Email is required'
+                  }
+                  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+                    return 'Invalid email address'
                   }
                   return undefined
                 }
               }}
             >
-              {(field) => <field.TextField label='First Name' />}
+              {(field) => <field.TextField label='Email' />}
             </form.AppField>
 
             <form.AppField
-              name='lastName'
+              name='password'
               validators={{
                 onBlur: ({ value }) => {
                   if (!value || value.trim().length === 0) {
-                    return 'Last name is required'
+                    return 'Password is required'
+                  }
+                  if (value.length < 8) {
+                    return 'Password must be at least 8 characters'
                   }
                   return undefined
                 }
               }}
             >
-              {(field) => <field.TextField label='Last Name' />}
+              {(field) => <field.PasswordField label='Password' />}
             </form.AppField>
-          </div>
 
-          <form.AppField
-            name='email'
-            validators={{
-              onBlur: ({ value }) => {
-                if (!value || value.trim().length === 0) {
-                  return 'Email is required'
-                }
-                if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-                  return 'Invalid email address'
-                }
-                return undefined
-              }
-            }}
-          >
-            {(field) => <field.TextField label='Email' />}
-          </form.AppField>
-
-          {/* <form.AppField
-              name='phone'
+            <form.AppField
+              name='confirmPassword'
               validators={{
                 onBlur: ({ value }) => {
-                  if (!/^(\+\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(value)) {
-                    return 'Invalid phone number format'
+                  if (!value || value.trim().length === 0) {
+                    return 'Please confirm your password'
                   }
                   return undefined
                 }
               }}
             >
-              {(field) => <field.TextField label='Phone' placeholder='123-456-7890' />}
-            </form.AppField> */}
+              {(field) => <field.PasswordField label='Confirm Password' />}
+            </form.AppField>
 
-          <form.AppField
-            name='password'
-            validators={{
-              onBlur: ({ value }) => {
-                if (!value || value.trim().length === 0) {
-                  return 'Password is required'
-                }
-                if (value.length < 8) {
-                  return 'Password must be at least 8 characters'
-                }
-                return undefined
-              }
-            }}
-          >
-            {(field) => <field.PasswordField label='Password' />}
-          </form.AppField>
-
-          <form.AppField
-            name='confirmPassword'
-            validators={{
-              onBlur: ({ value }) => {
-                if (!value || value.trim().length === 0) {
-                  return 'Please confirm your password'
-                }
-                return undefined
-              }
-            }}
-          >
-            {(field) => <field.PasswordField label='Confirm Password' />}
-          </form.AppField>
-
-          <form.AppForm>
-            <form.SubmitButton label='Sign Up' />
-          </form.AppForm>
-        </form>
-
-        <div className='mt-4 text-center'>
-          <Link
-            type='button'
-            to='/signin'
-            className='text-foreground-primary text-sm font-medium transition-colors hover:underline'
-          >
-            Already have an account? Sign in
-          </Link>
-        </div>
-      </div>
+            <form.AppForm>
+              <form.SubmitButton label='Sign Up' />
+            </form.AppForm>
+          </Form>
+        </CardBody>
+        <CardFooter className='w-full items-center justify-center text-center'>
+          <Link render={<RouterLink to='/signin' />}>Already have an account? Sign in</Link>
+        </CardFooter>
+      </Card>
     </div>
   )
 }

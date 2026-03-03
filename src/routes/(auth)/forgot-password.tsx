@@ -1,6 +1,17 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link as RouterLink } from '@tanstack/react-router'
 import { Activity, useState } from 'react'
 import { z } from 'zod'
+import { Alert } from '#/components/alert'
+import {
+  Card,
+  CardBody,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '#/components/card'
+import { Form } from '#/components/form'
+import { Link } from '#/components/link'
 import { publicEnv } from '#/config'
 import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
@@ -49,88 +60,69 @@ function RouteComponent() {
 
   if (success) {
     return (
-      <div className='flex justify-center px-4 py-10'>
-        <div className='w-full max-w-md p-6'>
-          <div className='flex flex-col items-center text-center'>
-            <div className='bg-background-success/10 mb-4 flex h-12 w-12 items-center justify-center rounded-full'>
-              <svg
-                className='text-foreground-success h-6 w-6'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                aria-hidden='true'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M5 13l4 4L19 7'
-                />
-              </svg>
-            </div>
-            <h1 className='text-lg leading-none font-semibold tracking-tight'>Check your email</h1>
-            <p className='text-on-background-neutral mt-2 mb-6 text-sm'>
-              We've sent you a password reset link. Please check your inbox and follow the
-              instructions.
-            </p>
-            <Link
-              to='/signin'
-              className='bg-foreground-primary text-background-primary hover:bg-foreground-primary/90 focus-visible:outline-foreground-primary inline-flex h-10 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2'
-            >
-              Back to Sign In
-            </Link>
-          </div>
-        </div>
+      <div className='w-full max-w-md space-y-8 p-8'>
+        <Card className='w-full min-w-sm'>
+          <CardHeader>
+            <CardTitle>Check your email</CardTitle>
+            <CardDescription className='text-sm'>
+              We've sent you a password reset link.
+            </CardDescription>
+          </CardHeader>
+          <CardBody>
+            <Alert variant='success'>
+              Password reset email sent successfully! If you don't see it in your inbox, please
+              check your spam folder.
+            </Alert>
+          </CardBody>
+          <CardFooter className='w-full items-center justify-center text-center'>
+            <Link render={<RouterLink to='/signin' />}>Back to Sign In</Link>
+          </CardFooter>
+        </Card>
       </div>
     )
   }
 
   return (
-    <div className='flex justify-center px-4 py-10'>
-      <div className='w-full max-w-md p-6'>
-        <h1 className='text-lg leading-none font-semibold tracking-tight'>Forgot password</h1>
-        <p className='text-on-background-neutral mt-2 mb-6 text-sm'>
-          Enter your email address and we'll send you a link to reset your password.
-        </p>
+    <div className='w-full max-w-md space-y-8 p-8'>
+      <Card className='w-full min-w-sm'>
+        <CardHeader>
+          <CardTitle>Forgot password</CardTitle>
+          <CardDescription className='text-sm'>
+            Enter your email address and we'll send you a link to reset your password.
+          </CardDescription>
+        </CardHeader>
+        <CardBody>
+          <Activity mode={error ? 'visible' : 'hidden'}>
+            <div className='mb-6'>{error ? <Alert variant='danger'>{error}</Alert> : null}</div>
+          </Activity>
 
-        <Activity mode={error ? 'visible' : 'hidden'}>
-          <div className='border-border-critical bg-background-critical-faded mb-4 border-l-4 px-3 py-2.5'>
-            <p className='text-foreground-critical text-sm'>{error}</p>
-          </div>
-        </Activity>
-
-        <form onSubmit={handleSubmit} className='grid gap-4'>
-          <form.AppField
-            name='email'
-            validators={{
-              onBlur: ({ value }) => {
-                if (!value || value.trim().length === 0) {
-                  return 'Email is required'
+          <Form onSubmit={handleSubmit} className='grid gap-4'>
+            <form.AppField
+              name='email'
+              validators={{
+                onBlur: ({ value }) => {
+                  if (!value || value.trim().length === 0) {
+                    return 'Email is required'
+                  }
+                  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+                    return 'Invalid email address'
+                  }
+                  return undefined
                 }
-                if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-                  return 'Invalid email address'
-                }
-                return undefined
-              }
-            }}
-          >
-            {(field) => <field.TextField label='Email' />}
-          </form.AppField>
+              }}
+            >
+              {(field) => <field.TextField label='Email' />}
+            </form.AppField>
 
-          <form.AppForm>
-            <form.SubmitButton label='Send Reset Link' />
-          </form.AppForm>
-        </form>
-
-        <div className='mt-4 text-center'>
-          <Link
-            to='/signin'
-            className='text-foreground-primary text-sm font-medium transition-colors hover:underline'
-          >
-            Back to Sign In
-          </Link>
-        </div>
-      </div>
+            <form.AppForm>
+              <form.SubmitButton label='Send Reset Link' />
+            </form.AppForm>
+          </Form>
+        </CardBody>
+        <CardFooter className='w-full items-center justify-center text-center'>
+          <Link render={<RouterLink to='/signin' />}>Back to Sign In</Link>
+        </CardFooter>
+      </Card>
     </div>
   )
 }
