@@ -1,10 +1,24 @@
 import { useAsyncRateLimiter } from '@tanstack/react-pacer'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link as RouterLink } from '@tanstack/react-router'
 import { useCallback, useEffect, useState } from 'react'
 import { z } from 'zod'
+import { Alert } from '#/components/alert'
+import { Button } from '#/components/button'
+import {
+  Card,
+  CardBody,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '#/components/card'
+import { Field, FieldError, FieldLabel } from '#/components/field'
+import { Form } from '#/components/form'
+import { Input } from '#/components/input'
 import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
 import { getSafeRedirect } from '#/utils/redirect'
+import { clx } from '#/utils/variant'
 
 export const Route = createFileRoute('/(auth)/two-factor/otp')({
   component: RouteComponent,
@@ -47,10 +61,7 @@ function RouteComponent() {
       setIsVerifying(true)
 
       try {
-        const result = await authClient.twoFactor.verifyOtp({
-          code: value.code,
-          trustDevice: value.trustDevice
-        })
+        const result = await authClient.twoFactor.verifyOtp({ ...value })
 
         if (result.error) {
           setError(result.error.message || 'Invalid code')
@@ -122,95 +133,101 @@ function RouteComponent() {
   const isCooldown = remainingSeconds > 0
 
   return (
-    <div className='flex justify-center px-4 py-10'>
-      <div className='w-full max-w-md p-6'>
-        <h1 className='text-lg leading-none font-semibold tracking-tight'>Email Verification</h1>
-        <p className='text-on-background-neutral mt-2 mb-6 text-sm'>
-          We've sent a 6-digit code to your email address
-        </p>
+    <div className='w-full max-w-md space-y-6 p-8'>
+      <Card className='w-full min-w-sm'>
+        <CardHeader>
+          <CardTitle>Email Verification</CardTitle>
+          <CardDescription className='text-sm'>
+            We've sent a 6-digit code to your email address
+          </CardDescription>
+        </CardHeader>
+        <CardBody>
+          {error ? <div className='mb-6'>{<Alert variant='danger'>{error}</Alert>}</div> : null}
 
-        {error && (
-          <div className='border-border-critical bg-background-critical-faded mb-4 border-l-4 px-3 py-2.5'>
-            <p className='text-foreground-critical text-sm'>{error}</p>
-          </div>
-        )}
-
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            form.handleSubmit()
-          }}
-          className='grid gap-4'
-        >
-          <form.AppField
-            name='code'
-            validators={{
-              onBlur: ({ value }) => {
-                if (!value || value.length !== 6) {
-                  return 'Please enter a valid 6-digit code'
-                }
-                if (!/^\d+$/.test(value)) {
-                  return 'Code must contain only numbers'
-                }
-                return undefined
-              }
+          <Form
+            onSubmit={(e) => {
+              e.preventDefault()
+              form.handleSubmit()
             }}
+            className='grid gap-4'
           >
-            {(field) => (
-              <div>
-                <label
-                  htmlFor={field.name}
-                  className='text-foreground-neutral mb-1.5 block text-sm font-medium'
-                >
-                  Verification Code
-                </label>
-                <input
-                  type='text'
-                  inputMode='numeric'
-                  maxLength={6}
-                  autoComplete='one-time-code'
-                  value={field.state.value}
-                  onChange={(e) =>
-                    field.handleChange(e.target.value.replace(/\D/g, '').slice(0, 6))
+            <form.AppField
+              name='code'
+              validators={{
+                onBlur: ({ value }) => {
+                  if (!value || value.length !== 6) {
+                    return 'Please enter a valid 6-digit code'
                   }
-                  onBlur={field.handleBlur}
-                  className='border-border-neutral focus:ring-border-primary mt-1 block w-full rounded-md border px-3 py-2 text-center text-2xl tracking-[0.5em] focus:ring-2 focus:outline-none'
-                  placeholder='000000'
-                />
-              </div>
-            )}
-          </form.AppField>
+                  if (!/^\d+$/.test(value)) {
+                    return 'Code must contain only numbers'
+                  }
+                  return undefined
+                }
+              }}
+            >
+              {(field) => (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>Verification Code</FieldLabel>
+                  <Input
+                    id={field.name}
+                    type='text'
+                    inputMode='numeric'
+                    maxLength={6}
+                    autoComplete='one-time-code'
+                    value={field.state.value}
+                    onChange={(e) =>
+                      field.handleChange(e.target.value.replace(/\D/g, '').slice(0, 6))
+                    }
+                    onBlur={field.handleBlur}
+                    className='text-center text-2xl tracking-[0.5em]'
+                    placeholder='000000'
+                  />
+                  <FieldError match={field.state.meta.errors.length > 0}>
+                    {field.state.meta.errors
+                      .map((error) => (typeof error === 'string' ? error : error?.message))
+                      .join(', ')}
+                  </FieldError>
+                </Field>
+              )}
+            </form.AppField>
 
-          <form.AppField name='trustDevice'>
-            {(field) => <field.CheckboxField label='Trust this device' />}
-          </form.AppField>
+            <div className='flex flex-1 items-center justify-between'>
+              <form.AppField name='trustDevice'>
+                {(field) => <field.CheckboxField label='Trust this device' />}
+              </form.AppField>
+              <button
+                type='button'
+                onClick={handleResend}
+                disabled={isCooldown}
+                className={clx(
+                  'text-foreground-primary cursor-pointer p-0 text-sm transition-colors hover:font-medium',
+                  'hover:underline disabled:cursor-not-allowed disabled:opacity-50'
+                )}
+              >
+                {isCooldown ? `Resend code in ${remainingSeconds}s` : 'Resend code'}
+              </button>
+            </div>
 
-          <form.AppForm>
-            <form.SubmitButton label={isVerifying ? 'Verifying...' : 'Verify'} />
-          </form.AppForm>
-        </form>
-
-        <div className='mt-6 text-center'>
-          <button
-            type='button'
-            onClick={handleResend}
-            disabled={isCooldown}
-            className='text-foreground-primary text-sm font-medium transition-colors hover:underline disabled:cursor-not-allowed disabled:opacity-50'
-          >
-            {isCooldown ? `Resend code in ${remainingSeconds}s` : 'Resend code'}
-          </button>
-        </div>
-
-        <div className='mt-4 text-center'>
-          <Link
-            to='/two-factor'
-            search={search.redirect ? { redirect: search.redirect } : undefined}
-            className='text-foreground-primary text-sm font-medium transition-colors hover:underline'
+            <form.AppForm>
+              <form.SubmitButton label={isVerifying ? 'Verifying...' : 'Verify'} />
+            </form.AppForm>
+          </Form>
+        </CardBody>
+        <CardFooter className='flex flex-col items-center justify-center gap-4 text-center'>
+          <Button
+            block
+            variant='ghost'
+            render={
+              <RouterLink
+                to='/two-factor'
+                search={search.redirect ? { redirect: search.redirect } : undefined}
+              />
+            }
           >
             Use authenticator app instead
-          </Link>
-        </div>
-      </div>
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   )
 }

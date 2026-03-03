@@ -83,7 +83,7 @@ function RouteComponent() {
 
   if (!token) {
     return (
-      <div className='w-full max-w-md space-y-8 p-8'>
+      <div className='w-full max-w-md space-y-6 p-8'>
         <Card className='w-full min-w-sm'>
           <CardHeader>
             <CardTitle>Invalid Link</CardTitle>
@@ -102,7 +102,7 @@ function RouteComponent() {
 
   if (success) {
     return (
-      <div className='w-full max-w-md space-y-8 p-8'>
+      <div className='w-full max-w-md space-y-6 p-8'>
         <Card className='w-full min-w-sm'>
           <CardHeader>
             <CardTitle>Password Reset Complete</CardTitle>
@@ -127,7 +127,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className='w-full max-w-md space-y-8 p-8'>
+    <div className='w-full max-w-md space-y-6 p-8'>
       <Card className='w-full min-w-sm'>
         <CardHeader>
           <CardTitle>Reset Password</CardTitle>

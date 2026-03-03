@@ -60,7 +60,7 @@ function RouteComponent() {
 
   if (success) {
     return (
-      <div className='w-full max-w-md space-y-8 p-8'>
+      <div className='w-full max-w-md space-y-6 p-8'>
         <Card className='w-full min-w-sm'>
           <CardHeader>
             <CardTitle>Check your email</CardTitle>
@@ -83,7 +83,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className='w-full max-w-md space-y-8 p-8'>
+    <div className='w-full max-w-md space-y-6 p-8'>
       <Card className='w-full min-w-sm'>
         <CardHeader>
           <CardTitle>Forgot password</CardTitle>

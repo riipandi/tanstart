@@ -2,14 +2,8 @@ import { createFileRoute, Link as RouterLink } from '@tanstack/react-router'
 import { Activity, useState } from 'react'
 import { z } from 'zod'
 import { Alert } from '#/components/alert'
-import {
-  Card,
-  CardBody,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '#/components/card'
+import { Card, CardBody, CardDescription, CardTitle } from '#/components/card'
+import { CardFooter, CardHeader } from '#/components/card'
 import { Form } from '#/components/form'
 import { Link } from '#/components/link'
 import { Separator } from '#/components/separator'
@@ -84,7 +78,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className='w-full max-w-md space-y-8 p-8'>
+    <div className='w-full max-w-md space-y-6 p-8'>
       <Card className='w-full min-w-sm'>
         <CardHeader>
           <CardTitle>Sign in to your account</CardTitle>
