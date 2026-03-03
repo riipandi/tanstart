@@ -11,13 +11,13 @@ import { twoFactor, emailOTP } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { typeid } from 'typeid-js'
 import { protectedEnv } from '#/config'
-import { db } from '#/database/db-client'
+import { dbClient } from '#/database/db-client'
 import { sendMail } from '#/libraries/mailer'
 import { passwordHash, passwordVerify } from '#/utils/crypto'
 
 export const authOptions = {
   database: {
-    db,
+    db: dbClient,
     type: 'postgres',
     transaction: true,
     debugLogs: false,

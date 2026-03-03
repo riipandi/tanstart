@@ -12,7 +12,8 @@ const resolve = (path: string) => fileURLToPath(new URL(path, import.meta.url))
 
 const nitroConfig: NitroPluginConfig = {
   compatibilityDate: '2025-09-15',
-  preset: 'node_server'
+  preset: 'node_server',
+  plugins: ['src/database/db-plugin.ts']
 }
 
 export default defineConfig({
