@@ -6,7 +6,7 @@
  * @see: https://better-auth.com/docs/concepts/session-management#customizing-session-response
  */
 
-import { betterAuth } from 'better-auth'
+import { betterAuth, type BetterAuthOptions } from 'better-auth'
 import { twoFactor, emailOTP } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { typeid } from 'typeid-js'
@@ -15,7 +15,7 @@ import { db } from '#/database/db-client'
 import { sendMail } from '#/libraries/mailer'
 import { passwordHash, passwordVerify } from '#/utils/crypto'
 
-export const auth = betterAuth({
+export const authOptions = {
   database: {
     db,
     type: 'postgres',
@@ -227,6 +227,8 @@ export const auth = betterAuth({
       }
     })
   ]
-})
+} satisfies BetterAuthOptions
+
+export const auth = betterAuth(authOptions)
 
 export type Session = typeof auth.$Infer.Session

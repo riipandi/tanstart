@@ -1,23 +1,30 @@
 import { useTheme } from '@lonik/themer'
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { z } from 'zod'
 import { GlobalNotFound } from '#/components/boundaries'
 import { ThemeSelector } from '#/components/theme-selector'
 import { getSession } from '#/guards/session'
 
-interface BeforeLoadParams {
-  search?: { redirect?: string }
-}
-
 export const Route = createFileRoute('/(auth)')({
   component: RouteComponent,
   notFoundComponent: GlobalNotFound,
-  beforeLoad: async ({ search }: BeforeLoadParams) => {
+  beforeLoad: async ({ search }) => {
     const session = await getSession()
+
+    // // TODO: Two-Factor page require authenticated
+    // if (location.pathname === '/two-factor') {
+    //   if (!hasTwoFactorCookie) {
+    //     throw redirect({ to: '/signin', search: { redirect: search?.redirect } })
+    //   }
+    // }
+
     if (session) {
-      const redirectTo = search?.redirect ?? '/dashboard'
-      throw redirect({ href: redirectTo })
+      throw redirect({ to: search?.redirect ?? '/dashboard' })
     }
-  }
+  },
+  validateSearch: z.object({
+    redirect: z.string().optional()
+  })
 })
 
 function RouteComponent() {
