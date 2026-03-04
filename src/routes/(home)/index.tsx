@@ -8,40 +8,34 @@ export const Route = createFileRoute('/(home)/')({
 function RouteComponent() {
   const features = [
     {
-      icon: <Lucide.Zap className='text-sidebar-primary h-10 w-10' />,
+      icon: <Lucide.Zap className='text-foreground-primary size-8' />,
       title: 'Powerful Server Functions',
-      description:
-        'Write server-side code that seamlessly integrates with your client components. Type-safe, secure, and simple.'
+      description: `Write server-side code that seamlessly integrates with your client components. Type-safe, secure, and simple.`
     },
     {
-      icon: <Lucide.Server className='text-sidebar-primary h-10 w-10' />,
+      icon: <Lucide.Server className='text-foreground-primary size-8' />,
       title: 'Flexible Server Side Rendering',
-      description:
-        'Full-document SSR, streaming, and progressive enhancement out of the box. Control exactly what renders where.'
+      description: `Full-document SSR, streaming, and progressive enhancement out of the box. Control exactly what renders where.`
     },
     {
-      icon: <Lucide.Route className='text-sidebar-primary h-10 w-10' />,
+      icon: <Lucide.Route className='text-foreground-primary size-8' />,
       title: 'API Routes',
-      description:
-        'Build type-safe API endpoints alongside your application. No separate backend needed.'
+      description: `Build type-safe API endpoints alongside your application. No separate backend needed.`
     },
     {
-      icon: <Lucide.Shield className='text-sidebar-primary h-10 w-10' />,
+      icon: <Lucide.Shield className='text-foreground-primary size-8' />,
       title: 'Strongly Typed Everything',
-      description:
-        'End-to-end type safety from server to client. Catch errors before they reach production.'
+      description: `End-to-end type safety from server to client. Catch errors before they reach production.`
     },
     {
-      icon: <Lucide.Waves className='text-sidebar-primary h-10 w-10' />,
+      icon: <Lucide.Waves className='text-foreground-primary size-8' />,
       title: 'Full Streaming Support',
-      description:
-        'Stream data from server to client progressively. Perfect for AI applications and real-time updates.'
+      description: `Stream data from server to client progressively. Perfect for AI applications and real-time updates.`
     },
     {
-      icon: <Lucide.Sparkles className='text-sidebar-primary h-10 w-10' />,
+      icon: <Lucide.Sparkles className='text-foreground-primary size-8' />,
       title: 'Next Generation Ready',
-      description:
-        'Built from the ground up for modern web applications. Deploy anywhere JavaScript runs.'
+      description: `Built from the ground up for modern web applications. Deploy anywhere JavaScript runs.`
     }
   ]
 
@@ -53,8 +47,8 @@ function RouteComponent() {
           <div className='mb-6 flex items-center justify-center gap-6'>
             <img
               src='/images/tanstack-circle-logo.png'
+              className='size-18 md:size-24'
               alt='TanStack Logo'
-              className='h-20 w-20 md:h-28 md:w-28'
             />
             <h1 className='text-sidebar-foreground text-5xl font-black tracking-[-0.08em] md:text-6xl'>
               <span className='text-on-background-neutral'>TANSTACK</span>{' '}
@@ -72,14 +66,24 @@ function RouteComponent() {
             Build modern applications with server functions, streaming, and type safety.
           </p>
           <div className='flex flex-col items-center gap-4'>
-            <a
-              href='https://tanstack.com/start'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='bg-background-primary text-on-brand shadow-background-primary/30 hover:bg-background-primary/80 rounded-lg px-6 py-2.5 text-sm font-semibold shadow transition-colors'
-            >
-              Documentation
-            </a>
+            <div className='flex gap-4'>
+              <a
+                href='https://tanstack.com/start'
+                className='bg-background-primary text-on-brand shadow-background-primary/30 hover:bg-background-primary/80 rounded-lg px-6 py-2.5 text-sm font-semibold shadow transition-colors'
+                rel='noopener noreferrer'
+                target='_blank'
+              >
+                TansStack Docs
+              </a>
+              <a
+                href='https://better-auth.com/docs'
+                className='bg-background-primary text-on-brand shadow-background-primary/30 hover:bg-background-primary/80 rounded-lg px-6 py-2.5 text-sm font-semibold shadow transition-colors'
+                rel='noopener noreferrer'
+                target='_blank'
+              >
+                Better Auth Docs
+              </a>
+            </div>
             <p className='text-on-background-neutral mt-2 text-sm'>
               Begin your TanStack Start journey by editing{' '}
               <code className='bg-sidebar-accent text-background-primary rounded px-2 py-1 text-xs'>

@@ -17,7 +17,7 @@ export const publicEnv = {
   APP_LOG_LEVEL: setEnv<AppLogLevel>(env.APP_LOG_LEVEL, 'info'),
   PUBLIC_BASE_URL: setEnv(env.PUBLIC_BASE_URL, 'http://localhost:3000'),
   PUBLIC_SITE_DOMAIN: setEnv(env.PUBLIC_SITE_DOMAIN, 'example.com'),
-  PUBLIC_CORS_ORIGINS: setEnvArray(env.PUBLIC_CORS_ORIGINS, ['*']),
+  PUBLIC_TRUSTED_ORIGINS: setEnvArray(env.PUBLIC_TRUSTED_ORIGINS, ['*']),
   PUBLIC_DISABLE_SIGNUP: setEnv<boolean>(env.PUBLIC_DISABLE_SIGNUP, false),
   PUBLIC_IDENTIFIER: setEnv(env.PUBLIC_IDENTIFIER, pkg.name),
   PUBLIC_RATE_LIMIT_DEFAULT_MAX: setEnv(env.PUBLIC_RATE_LIMIT_DEFAULT_MAX, 100), // default 100 requests

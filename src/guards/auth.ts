@@ -23,12 +23,13 @@ export const authOptions = {
     db: dbClient,
     type: 'postgres',
     transaction: true,
-    debugLogs: false,
-    casing: 'snake'
+    debugLogs: false
+    // casing: 'snake'
   },
   baseURL: protectedEnv.PUBLIC_BASE_URL,
   secret: protectedEnv.AUTH_SECRET_KEY,
   appName: protectedEnv.PUBLIC_IDENTIFIER, // It'll be used as an issuer for 2FA.
+  trustedOrigins: protectedEnv.PUBLIC_TRUSTED_ORIGINS,
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
@@ -126,7 +127,11 @@ export const authOptions = {
   account: {
     storeStateStrategy: 'database',
     storeAccountCookie: true, // Store account data after OAuth flow in a cookie (useful for database-less flows)
-    accountLinking: { enabled: true, trustedProviders: ['google', 'github'] }
+    accountLinking: {
+      enabled: true,
+      allowDifferentEmails: false,
+      trustedProviders: ['google', 'github']
+    }
   },
   user: {
     additionalFields: {
@@ -249,7 +254,17 @@ export const authOptions = {
         console.info(email, token, url)
       }
     }),
-    passkey(),
+    passkey({
+      // FIXME: Passkey create error if using snake_case
+      // @see: https://github.com/better-auth/better-auth/issues/4862
+      rpID: protectedEnv.APP_MODE ? protectedEnv.PUBLIC_SITE_DOMAIN : 'localhost',
+      rpName: protectedEnv.PUBLIC_IDENTIFIER,
+      origin: protectedEnv.PUBLIC_BASE_URL,
+      authenticatorSelection: {
+        userVerification: 'required',
+        residentKey: 'preferred'
+      }
+    }),
     admin()
   ]
 } satisfies BetterAuthOptions

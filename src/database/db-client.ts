@@ -11,14 +11,14 @@
 
 import { PostgresDialect } from 'kysely'
 import type { ErrorLogEvent, KyselyConfig, QueryLogEvent } from 'kysely'
-import { CamelCasePlugin, Kysely, ParseJSONResultsPlugin } from 'kysely'
+import { Kysely /*CamelCasePlugin, ParseJSONResultsPlugin*/ } from 'kysely'
 import { Pool } from 'pg'
 import { protectedEnv } from '#/config'
 import { prettyMs } from '#/utils/humanize'
 import type { AppDatabase } from './db-schema'
 
 export const kyselyConfig: Partial<KyselyConfig> = {
-  plugins: [new CamelCasePlugin(), new ParseJSONResultsPlugin()],
+  // plugins: [new CamelCasePlugin(), new ParseJSONResultsPlugin()],
   log: (event: QueryLogEvent | ErrorLogEvent): void => {
     const logLevel = protectedEnv.APP_LOG_LEVEL
     const { queryId } = event.query.queryId
