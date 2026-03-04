@@ -29,20 +29,16 @@ import { Switch } from '#/components/switch'
 import { Session } from '#/guards/auth-client'
 import { useTwoFactorSetup, useQRCode } from '#/hooks/use-two-factor'
 import { TwoFactorBackupCodes } from './two-factor-backup-codes'
-import { TwoFactorMethodSelection } from './two-factor-step-method'
-import { TwoFactorStepOTP } from './two-factor-step-otp'
 import { TwoFactorStepSuccess } from './two-factor-step-success'
 import { TwoFactorStepTOTP } from './two-factor-step-totp'
 
-type WizardStep = 'idle' | 'method' | 'setup' | 'success'
-type SetupMethod = 'totp' | 'otp' | null
+type WizardStep = 'idle' | 'setup' | 'success'
 
 export function TwoFactorSettings(user: Session['user']) {
   const navigate = useNavigate()
   const twoFactorEnabled = user.twoFactorEnabled ?? false
 
   const [step, setStep] = useState<WizardStep>('idle')
-  const [method, setMethod] = useState<SetupMethod>(null)
   const [totpUri, setTotpUri] = useState<string | null>(null)
   const [backupCodes, setBackupCodes] = useState<string[] | null>(null)
   const [generatedBackupCodes, setGeneratedBackupCodes] = useState<string[] | null>(null)
@@ -58,11 +54,8 @@ export function TwoFactorSettings(user: Session['user']) {
   const {
     isVerifying,
     error,
-    setError,
     enableTwoFactor,
     verifyTotp,
-    verifyOtp,
-    sendOtp,
     disableTwoFactor,
     generateBackupCodes: generateBackupCodesAction,
     clearError,
@@ -72,7 +65,6 @@ export function TwoFactorSettings(user: Session['user']) {
   // FIXME: React instrumentation encountered an error: Error: The children should not have changed if we pass in the same set.
   const resetWizard = useCallback(() => {
     setStep('idle')
-    setMethod(null)
     setTotpUri(null)
     setBackupCodes(null)
     clearQRCode()
@@ -114,7 +106,11 @@ export function TwoFactorSettings(user: Session['user']) {
     setShowEnableDialog(false)
     setIsSubmittingDialog(false)
     setDialogPassword('')
-    setStep('method')
+
+    if (result.data.totpURI) {
+      generateQRCode(result.data.totpURI)
+    }
+    setStep('setup')
   }
 
   const handleDisableDialogClose = () => {
@@ -188,30 +184,8 @@ export function TwoFactorSettings(user: Session['user']) {
     setDialogPassword('')
   }
 
-  const handleMethodSelect = async (selectedMethod: 'totp' | 'otp') => {
-    setMethod(selectedMethod)
-
-    if (selectedMethod === 'totp' && totpUri) {
-      generateQRCode(totpUri)
-    } else if (selectedMethod === 'otp') {
-      await sendOtp()
-    }
-
-    setStep('setup')
-  }
-
   const handleVerifyTotp = async (code: string) => {
     const result = await verifyTotp(code)
-    if (result.error) return
-
-    if (result.backupCodes) {
-      setBackupCodes(result.backupCodes)
-    }
-    setStep('success')
-  }
-
-  const handleVerifyOtp = async (code: string) => {
-    const result = await verifyOtp(code)
     if (result.error) return
 
     if (result.backupCodes) {
@@ -223,10 +197,6 @@ export function TwoFactorSettings(user: Session['user']) {
   const handleSuccessComplete = () => {
     resetWizard()
     navigate({ to: '/account' })
-  }
-
-  const handleResendOtp = async () => {
-    return await sendOtp()
   }
 
   // Cleanup effect: Ensure body scroll is restored when step changes
@@ -348,28 +318,13 @@ export function TwoFactorSettings(user: Session['user']) {
             </div>
           </Activity>
 
-          <Activity mode={step === 'method' ? 'visible' : 'hidden'}>
-            <TwoFactorMethodSelection onSelectMethod={handleMethodSelect} onCancel={resetWizard} />
-          </Activity>
-
-          <Activity mode={step === 'setup' && method === 'totp' && totpUri ? 'visible' : 'hidden'}>
+          <Activity mode={step === 'setup' && totpUri ? 'visible' : 'hidden'}>
             <TwoFactorStepTOTP
               totpUri={totpUri || ''}
               qrCodeSvg={qrCodeSvg}
               isVerifying={isVerifying}
               onVerify={handleVerifyTotp}
               onCancel={resetWizard}
-            />
-          </Activity>
-
-          <Activity mode={step === 'setup' && method === 'otp' ? 'visible' : 'hidden'}>
-            <TwoFactorStepOTP
-              onSendOtp={handleResendOtp}
-              onVerify={handleVerifyOtp}
-              onCancel={resetWizard}
-              isVerifying={isVerifying}
-              setError={setError}
-              error={error}
             />
           </Activity>
 
