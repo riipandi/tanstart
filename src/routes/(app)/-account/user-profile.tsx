@@ -449,7 +449,7 @@ export function UserProfile(user: Session['user']) {
                         <strong>Important:</strong> This link will expire in 24 hours.
                       </AlertDescription>
                     </Alert>
-                    <div className='mb-6 text-center'>
+                    <div className='mb-4 text-center'>
                       <p className='text-on-background-neutral text-sm'>
                         Didn&apos;t receive the email?
                       </p>

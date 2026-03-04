@@ -1,5 +1,11 @@
 import * as Lucide from 'lucide-react'
 import { useState, useCallback, useEffect } from 'react'
+import { Alert, AlertDescription } from '#/components/alert'
+import { Button } from '#/components/button'
+import { Field } from '#/components/field'
+import { Input } from '#/components/input'
+import { InputGroup, InputGroupAddon } from '#/components/input-group'
+import { Label } from '#/components/label'
 import { clx } from '#/utils/variant'
 
 interface TwoFactorStepOTPProps {
@@ -57,75 +63,59 @@ export function TwoFactorStepOTP({
   }
 
   return (
-    <div className='border-border-neutral bg-background-elevation-base rounded-md border p-6'>
-      <div className='mb-4 flex items-center gap-3'>
-        <div className='bg-background-primary/10 flex h-12 w-12 items-center justify-center rounded-full'>
-          <Lucide.Mail className='text-background-primary h-6 w-6' />
-        </div>
-        <div>
-          <h3 className='text-base font-semibold'>Verify Email OTP</h3>
-          <p className='text-on-background-neutral text-sm'>
-            We've sent a 6-digit code to your email address
-          </p>
-        </div>
-      </div>
-
-      {error && (
-        <div className='border-border-critical bg-background-critical-faded mb-4 border-l-4 px-3 py-2.5'>
-          <p className='text-foreground-critical text-sm'>{error}</p>
-        </div>
+    <div className='p-4'>
+      {!error && (
+        <Alert variant='info' className='mb-4'>
+          <Lucide.Mail className='text-background-primary size-4' />
+          <AlertDescription>We've sent a 6-digit code to your email address</AlertDescription>
+        </Alert>
       )}
 
       <div className='space-y-4'>
-        <div>
-          <label
-            htmlFor='otp-code'
-            className='text-foreground-neutral mb-1.5 block text-sm font-medium'
+        <Field>
+          <Label htmlFor='otp-code'>Verification Code</Label>
+          <InputGroup className='w-full'>
+            <Input
+              id='otp-code'
+              type='text'
+              inputMode='numeric'
+              maxLength={6}
+              autoComplete='one-time-code'
+              value={code}
+              onChange={handleCodeChange}
+              className='text-center text-xl tracking-widest'
+              placeholder='000000'
+            />
+            <InputGroupAddon align='end'>
+              <Button
+                size='sm'
+                variant='outline'
+                onClick={handleVerify}
+                disabled={isVerifying || code.length !== 6}
+              >
+                {isVerifying ? 'Verifying...' : 'Verify Code'}
+              </Button>
+            </InputGroupAddon>
+          </InputGroup>
+        </Field>
+
+        <div className='flex justify-between'>
+          <Button
+            size='xs'
+            variant='ghost'
+            onClick={handleResendOtp}
+            disabled={!canResend || countdown > 0}
           >
-            Verification Code
-          </label>
-          <input
-            id='otp-code'
-            type='text'
-            inputMode='numeric'
-            maxLength={6}
-            autoComplete='one-time-code'
-            value={code}
-            onChange={handleCodeChange}
-            className='border-border-neutral focus:ring-border-primary mt-1 block w-full rounded-md border px-3 py-2 text-center text-2xl tracking-[0.5em] focus:ring-2 focus:outline-none'
-            placeholder='000000'
-          />
+            <Lucide.RefreshCw
+              className={clx('size-3.5', !canResend || countdown > 0 ? '' : 'animate-spin')}
+            />
+            Resend code {countdown > 0 && `(${countdown}s)`}
+          </Button>
+
+          <Button size='xs' variant='ghost' onClick={onCancel}>
+            Cancel
+          </Button>
         </div>
-
-        <button
-          type='button'
-          onClick={handleResendOtp}
-          disabled={!canResend || countdown > 0}
-          className='text-foreground-neutral flex items-center gap-1 text-sm font-medium transition-colors hover:underline disabled:cursor-not-allowed disabled:no-underline disabled:opacity-50'
-        >
-          <Lucide.RefreshCw
-            className={clx('size-3.5', !canResend || countdown > 0 ? '' : 'animate-spin')}
-          />
-          Resend code {countdown > 0 && `(${countdown}s)`}
-        </button>
-      </div>
-
-      <div className='mt-6 flex justify-end gap-2'>
-        <button
-          type='button'
-          onClick={onCancel}
-          className='text-foreground-neutral text-sm font-medium transition-colors hover:underline'
-        >
-          Cancel
-        </button>
-        <button
-          type='button'
-          onClick={handleVerify}
-          disabled={isVerifying || code.length !== 6}
-          className='bg-background-primary hover:bg-background-primary/80 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-        >
-          {isVerifying ? 'Verifying...' : 'Verify'}
-        </button>
       </div>
     </div>
   )

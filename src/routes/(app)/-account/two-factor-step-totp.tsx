@@ -1,5 +1,10 @@
 import * as Lucide from 'lucide-react'
 import { useState } from 'react'
+import { Button } from '#/components/button'
+import { Field } from '#/components/field'
+import { Input } from '#/components/input'
+import { InputGroup, InputGroupAddon } from '#/components/input-group'
+import { Label } from '#/components/label'
 import { extractSecretFromUri } from '#/hooks/use-two-factor'
 import { useCopyToClipboard } from '#/hooks/use-two-factor'
 
@@ -39,7 +44,7 @@ export function TwoFactorStepTOTP({
   }
 
   return (
-    <div className='border-border-neutral bg-background-elevation-base rounded-md border p-6'>
+    <div className='p-4'>
       <h3 className='mb-4 text-center text-base font-semibold'>Set Up Authenticator App</h3>
 
       <div
@@ -70,39 +75,34 @@ export function TwoFactorStepTOTP({
       </div>
 
       <div className='space-y-4'>
-        <div>
-          <label
-            htmlFor='secret-key'
-            className='text-foreground-neutral mb-2 block text-sm font-medium'
-          >
-            Secret Key
-          </label>
-          <div className='flex gap-2'>
-            <input
+        <Field>
+          <Label htmlFor='secret-key'>Secret Key</Label>
+          <InputGroup className='w-full'>
+            <Input
               id='secret-key'
               type='text'
-              readOnly
               value={secretKey || ''}
-              className='border-border-neutral bg-background-neutral w-full rounded-md border px-3 py-2 font-mono text-sm'
-              placeholder='Loading secret key...'
+              className='text-center text-xs font-medium'
+              readOnly
             />
-            <button
-              type='button'
-              onClick={handleCopySecret}
-              disabled={!secretKey || copied}
-              className='border-border-neutral bg-background-elevation-base text-foreground-neutral hover:bg-background-neutral-faded focus-visible:bg-background-neutral-faded focus-visible:ring-foreground-primary flex w-12 items-center justify-center rounded-md border transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-              title={copied ? 'Copied!' : 'Copy secret key'}
-            >
-              {copied ? (
-                <Lucide.Check className='text-foreground-positive h-5 w-5' />
-              ) : (
-                <Lucide.Copy className='h-5 w-5' />
-              )}
-            </button>
-          </div>
-        </div>
+            <InputGroupAddon align='end'>
+              <Button
+                size='xs'
+                variant='outline'
+                onClick={handleCopySecret}
+                disabled={!secretKey || copied}
+              >
+                {copied ? (
+                  <Lucide.Check className='text-foreground-positive h-5 w-5' />
+                ) : (
+                  <Lucide.Copy className='h-5 w-5' />
+                )}
+              </Button>
+            </InputGroupAddon>
+          </InputGroup>
+        </Field>
 
-        <div className='border-border-neutral bg-background-neutral rounded-md border p-4'>
+        <div className='border-border-neutral bg-background-neutral-faded rounded-md border p-4'>
           <h4 className='text-foreground-neutral mb-2 text-sm font-semibold'>
             How to add manually:
           </h4>
@@ -114,46 +114,39 @@ export function TwoFactorStepTOTP({
             <li>Enter the verification code below</li>
           </ol>
         </div>
+
+        <Field>
+          <Label htmlFor='totp-verify-code'>Verification Code</Label>
+          <InputGroup className='w-full'>
+            <Input
+              id='totp-verify-code'
+              type='text'
+              inputMode='numeric'
+              maxLength={6}
+              autoComplete='one-time-code'
+              value={code}
+              onChange={handleCodeChange}
+              className='text-center text-xl tracking-widest'
+              placeholder='000000'
+            />
+            <InputGroupAddon align='end'>
+              <Button
+                size='sm'
+                variant='outline'
+                onClick={handleVerify}
+                disabled={isVerifying || code.length !== 6}
+              >
+                {isVerifying ? 'Verifying...' : 'Verify & Enable'}
+              </Button>
+            </InputGroupAddon>
+          </InputGroup>
+        </Field>
       </div>
 
-      <div className='mt-6 space-y-4'>
-        <div>
-          <label
-            htmlFor='totp-verify-code'
-            className='text-foreground-neutral mb-1.5 block text-sm font-medium'
-          >
-            Verification Code
-          </label>
-          <input
-            id='totp-verify-code'
-            type='text'
-            inputMode='numeric'
-            maxLength={6}
-            autoComplete='one-time-code'
-            value={code}
-            onChange={handleCodeChange}
-            className='border-border-neutral focus:ring-border-primary mt-1 block w-full rounded-md border px-3 py-2 text-center text-2xl tracking-[0.5em] focus:ring-2 focus:outline-none'
-            placeholder='000000'
-          />
-        </div>
-      </div>
-
-      <div className='mt-6 flex justify-end gap-2'>
-        <button
-          type='button'
-          onClick={onCancel}
-          className='text-foreground-neutral text-sm font-medium transition-colors hover:underline'
-        >
+      <div className='mt-6 flex justify-end'>
+        <Button size='xs' variant='ghost' onClick={onCancel}>
           Cancel
-        </button>
-        <button
-          type='button'
-          onClick={handleVerify}
-          disabled={isVerifying || code.length !== 6}
-          className='bg-background-primary hover:bg-background-primary/80 focus-visible:bg-background-primary/90 text-on-background-primary focus-visible:ring-foreground-primary rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-        >
-          {isVerifying ? 'Verifying...' : 'Verify & Enable'}
-        </button>
+        </Button>
       </div>
     </div>
   )

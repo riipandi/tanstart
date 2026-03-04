@@ -11,24 +11,31 @@ import {
   CardDescription,
   CardHeaderAction
 } from '#/components/card'
+import {
+  Dialog,
+  DialogTrigger,
+  DialogPopup,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogBody,
+  DialogFooter,
+  DialogClose
+} from '#/components/dialog'
+import { Field } from '#/components/field'
+import { InputPassword } from '#/components/input-password'
 import { Label } from '#/components/label'
 import { Switch } from '#/components/switch'
 import { Session } from '#/guards/auth-client'
 import { useTwoFactorSetup, useQRCode } from '#/hooks/use-two-factor'
 import { TwoFactorBackupCodes } from './two-factor-backup-codes'
-import { TwoFactorBackupPassword } from './two-factor-backup-password'
-import { TwoFactorDisable } from './two-factor-disable'
-import { TwoFactorPasswordInput } from './two-factor-password-input'
 import { TwoFactorMethodSelection } from './two-factor-step-method'
 import { TwoFactorStepOTP } from './two-factor-step-otp'
 import { TwoFactorStepSuccess } from './two-factor-step-success'
 import { TwoFactorStepTOTP } from './two-factor-step-totp'
-import { TwoFactorStepper } from './two-factor-stepper'
 
-type WizardStep = 'idle' | 'method' | 'password' | 'verify-for-backup' | 'setup' | 'success'
+type WizardStep = 'idle' | 'method' | 'setup' | 'success'
 type SetupMethod = 'totp' | 'otp' | null
-
-const STEPS = ['Method', 'Setup', 'Complete']
 
 export function TwoFactorSettings(user: Session['user']) {
   const navigate = useNavigate()
@@ -36,11 +43,16 @@ export function TwoFactorSettings(user: Session['user']) {
 
   const [step, setStep] = useState<WizardStep>('idle')
   const [method, setMethod] = useState<SetupMethod>(null)
-  const [pendingPassword, setPendingPassword] = useState('')
-  const [backupPassword, setBackupPassword] = useState('')
   const [totpUri, setTotpUri] = useState<string | null>(null)
   const [backupCodes, setBackupCodes] = useState<string[] | null>(null)
   const [generatedBackupCodes, setGeneratedBackupCodes] = useState<string[] | null>(null)
+
+  const [showEnableDialog, setShowEnableDialog] = useState(false)
+  const [showDisableDialog, setShowDisableDialog] = useState(false)
+  const [showBackupDialog, setShowBackupDialog] = useState(false)
+  const [dialogPassword, setDialogPassword] = useState('')
+  const [dialogError, setDialogError] = useState<string | null>(null)
+  const [isSubmittingDialog, setIsSubmittingDialog] = useState(false)
 
   const { qrCodeSvg, generateQRCode, clearQRCode } = useQRCode()
   const {
@@ -56,26 +68,9 @@ export function TwoFactorSettings(user: Session['user']) {
     clearStoredBackupCodes
   } = useTwoFactorSetup()
 
-  const getStepNumber = useCallback((): number => {
-    switch (step) {
-      case 'method':
-        return 1
-      case 'password':
-      case 'verify-for-backup':
-      case 'setup':
-        return 2
-      case 'success':
-        return 3
-      default:
-        return 0
-    }
-  }, [step])
-
   const resetWizard = useCallback(() => {
     setStep('idle')
     setMethod(null)
-    setPendingPassword('')
-    setBackupPassword('')
     setTotpUri(null)
     setBackupCodes(null)
     clearQRCode()
@@ -83,35 +78,112 @@ export function TwoFactorSettings(user: Session['user']) {
     clearError()
   }, [clearQRCode, clearStoredBackupCodes, clearError])
 
-  const handleGenerateBackupCodesClick = () => {
-    setStep('verify-for-backup')
+  const handleEnableDialogClose = () => {
+    if (!isSubmittingDialog) {
+      setShowEnableDialog(false)
+      setTimeout(() => {
+        setDialogPassword('')
+        setDialogError(null)
+      }, 300)
+    }
   }
 
-  const handleBackupPasswordSubmit = async () => {
-    if (!backupPassword) return
-
-    const result = await generateBackupCodesAction(backupPassword)
-    if (result.error) return
-
-    if (result.data?.backupCodes) {
-      setGeneratedBackupCodes(result.data.backupCodes)
+  const handleEnableDialogSubmit = async () => {
+    if (!dialogPassword.trim()) {
+      setDialogError('Password is required')
+      return
     }
 
-    setBackupPassword('')
-    setStep('idle')
-  }
+    setIsSubmittingDialog(true)
+    setDialogError(null)
 
-  const handlePasswordSubmit = async () => {
-    if (!pendingPassword) return
+    const result = await enableTwoFactor(dialogPassword)
 
-    const result = await enableTwoFactor(pendingPassword)
-    if (result.error || !result.data) return
+    if (result.error || !result.data) {
+      setDialogError(typeof result.error === 'string' ? result.error : 'Failed to enable 2FA')
+      setIsSubmittingDialog(false)
+      return
+    }
 
     if (result.data.totpURI) {
       setTotpUri(result.data.totpURI)
     }
 
+    setShowEnableDialog(false)
+    setIsSubmittingDialog(false)
+    setDialogPassword('')
     setStep('method')
+  }
+
+  const handleDisableDialogClose = () => {
+    if (!isSubmittingDialog) {
+      setShowDisableDialog(false)
+      setTimeout(() => {
+        setDialogPassword('')
+        setDialogError(null)
+      }, 300)
+    }
+  }
+
+  const handleDisableDialogSubmit = async () => {
+    if (!dialogPassword.trim()) {
+      setDialogError('Password is required')
+      return
+    }
+
+    setIsSubmittingDialog(true)
+    setDialogError(null)
+
+    const result = await disableTwoFactor(dialogPassword)
+
+    if (result.error) {
+      setDialogError(typeof result.error === 'string' ? result.error : 'Failed to disable 2FA')
+      setIsSubmittingDialog(false)
+      return
+    }
+
+    setShowDisableDialog(false)
+    setIsSubmittingDialog(false)
+    resetWizard()
+    navigate({ to: '/account' })
+  }
+
+  const handleBackupDialogClose = () => {
+    if (!isSubmittingDialog) {
+      setShowBackupDialog(false)
+      setTimeout(() => {
+        setDialogPassword('')
+        setDialogError(null)
+      }, 300)
+    }
+  }
+
+  const handleBackupDialogSubmit = async () => {
+    if (!dialogPassword.trim()) {
+      setDialogError('Password is required')
+      return
+    }
+
+    setIsSubmittingDialog(true)
+    setDialogError(null)
+
+    const result = await generateBackupCodesAction(dialogPassword)
+
+    if (result.error) {
+      setDialogError(
+        typeof result.error === 'string' ? result.error : 'Failed to generate backup codes'
+      )
+      setIsSubmittingDialog(false)
+      return
+    }
+
+    if (result.data?.backupCodes) {
+      setGeneratedBackupCodes(result.data.backupCodes)
+    }
+
+    setShowBackupDialog(false)
+    setIsSubmittingDialog(false)
+    setDialogPassword('')
   }
 
   const handleMethodSelect = async (selectedMethod: 'totp' | 'otp') => {
@@ -151,14 +223,6 @@ export function TwoFactorSettings(user: Session['user']) {
     navigate({ to: '/account' })
   }
 
-  const handleDisable = async (password: string) => {
-    const result = await disableTwoFactor(password)
-    if (result.error) return
-
-    resetWizard()
-    navigate({ to: '/account' })
-  }
-
   const handleResendOtp = async () => {
     return await sendOtp()
   }
@@ -178,25 +242,39 @@ export function TwoFactorSettings(user: Session['user']) {
 
           <CardHeaderAction>
             <Activity mode={step === 'idle' && twoFactorEnabled ? 'visible' : 'hidden'}>
-              <Button
-                type='button'
-                variant='outline'
-                onClick={handleGenerateBackupCodesClick}
-                disabled={isVerifying}
-              >
-                {isVerifying ? 'Generating...' : 'Generate Backup Codes'}
-              </Button>
+              <div className='flex gap-2'>
+                <Dialog
+                  open={showBackupDialog}
+                  onOpenChange={setShowBackupDialog}
+                  disablePointerDismissal
+                >
+                  <DialogTrigger render={<Button type='button' variant='outline' />}>
+                    Generate Backup Codes
+                  </DialogTrigger>
+                </Dialog>
+
+                <Dialog
+                  open={showDisableDialog}
+                  onOpenChange={setShowDisableDialog}
+                  disablePointerDismissal
+                >
+                  <DialogTrigger render={<Button type='button' variant='danger' />}>
+                    Disable 2FA
+                  </DialogTrigger>
+                </Dialog>
+              </div>
             </Activity>
 
             <Activity mode={step === 'idle' && !twoFactorEnabled ? 'visible' : 'hidden'}>
-              <Button
-                type='button'
-                variant='primary'
-                onClick={handleGenerateBackupCodesClick}
-                disabled={isVerifying}
+              <Dialog
+                open={showEnableDialog}
+                onOpenChange={setShowEnableDialog}
+                disablePointerDismissal
               >
-                Enable 2FA
-              </Button>
+                <DialogTrigger render={<Button type='button' variant='primary' />}>
+                  Enable 2FA
+                </DialogTrigger>
+              </Dialog>
             </Activity>
           </CardHeaderAction>
         </div>
@@ -204,14 +282,12 @@ export function TwoFactorSettings(user: Session['user']) {
 
       <CardBody>
         {error && (
-          <Alert variant='danger'>
-            <Lucide.AlertCircle className='size-4' />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        {step !== 'idle' && step !== 'success' && (
-          <TwoFactorStepper currentStep={getStepNumber()} steps={STEPS} />
+          <div className='p-4'>
+            <Alert variant='danger'>
+              <Lucide.AlertCircle className='size-4' />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          </div>
         )}
 
         <div className='space-y-3'>
@@ -223,62 +299,38 @@ export function TwoFactorSettings(user: Session['user']) {
                 </div>
                 <div>
                   <div className='flex items-center gap-2'>
-                    <span className='font-medium'>Authenticator Device</span>
+                    <span className='font-medium'>Authenticator App</span>
                   </div>
-                  <p className='text-on-background-neutral text-xs'>Enabled since: dd/mm/yyyy</p>
+                  <p className='text-on-background-neutral text-sm'>
+                    Use an authenticator app for 2FA
+                  </p>
                 </div>
               </div>
               <Label>
-                <Switch readOnly disabled />
-                <span className='sr-only'>Toggle 2FA</span>
+                <Switch checked={twoFactorEnabled} readOnly className='cursor-default' />
+                <span className='sr-only'>Authenticator App Enabled</span>
               </Label>
             </div>
 
             <div className='border-border-neutral-faded flex items-center justify-between rounded-lg border p-4 pr-5'>
               <div className='flex items-center gap-3'>
                 <div className='bg-background-neutral-faded flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
-                  <Lucide.ShieldCheck />
+                  <Lucide.Mail />
                 </div>
                 <div>
                   <div className='flex items-center gap-2'>
                     <span className='font-medium'>Email OTP</span>
                   </div>
-                  <p className='text-on-background-neutral text-xs'>Enabled since: dd/mm/yyyy</p>
+                  <p className='text-on-background-neutral text-sm'>
+                    Receive verification codes via email
+                  </p>
                 </div>
               </div>
               <Label>
-                <Switch readOnly disabled />
-                <span className='sr-only'>Toggle 2FA</span>
+                <Switch checked={twoFactorEnabled} readOnly className='cursor-default' />
+                <span className='sr-only'>Email OTP Enabled</span>
               </Label>
             </div>
-          </Activity>
-
-          <Activity mode={step === 'password' && !twoFactorEnabled ? 'visible' : 'hidden'}>
-            <TwoFactorPasswordInput
-              password={pendingPassword}
-              onPasswordChange={setPendingPassword}
-              onSubmit={handlePasswordSubmit}
-              isVerifying={isVerifying}
-              onCancel={resetWizard}
-            />
-          </Activity>
-
-          <Activity mode={step === 'password' && twoFactorEnabled ? 'visible' : 'hidden'}>
-            <TwoFactorDisable
-              isVerifying={isVerifying}
-              onDisable={handleDisable}
-              onCancel={resetWizard}
-            />
-          </Activity>
-
-          <Activity mode={step === 'verify-for-backup' ? 'visible' : 'hidden'}>
-            <TwoFactorBackupPassword
-              password={backupPassword}
-              onPasswordChange={setBackupPassword}
-              onSubmit={handleBackupPasswordSubmit}
-              isVerifying={isVerifying}
-              onCancel={resetWizard}
-            />
           </Activity>
 
           <Activity mode={step === 'method' ? 'visible' : 'hidden'}>
@@ -319,9 +371,227 @@ export function TwoFactorSettings(user: Session['user']) {
           <TwoFactorBackupCodes codes={generatedBackupCodes || []} />
         </Activity>
 
-        <Activity mode={backupCodes && step === 'idle' ? 'visible' : 'hidden'}>
-          <TwoFactorBackupCodes codes={backupCodes || []} />
-        </Activity>
+        <Dialog open={showEnableDialog} onOpenChange={setShowEnableDialog} disablePointerDismissal>
+          <DialogTrigger />
+          <DialogPopup>
+            <DialogHeader>
+              <div className='flex items-center gap-3'>
+                <div className='bg-background-primary-faded flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
+                  <Lucide.Shield className='text-foreground-primary h-5 w-5' />
+                </div>
+                <div>
+                  <DialogTitle>Enable 2FA</DialogTitle>
+                  <DialogDescription>
+                    Add an extra layer of security to your account
+                  </DialogDescription>
+                </div>
+              </div>
+              <DialogClose
+                className='ml-auto'
+                onClick={handleEnableDialogClose}
+                disabled={isSubmittingDialog}
+              >
+                <Lucide.XIcon className='size-4' strokeWidth={2.0} />
+              </DialogClose>
+            </DialogHeader>
+            <DialogBody>
+              {dialogError && (
+                <div className='text-foreground-critical mt-4 text-sm'>{dialogError}</div>
+              )}
+              <Field>
+                <Label htmlFor='enable-password'>Enter your password</Label>
+                <InputPassword
+                  id='enable-password'
+                  value={dialogPassword}
+                  onChange={(e) => {
+                    setDialogPassword(e.target.value)
+                    if (dialogError) setDialogError(null)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && dialogPassword.trim() && !isSubmittingDialog) {
+                      handleEnableDialogSubmit()
+                    }
+                  }}
+                  disabled={isSubmittingDialog}
+                  placeholder='Your password'
+                  autoFocus
+                />
+              </Field>
+            </DialogBody>
+            <DialogFooter>
+              <Button
+                variant='primary'
+                disabled={!dialogPassword.trim() || isSubmittingDialog}
+                onClick={handleEnableDialogSubmit}
+                block
+              >
+                {isSubmittingDialog ? (
+                  <span className='flex items-center justify-center gap-2'>
+                    <Lucide.Loader2 className='size-4 animate-spin' />
+                    Verifying...
+                  </span>
+                ) : (
+                  'Continue'
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogPopup>
+        </Dialog>
+
+        <Dialog
+          open={showDisableDialog}
+          onOpenChange={setShowDisableDialog}
+          disablePointerDismissal
+        >
+          <DialogTrigger />
+          <DialogPopup>
+            <DialogHeader>
+              <div className='flex items-center gap-3'>
+                <div className='bg-background-critical/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
+                  <Lucide.AlertTriangle className='text-foreground-critical h-5 w-5' />
+                </div>
+                <div>
+                  <DialogTitle>Disable 2FA?</DialogTitle>
+                  <DialogDescription>This action cannot be undone</DialogDescription>
+                </div>
+              </div>
+              <DialogClose
+                className='ml-auto'
+                onClick={handleDisableDialogClose}
+                disabled={isSubmittingDialog}
+              >
+                <Lucide.XIcon className='size-4' strokeWidth={2.0} />
+              </DialogClose>
+            </DialogHeader>
+            <DialogBody>
+              <Alert variant='danger' className='mb-4'>
+                <Lucide.AlertTriangle className='size-4' />
+                <AlertDescription>
+                  <strong>Warning: This will reduce your account security</strong>
+                  <br />
+                  Disabling 2FA removes an important layer of protection. Your account will only be
+                  protected by your password.
+                </AlertDescription>
+              </Alert>
+
+              {dialogError && (
+                <div className='text-foreground-critical mt-4 text-sm'>{dialogError}</div>
+              )}
+
+              <Field className='mt-4'>
+                <Label htmlFor='disable-password'>Enter your password</Label>
+                <InputPassword
+                  id='disable-password'
+                  value={dialogPassword}
+                  onChange={(e) => {
+                    setDialogPassword(e.target.value)
+                    if (dialogError) setDialogError(null)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && dialogPassword.trim() && !isSubmittingDialog) {
+                      handleDisableDialogSubmit()
+                    }
+                  }}
+                  disabled={isSubmittingDialog}
+                  placeholder='Your password'
+                  autoFocus
+                />
+              </Field>
+            </DialogBody>
+            <DialogFooter>
+              <Button
+                variant='danger'
+                disabled={!dialogPassword.trim() || isSubmittingDialog}
+                onClick={handleDisableDialogSubmit}
+                block
+              >
+                {isSubmittingDialog ? (
+                  <span className='flex items-center justify-center gap-2'>
+                    <Lucide.Loader2 className='size-4 animate-spin' />
+                    Disabling...
+                  </span>
+                ) : (
+                  'Disable 2FA'
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogPopup>
+        </Dialog>
+
+        <Dialog open={showBackupDialog} onOpenChange={setShowBackupDialog} disablePointerDismissal>
+          <DialogTrigger />
+          <DialogPopup>
+            <DialogHeader>
+              <div className='flex items-center gap-3'>
+                <div className='bg-background-primary-faded flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
+                  <Lucide.Key className='text-foreground-primary h-5 w-5' />
+                </div>
+                <div>
+                  <DialogTitle>Generate Backup Codes</DialogTitle>
+                  <DialogDescription>Create new recovery codes for your account</DialogDescription>
+                </div>
+              </div>
+              <DialogClose
+                className='ml-auto'
+                onClick={handleBackupDialogClose}
+                disabled={isSubmittingDialog}
+              >
+                <Lucide.XIcon className='size-4' strokeWidth={2.0} />
+              </DialogClose>
+            </DialogHeader>
+            <DialogBody>
+              <Alert variant='warning' className='mb-4'>
+                <Lucide.AlertTriangle className='size-4' />
+                <AlertDescription>
+                  <strong>Your old codes will be invalidated</strong>
+                  <br />
+                  After generating new codes, your previous backup codes will no longer work. Make
+                  sure to store the new codes in a safe place.
+                </AlertDescription>
+              </Alert>
+
+              {dialogError && (
+                <div className='text-foreground-critical mt-4 text-sm'>{dialogError}</div>
+              )}
+              <Field className='mt-4'>
+                <Label htmlFor='backup-password'>Enter your password</Label>
+                <InputPassword
+                  id='backup-password'
+                  value={dialogPassword}
+                  onChange={(e) => {
+                    setDialogPassword(e.target.value)
+                    if (dialogError) setDialogError(null)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && dialogPassword.trim() && !isSubmittingDialog) {
+                      handleBackupDialogSubmit()
+                    }
+                  }}
+                  disabled={isSubmittingDialog}
+                  placeholder='Your password'
+                  autoFocus
+                />
+              </Field>
+            </DialogBody>
+            <DialogFooter>
+              <Button
+                variant='primary'
+                disabled={!dialogPassword.trim() || isSubmittingDialog}
+                onClick={handleBackupDialogSubmit}
+                block
+              >
+                {isSubmittingDialog ? (
+                  <span className='flex items-center justify-center gap-2'>
+                    <Lucide.Loader2 className='size-4 animate-spin' />
+                    Generating...
+                  </span>
+                ) : (
+                  'Generate Codes'
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogPopup>
+        </Dialog>
       </CardBody>
     </Card>
   )

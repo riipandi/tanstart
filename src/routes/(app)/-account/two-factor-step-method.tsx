@@ -1,4 +1,5 @@
 import * as Lucide from 'lucide-react'
+import { Button } from '#/components/button'
 
 interface TwoFactorMethodSelectionProps {
   onSelectMethod: (method: 'totp' | 'otp') => void
@@ -10,8 +11,8 @@ export function TwoFactorMethodSelection({
   onCancel
 }: TwoFactorMethodSelectionProps) {
   return (
-    <div className='border-border-neutral bg-background-elevation-base rounded-md border p-6'>
-      <h3 className='mb-4 text-center text-base font-semibold'>Choose Verification Method</h3>
+    <div className='p-4'>
+      <h3 className='mb-2 text-center text-base font-semibold'>Choose Verification Method</h3>
       <p className='text-on-background-neutral mb-6 text-center text-sm'>
         Select how you want to receive verification codes
       </p>
@@ -51,13 +52,9 @@ export function TwoFactorMethodSelection({
       </div>
 
       <div className='mt-6 flex justify-end'>
-        <button
-          type='button'
-          onClick={onCancel}
-          className='text-foreground-neutral text-sm font-medium transition-colors hover:underline'
-        >
+        <Button variant='outline' onClick={onCancel}>
           Cancel
-        </button>
+        </Button>
       </div>
     </div>
   )

@@ -8,8 +8,8 @@ interface TwoFactorStepSuccessProps {
 
 export function TwoFactorStepSuccess({ backupCodes, onComplete }: TwoFactorStepSuccessProps) {
   return (
-    <div className='border-border-neutral bg-background-elevation-base rounded-md border p-6'>
-      <div className='mb-6 text-center'>
+    <div className='p-4'>
+      <div className='mb-4 text-center'>
         <div className='bg-background-positive-faded mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full'>
           <Lucide.CheckCircle2 className='text-foreground-positive h-10 w-10' />
         </div>
@@ -19,7 +19,7 @@ export function TwoFactorStepSuccess({ backupCodes, onComplete }: TwoFactorStepS
         </p>
       </div>
 
-      <TwoFactorBackupCodes codes={backupCodes} onHide={() => {}} />
+      <TwoFactorBackupCodes codes={backupCodes} />
 
       <div className='mt-6 flex justify-end'>
         <button
