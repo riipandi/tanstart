@@ -4,14 +4,12 @@ import { z } from 'zod'
 import { Alert, AlertDescription } from '#/components/alert'
 import { Copy } from '#/components/copy'
 import { ensureSession } from '#/guards/session'
-import { ChangePassword } from './-account/change-password'
 import { DeleteAccount } from './-account/delete-account'
 import { SessionsList } from './-account/sessions-list'
 import { SocialAccounts } from './-account/social-accounts'
-import { TwoFactorSettings } from './-account/two-factor'
 import { UserProfile } from './-account/user-profile'
 
-export const Route = createFileRoute('/(app)/account')({
+export const Route = createFileRoute('/(app)/account/')({
   component: RouteComponent,
   beforeLoad: async () => {
     const session = await ensureSession()
@@ -31,7 +29,7 @@ function RouteComponent() {
 
   return (
     <div className='flex justify-center px-4 py-10'>
-      <div className='w-full max-w-2xl space-y-8 p-6'>
+      <div className='w-full max-w-2xl space-y-8'>
         {deleteCancelled && (
           <Alert variant='success'>
             <Lucide.Check className='size-4' />
@@ -52,8 +50,6 @@ function RouteComponent() {
 
         <UserProfile {...user} />
         <SocialAccounts />
-        <TwoFactorSettings {...user} />
-        <ChangePassword />
         <SessionsList />
         <DeleteAccount />
       </div>

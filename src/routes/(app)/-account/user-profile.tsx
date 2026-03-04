@@ -325,7 +325,7 @@ export function UserProfile(user: Session['user']) {
   return (
     <Card>
       <CardBody className='relative'>
-        {!isEditingName && (
+        <Activity mode={!isEditingName ? 'visible' : 'hidden'}>
           <Dialog
             open={showChangeEmailDialog}
             onOpenChange={setShowChangeEmailDialog}
@@ -337,7 +337,7 @@ export function UserProfile(user: Session['user']) {
                   variant='ghost'
                   size='xs'
                   onClick={handleChangeEmail}
-                  className='absolute top-4 right-4 text-xs'
+                  className='absolute top-5 right-5 text-xs'
                   title='Change email'
                 />
               }
@@ -347,149 +347,149 @@ export function UserProfile(user: Session['user']) {
             </DialogTrigger>
             <DialogPopup>
               {/* Step 1: Email Change Form */}
-              {!emailVerificationSent && (
-                <>
-                  <DialogHeader>
-                    <div className='flex items-center gap-3'>
-                      <div className='bg-background-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
-                        <Lucide.Mail className='text-foreground-primary h-5 w-5' />
-                      </div>
-                      <div>
-                        <DialogTitle>Change Email?</DialogTitle>
-                        <DialogDescription>
-                          We&apos;ll send a verification link to your new email address
-                        </DialogDescription>
-                      </div>
+              <Activity mode={!emailVerificationSent ? 'visible' : 'hidden'}>
+                <DialogHeader>
+                  <div className='flex items-center gap-3'>
+                    <div className='bg-background-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
+                      <Lucide.Mail className='text-foreground-primary h-5 w-5' />
                     </div>
-                  </DialogHeader>
-                  <DialogBody>
-                    <p className='text-on-background-neutral text-sm'>
-                      To confirm this change, please enter your new email address and current
-                      password.
-                    </p>
-                    {emailError && (
-                      <Alert variant='danger' className='mt-4'>
-                        <Lucide.AlertCircle className='size-4' />
-                        <AlertDescription>{emailError}</AlertDescription>
-                      </Alert>
-                    )}
-                    <Form
-                      onSubmit={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        changeEmailForm.handleSubmit()
-                      }}
-                      className='mt-4 grid gap-4'
-                    >
-                      <changeEmailForm.AppField
-                        name='newEmail'
-                        validators={{
-                          onBlur: ({ value }) => {
-                            if (!value || value.trim().length === 0) {
-                              return 'New email is required'
-                            }
-                            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                              return 'Please enter a valid email address'
-                            }
-                            if (value.trim() === user.email) {
-                              return 'New email must be different from your current email'
-                            }
-                            return undefined
-                          }
-                        }}
-                      >
-                        {(field) => <field.TextField label='New email address' />}
-                      </changeEmailForm.AppField>
-
-                      <changeEmailForm.AppField
-                        name='password'
-                        validators={{
-                          onBlur: ({ value }) => {
-                            if (!value || value.trim().length === 0) {
-                              return 'Password is required'
-                            }
-                            return undefined
-                          }
-                        }}
-                      >
-                        {(field) => <field.PasswordField label='Current password' />}
-                      </changeEmailForm.AppField>
-                    </Form>
-                  </DialogBody>
-                  <DialogFooter>
-                    <DialogClose render={<Button variant='outline' disabled={isChangingEmail} />}>
-                      Cancel
-                    </DialogClose>
-                    <changeEmailForm.AppForm>
-                      <changeEmailForm.SubmitButton label='Change Email' />
-                    </changeEmailForm.AppForm>
-                  </DialogFooter>
-                </>
-              )}
-              {/* Step 2: Email Sent */}
-              {emailVerificationSent && (
-                <>
-                  <DialogHeader>
-                    <div className='mb-6 flex flex-col items-center text-center'>
-                      <div className='bg-background-primary-faded mb-3 flex h-14 w-14 items-center justify-center rounded-full'>
-                        <Lucide.Mail className='text-foreground-primary h-7 w-7' />
-                      </div>
-                      <DialogTitle>Check Your New Email</DialogTitle>
-                      <DialogDescription>
-                        We&apos;ve sent a verification link to {submittedEmail}
-                      </DialogDescription>
-                    </div>
-                  </DialogHeader>
-                  <DialogBody>
-                    <Alert variant='info'>
-                      <AlertDescription>
-                        Please check your inbox and click the verification link to complete the
-                        email change.
-                        <br />
-                        <strong>Important:</strong> This link will expire in 24 hours.
-                      </AlertDescription>
+                    <DialogTitle>Change Email Address</DialogTitle>
+                  </div>
+                  <DialogClose
+                    className='ml-auto'
+                    // onClick={handleCloseDialog}
+                    // disabled={isSubmitting}
+                  >
+                    <Lucide.XIcon className='size-4' strokeWidth={2.0} />
+                  </DialogClose>
+                </DialogHeader>
+                <DialogBody>
+                  <p className='text-on-background-neutral text-sm'>
+                    To confirm this change, please enter your new email address and current
+                    password. We&apos;ll send a verification link to your new email address.
+                  </p>
+                  {emailError && (
+                    <Alert variant='danger' className='mt-4'>
+                      <Lucide.AlertCircle className='size-4' />
+                      <AlertDescription>{emailError}</AlertDescription>
                     </Alert>
-                    <div className='mb-4 text-center'>
-                      <p className='text-on-background-neutral text-sm'>
-                        Didn&apos;t receive the email?
-                      </p>
-                      <Button
-                        type='button'
-                        variant='primary'
-                        mode='link'
-                        size='sm'
-                        onClick={handleResendEmail}
-                        disabled={isEmailCooldown || isChangingEmail}
-                      >
-                        {isChangingEmail ? (
-                          <span className='flex items-center justify-center gap-1'>
-                            <Lucide.Loader2 className='h-3 w-3 animate-spin' />
-                            Resending...
-                          </span>
-                        ) : isEmailCooldown ? (
-                          `Resend in ${emailRemainingSeconds}s`
-                        ) : (
-                          'Resend email'
-                        )}
-                      </Button>
+                  )}
+                  <Form
+                    onSubmit={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      changeEmailForm.handleSubmit()
+                    }}
+                    className='mt-4 grid gap-4'
+                  >
+                    <changeEmailForm.AppField
+                      name='newEmail'
+                      validators={{
+                        onBlur: ({ value }) => {
+                          if (!value || value.trim().length === 0) {
+                            return 'New email is required'
+                          }
+                          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                            return 'Please enter a valid email address'
+                          }
+                          if (value.trim() === user.email) {
+                            return 'New email must be different from your current email'
+                          }
+                          return undefined
+                        }
+                      }}
+                    >
+                      {(field) => <field.TextField label='New email address' />}
+                    </changeEmailForm.AppField>
+
+                    <changeEmailForm.AppField
+                      name='password'
+                      validators={{
+                        onBlur: ({ value }) => {
+                          if (!value || value.trim().length === 0) {
+                            return 'Password is required'
+                          }
+                          return undefined
+                        }
+                      }}
+                    >
+                      {(field) => <field.PasswordField label='Current password' />}
+                    </changeEmailForm.AppField>
+                  </Form>
+                </DialogBody>
+                <DialogFooter>
+                  <DialogClose render={<Button variant='outline' disabled={isChangingEmail} />}>
+                    Cancel
+                  </DialogClose>
+                  <changeEmailForm.AppForm>
+                    <changeEmailForm.SubmitButton label='Change Email' />
+                  </changeEmailForm.AppForm>
+                </DialogFooter>
+              </Activity>
+
+              {/* Step 2: Email Sent */}
+              <Activity mode={emailVerificationSent ? 'visible' : 'hidden'}>
+                <DialogHeader>
+                  <div className='mb-6 flex flex-col items-center text-center'>
+                    <div className='bg-background-primary-faded mb-3 flex h-14 w-14 items-center justify-center rounded-full'>
+                      <Lucide.Mail className='text-foreground-primary h-7 w-7' />
                     </div>
-                    {emailError && (
-                      <Alert variant='danger'>
-                        <Lucide.AlertCircle className='size-4' />
-                        <AlertDescription>{emailError}</AlertDescription>
-                      </Alert>
-                    )}
-                  </DialogBody>
-                  <DialogFooter>
-                    <Button variant='primary' onClick={handleGotIt}>
-                      Got it
+                    <DialogTitle>Check Your New Email</DialogTitle>
+                    <DialogDescription>
+                      We&apos;ve sent a verification link to {submittedEmail}
+                    </DialogDescription>
+                  </div>
+                </DialogHeader>
+                <DialogBody>
+                  <Alert variant='info'>
+                    <AlertDescription>
+                      Please check your inbox and click the verification link to complete the email
+                      change.
+                      <br />
+                      <strong>Important:</strong> This link will expire in 24 hours.
+                    </AlertDescription>
+                  </Alert>
+                  <div className='mb-4 text-center'>
+                    <p className='text-on-background-neutral text-sm'>
+                      Didn&apos;t receive the email?
+                    </p>
+                    <Button
+                      type='button'
+                      variant='primary'
+                      mode='link'
+                      size='sm'
+                      onClick={handleResendEmail}
+                      disabled={isEmailCooldown || isChangingEmail}
+                    >
+                      {isChangingEmail ? (
+                        <span className='flex items-center justify-center gap-1'>
+                          <Lucide.Loader2 className='h-3 w-3 animate-spin' />
+                          Resending...
+                        </span>
+                      ) : isEmailCooldown ? (
+                        `Resend in ${emailRemainingSeconds}s`
+                      ) : (
+                        'Resend email'
+                      )}
                     </Button>
-                  </DialogFooter>
-                </>
-              )}
+                  </div>
+                  {emailError && (
+                    <Alert variant='danger'>
+                      <Lucide.AlertCircle className='size-4' />
+                      <AlertDescription>{emailError}</AlertDescription>
+                    </Alert>
+                  )}
+                </DialogBody>
+                <DialogFooter>
+                  <Button variant='primary' onClick={handleGotIt}>
+                    Got it
+                  </Button>
+                </DialogFooter>
+              </Activity>
             </DialogPopup>
           </Dialog>
-        )}
+        </Activity>
+
         <div className='flex items-start justify-center gap-6 px-1'>
           <div className='flex flex-col items-center gap-2 pt-1.5'>
             <button
