@@ -8,7 +8,7 @@ import { Label } from '#/components/label'
 import { extractSecretFromUri } from '#/hooks/use-two-factor'
 import { useCopyToClipboard } from '#/hooks/use-two-factor'
 
-interface TwoFactorStepTOTPProps {
+interface TwoFactorStepSetupProps {
   totpUri: string
   qrCodeSvg: string | null
   isVerifying: boolean
@@ -16,13 +16,13 @@ interface TwoFactorStepTOTPProps {
   onCancel: () => void
 }
 
-export function TwoFactorStepTOTP({
+export function TwoFactorStepSetup({
   totpUri,
   qrCodeSvg,
   isVerifying,
   onVerify,
   onCancel
-}: TwoFactorStepTOTPProps) {
+}: TwoFactorStepSetupProps) {
   const [code, setCode] = useState('')
   const secretKey = extractSecretFromUri(totpUri)
   const { copied, copyToClipboard } = useCopyToClipboard()
@@ -147,6 +147,91 @@ export function TwoFactorStepTOTP({
         <Button size='xs' variant='ghost' onClick={onCancel}>
           Cancel
         </Button>
+      </div>
+    </div>
+  )
+}
+
+export function TwoFactorBackupCodes({ codes }: { codes: string[] }) {
+  const { copied, copyToClipboard } = useCopyToClipboard()
+
+  const handleCopy = async () => {
+    const text = codes.join('\n')
+    await copyToClipboard(text)
+  }
+
+  return (
+    <div className='bg-background-warning-faded border-border-warning-faded mt-6 rounded-md border p-6'>
+      <div className='mb-2 flex items-center justify-between'>
+        <div className='flex items-center gap-2'>
+          <Lucide.Shield className='text-foreground-warning size-4' />
+          <h3 className='text-foreground-warning text-sm font-semibold'>Backup Codes</h3>
+        </div>
+        <div className='flex items-center gap-2'>
+          <button
+            type='button'
+            onClick={handleCopy}
+            disabled={copied}
+            className='text-foreground-warning flex items-center gap-1 text-xs font-medium hover:underline disabled:cursor-not-allowed disabled:opacity-50'
+            title={copied ? 'Copied!' : 'Copy all codes'}
+          >
+            {copied ? (
+              <>
+                <Lucide.Check className='h-3 w-3' />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Lucide.Copy className='h-3 w-3' />
+                Copy
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+      <p className='text-foreground-warning mb-4 text-sm'>
+        Save these codes in a safe place. You can use them to access your account if you lose your
+        authenticator.
+      </p>
+      <div className='grid grid-cols-3 gap-2 font-mono text-sm'>
+        {codes.map((code) => (
+          <span key={code} className='text-foreground-warning text-sm font-medium'>
+            {code}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+interface TwoFactorStepSuccessProps {
+  backupCodes: string[]
+  onComplete: () => void
+}
+
+export function TwoFactorStepSuccess({ backupCodes, onComplete }: TwoFactorStepSuccessProps) {
+  return (
+    <div className='p-4'>
+      <div className='mb-4 text-center'>
+        <div className='bg-background-positive-faded mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full'>
+          <Lucide.CheckCircle2 className='text-foreground-positive h-10 w-10' />
+        </div>
+        <h3 className='mb-2 text-base font-semibold'>Two-Factor Authentication Enabled</h3>
+        <p className='text-on-background-neutral text-sm'>
+          Your account is now protected with an extra layer of security
+        </p>
+      </div>
+
+      <TwoFactorBackupCodes codes={backupCodes} />
+
+      <div className='mt-6 flex justify-end'>
+        <button
+          type='button'
+          onClick={onComplete}
+          className='bg-background-primary hover:bg-background-primary/80 focus-visible:bg-background-primary/90 text-on-background-primary focus-visible:ring-foreground-primary rounded-md px-6 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none'
+        >
+          Done
+        </button>
       </div>
     </div>
   )

@@ -28,9 +28,7 @@ import { Label } from '#/components/label'
 import { Switch } from '#/components/switch'
 import { Session } from '#/guards/auth-client'
 import { useTwoFactorSetup, useQRCode } from '#/hooks/use-two-factor'
-import { TwoFactorBackupCodes } from './two-factor-backup-codes'
-import { TwoFactorStepSuccess } from './two-factor-step-success'
-import { TwoFactorStepTOTP } from './two-factor-step-totp'
+import { TwoFactorStepSetup, TwoFactorStepSuccess, TwoFactorBackupCodes } from './two-factor-steps'
 
 type WizardStep = 'idle' | 'setup' | 'success'
 
@@ -319,7 +317,7 @@ export function TwoFactorSettings(user: Session['user']) {
           </Activity>
 
           <Activity mode={step === 'setup' && totpUri ? 'visible' : 'hidden'}>
-            <TwoFactorStepTOTP
+            <TwoFactorStepSetup
               totpUri={totpUri || ''}
               qrCodeSvg={qrCodeSvg}
               isVerifying={isVerifying}
