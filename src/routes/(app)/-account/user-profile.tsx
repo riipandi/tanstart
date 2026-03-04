@@ -1,25 +1,10 @@
-import { useAsyncRateLimiter } from '@tanstack/react-pacer'
-import { useRouter } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
-import { useRef, useState, Activity, useEffect } from 'react'
+import { useRef, useState, Activity } from 'react'
 import { z } from 'zod'
 import { Alert, AlertDescription } from '#/components/alert'
 import { Avatar, AvatarFallback, AvatarImage } from '#/components/avatar'
 import { Button } from '#/components/button'
 import { Card, CardBody } from '#/components/card'
-import {
-  Dialog,
-  DialogBody,
-  DialogClose,
-  DialogPopup,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '#/components/dialog'
-import { Form } from '#/components/form'
-import { Session } from '#/guards/auth-client'
 import { authClient } from '#/guards/auth-client'
 import { removeAvatar, uploadAvatar } from '#/guards/avatar'
 import { useAppForm } from '#/hooks/use-form'
@@ -30,14 +15,13 @@ const nameSchema = z.object({
   lastName: z.string().min(1, { error: 'Last name is required' })
 })
 
-const changeEmailSchema = z.object({
-  newEmail: z.string().min(1, { error: 'New email is required' }),
-  password: z.string().min(1, { error: 'Password is required' })
-})
-
-export function UserProfile(user: Session['user']) {
+export function UserProfile(user: {
+  name?: string
+  email: string
+  image?: string | null
+  createdAt: Date
+}) {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const router = useRouter()
   const [isUploading, setIsUploading] = useState(false)
   const [isRemoving, setIsRemoving] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -45,64 +29,6 @@ export function UserProfile(user: Session['user']) {
 
   const [isEditingName, setIsEditingName] = useState(false)
   const [nameError, setNameError] = useState<string | null>(null)
-
-  // Change email states
-  const [showChangeEmailDialog, setShowChangeEmailDialog] = useState(false)
-  const [isChangingEmail, setIsChangingEmail] = useState(false)
-  const [emailError, setEmailError] = useState<string | null>(null)
-  const [emailVerificationSent, setEmailVerificationSent] = useState(false)
-  const [emailInitialSubmitTime, setEmailInitialSubmitTime] = useState<number | null>(null)
-  const [submittedEmail, setSubmittedEmail] = useState('')
-
-  const changeEmailForm = useAppForm({
-    defaultValues: { newEmail: '', password: '' },
-    validators: { onChangeAsync: changeEmailSchema },
-    onSubmit: async ({ value }) => {
-      setEmailError(null)
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(value.newEmail.trim())) {
-        setEmailError('Please enter a valid email address')
-        return
-      }
-
-      if (value.newEmail.trim() === user.email) {
-        setEmailError('New email must be different from your current email')
-        return
-      }
-
-      setIsChangingEmail(true)
-
-      try {
-        const result = await authClient.changeEmail({
-          newEmail: value.newEmail.trim(),
-          callbackURL: '/signin'
-        })
-
-        if (result.error) {
-          if (result.error.message?.toLowerCase().includes('password')) {
-            setEmailError('Incorrect password. Please try again.')
-          } else {
-            setEmailError(result.error.message || 'Failed to send verification email')
-          }
-          setIsChangingEmail(false)
-          return
-        }
-
-        setSubmittedEmail(value.newEmail.trim())
-        setEmailVerificationSent(true)
-        setEmailInitialSubmitTime(Date.now())
-        setIsChangingEmail(false)
-      } catch (err) {
-        console.error('Change email error:', err)
-        setEmailError('An unexpected error occurred. Please try again.')
-        setIsChangingEmail(false)
-      }
-    }
-  })
-
-  // Cooldown period: 10s for DEV, 60s for other environments
-  const emailCooldownPeriod = import.meta.env.DEV ? 10_000 : 60_000
 
   const nameParts = user.name?.split(' ') || ['', '']
   const initialFirstName = nameParts[0] || ''
@@ -125,7 +51,6 @@ export function UserProfile(user: Session['user']) {
 
         setIsEditingName(false)
         formApi.reset()
-        router.invalidate()
       } catch (err) {
         console.error(err)
         setNameError('An unexpected error occurred')
@@ -206,8 +131,6 @@ export function UserProfile(user: Session['user']) {
       if (updateResult.error) {
         throw new Error(updateResult.error.message)
       }
-
-      router.invalidate()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to upload avatar')
       console.error(err)
@@ -233,8 +156,6 @@ export function UserProfile(user: Session['user']) {
       if (updateResult.error) {
         throw new Error(updateResult.error.message)
       }
-
-      router.invalidate()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to remove avatar')
       console.error(err)
@@ -243,253 +164,9 @@ export function UserProfile(user: Session['user']) {
     }
   }
 
-  const handleChangeEmail = () => {
-    setShowChangeEmailDialog(true)
-  }
-
-  const handleCloseChangeEmailDialog = () => {
-    if (!isChangingEmail) {
-      setShowChangeEmailDialog(false)
-      setTimeout(() => {
-        setEmailError(null)
-        setEmailVerificationSent(false)
-        changeEmailForm.reset()
-      }, 300)
-    }
-  }
-
-  const resendEmailLimiter = useAsyncRateLimiter(
-    async () => {
-      setIsChangingEmail(true)
-      setEmailError(null)
-
-      try {
-        const result = await authClient.changeEmail({
-          newEmail: submittedEmail.trim(),
-          callbackURL: '/signin'
-        })
-
-        if (result.error) {
-          setEmailError(result.error.message || 'Failed to resend email')
-          setIsChangingEmail(false)
-          return
-        }
-
-        setIsChangingEmail(false)
-      } catch (err) {
-        console.error('Resend email error:', err)
-        setEmailError('Failed to resend email. Please try again.')
-        setIsChangingEmail(false)
-      }
-    },
-    {
-      limit: 1,
-      window: emailCooldownPeriod,
-      windowType: 'sliding'
-    },
-    (state) => ({
-      isExceeded: state.isExceeded,
-      executionTimes: state.executionTimes
-    })
-  )
-
-  const handleResendEmail = () => resendEmailLimiter.maybeExecute()
-
-  const resendEmailState = resendEmailLimiter.state
-
-  // Force re-render for countdown
-  const [, setTick] = useState(0)
-  useEffect(() => {
-    if (
-      emailInitialSubmitTime ||
-      (resendEmailState.isExceeded && resendEmailState.executionTimes.length > 0)
-    ) {
-      const interval = setInterval(() => {
-        setTick((prev) => prev + 1)
-      }, 1000)
-      return () => clearInterval(interval)
-    }
-  }, [emailInitialSubmitTime, resendEmailState.isExceeded, resendEmailState.executionTimes.length])
-
-  const handleGotIt = () => {
-    handleCloseChangeEmailDialog()
-  }
-
-  // Calculate resend cooldown
-  const emailCooldownEnd =
-    Math.max(emailInitialSubmitTime ?? 0, resendEmailState.executionTimes[0] ?? 0) +
-    emailCooldownPeriod
-  const emailRemainingSeconds = Math.ceil((emailCooldownEnd - Date.now()) / 1000)
-  const isEmailCooldown = emailRemainingSeconds > 0
-
   return (
     <Card>
       <CardBody className='relative'>
-        <Activity mode={!isEditingName ? 'visible' : 'hidden'}>
-          <Dialog
-            open={showChangeEmailDialog}
-            onOpenChange={setShowChangeEmailDialog}
-            disablePointerDismissal
-          >
-            <DialogTrigger
-              render={
-                <Button
-                  variant='ghost'
-                  size='xs'
-                  onClick={handleChangeEmail}
-                  className='absolute top-5 right-5 text-xs'
-                  title='Change email'
-                />
-              }
-            >
-              <Lucide.Mail size={14} />
-              <span className='ml-1 hidden sm:inline'>Change</span>
-            </DialogTrigger>
-            <DialogPopup>
-              {/* Step 1: Email Change Form */}
-              <Activity mode={!emailVerificationSent ? 'visible' : 'hidden'}>
-                <DialogHeader>
-                  <div className='flex items-center gap-3'>
-                    <div className='bg-background-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
-                      <Lucide.Mail className='text-foreground-primary h-5 w-5' />
-                    </div>
-                    <DialogTitle>Change Email Address</DialogTitle>
-                  </div>
-                  <DialogClose
-                    className='ml-auto'
-                    // onClick={handleCloseDialog}
-                    // disabled={isSubmitting}
-                  >
-                    <Lucide.XIcon className='size-4' strokeWidth={2.0} />
-                  </DialogClose>
-                </DialogHeader>
-                <DialogBody>
-                  <p className='text-on-background-neutral text-sm'>
-                    To confirm this change, please enter your new email address and current
-                    password. We&apos;ll send a verification link to your new email address.
-                  </p>
-                  {emailError && (
-                    <Alert variant='danger' className='mt-4'>
-                      <Lucide.AlertCircle className='size-4' />
-                      <AlertDescription>{emailError}</AlertDescription>
-                    </Alert>
-                  )}
-                  <Form
-                    onSubmit={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      changeEmailForm.handleSubmit()
-                    }}
-                    className='mt-4 grid gap-4'
-                  >
-                    <changeEmailForm.AppField
-                      name='newEmail'
-                      validators={{
-                        onBlur: ({ value }) => {
-                          if (!value || value.trim().length === 0) {
-                            return 'New email is required'
-                          }
-                          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                            return 'Please enter a valid email address'
-                          }
-                          if (value.trim() === user.email) {
-                            return 'New email must be different from your current email'
-                          }
-                          return undefined
-                        }
-                      }}
-                    >
-                      {(field) => <field.TextField label='New email address' />}
-                    </changeEmailForm.AppField>
-
-                    <changeEmailForm.AppField
-                      name='password'
-                      validators={{
-                        onBlur: ({ value }) => {
-                          if (!value || value.trim().length === 0) {
-                            return 'Password is required'
-                          }
-                          return undefined
-                        }
-                      }}
-                    >
-                      {(field) => <field.PasswordField label='Current password' />}
-                    </changeEmailForm.AppField>
-                  </Form>
-                </DialogBody>
-                <DialogFooter>
-                  <DialogClose render={<Button variant='outline' disabled={isChangingEmail} />}>
-                    Cancel
-                  </DialogClose>
-                  <changeEmailForm.AppForm>
-                    <changeEmailForm.SubmitButton label='Change Email' />
-                  </changeEmailForm.AppForm>
-                </DialogFooter>
-              </Activity>
-
-              {/* Step 2: Email Sent */}
-              <Activity mode={emailVerificationSent ? 'visible' : 'hidden'}>
-                <DialogHeader>
-                  <div className='mb-6 flex flex-col items-center text-center'>
-                    <div className='bg-background-primary-faded mb-3 flex h-14 w-14 items-center justify-center rounded-full'>
-                      <Lucide.Mail className='text-foreground-primary h-7 w-7' />
-                    </div>
-                    <DialogTitle>Check Your New Email</DialogTitle>
-                    <DialogDescription>
-                      We&apos;ve sent a verification link to {submittedEmail}
-                    </DialogDescription>
-                  </div>
-                </DialogHeader>
-                <DialogBody>
-                  <Alert variant='info'>
-                    <AlertDescription>
-                      Please check your inbox and click the verification link to complete the email
-                      change.
-                      <br />
-                      <strong>Important:</strong> This link will expire in 24 hours.
-                    </AlertDescription>
-                  </Alert>
-                  <div className='mb-4 text-center'>
-                    <p className='text-on-background-neutral text-sm'>
-                      Didn&apos;t receive the email?
-                    </p>
-                    <Button
-                      type='button'
-                      variant='primary'
-                      mode='link'
-                      size='sm'
-                      onClick={handleResendEmail}
-                      disabled={isEmailCooldown || isChangingEmail}
-                    >
-                      {isChangingEmail ? (
-                        <span className='flex items-center justify-center gap-1'>
-                          <Lucide.Loader2 className='h-3 w-3 animate-spin' />
-                          Resending...
-                        </span>
-                      ) : isEmailCooldown ? (
-                        `Resend in ${emailRemainingSeconds}s`
-                      ) : (
-                        'Resend email'
-                      )}
-                    </Button>
-                  </div>
-                  {emailError && (
-                    <Alert variant='danger'>
-                      <Lucide.AlertCircle className='size-4' />
-                      <AlertDescription>{emailError}</AlertDescription>
-                    </Alert>
-                  )}
-                </DialogBody>
-                <DialogFooter>
-                  <Button variant='primary' onClick={handleGotIt}>
-                    Got it
-                  </Button>
-                </DialogFooter>
-              </Activity>
-            </DialogPopup>
-          </Dialog>
-        </Activity>
-
         <div className='flex items-start justify-center gap-6 px-1'>
           <div className='flex flex-col items-center gap-2 pt-1.5'>
             <button

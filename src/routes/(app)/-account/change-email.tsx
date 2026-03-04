@@ -23,38 +23,51 @@ import {
   DialogClose
 } from '#/components/dialog'
 import { Field } from '#/components/field'
+import { Input } from '#/components/input'
 import { InputPassword } from '#/components/input-password'
 import { Label } from '#/components/label'
 import { authClient } from '#/guards/auth-client'
 
-export function DeleteAccount() {
+export function ChangeEmail({ email: currentEmail }: { email: string }) {
   const [showDialog, setShowDialog] = useState(false)
+  const [newEmail, setNewEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [emailSent, setEmailSent] = useState(false)
+  const [submittedEmail, setSubmittedEmail] = useState('')
 
-  // Track initial submit time for resend cooldown
   const [initialSubmitTime, setInitialSubmitTime] = useState<number | null>(null)
 
-  // Cooldown period: 10s for DEV, 60s for other environments
   const cooldownPeriod = import.meta.env.DEV ? 10_000 : 60_000
 
   const handleCloseDialog = () => {
     if (!isSubmitting) {
       setShowDialog(false)
-      // Reset after animation
       setTimeout(() => {
         setError(null)
+        setNewEmail('')
         setPassword('')
         setEmailSent(false)
+        setSubmittedEmail('')
       }, 300)
     }
   }
 
   const handleSubmit = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(newEmail.trim())) {
+      setError('Please enter a valid email address')
+      return
+    }
+
+    if (newEmail.trim() === currentEmail) {
+      setError('New email must be different from your current email')
+      return
+    }
+
     if (!password.trim()) {
-      setError('Password is required to delete your account')
+      setError('Password is required to change your email')
       return
     }
 
@@ -62,28 +75,27 @@ export function DeleteAccount() {
     setError(null)
 
     try {
-      const result = await authClient.deleteUser({
-        password: password.trim(),
-        callbackURL: '/signin'
+      const result = await authClient.changeEmail({
+        newEmail: newEmail.trim(),
+        callbackURL: '/account?email_changed=true'
       })
 
       if (result.error) {
-        // Handle specific error cases
         if (result.error.message?.toLowerCase().includes('password')) {
           setError('Incorrect password. Please try again.')
         } else {
-          setError(result.error.message || 'Failed to initiate account deletion')
+          setError(result.error.message || 'Failed to send verification email')
         }
         setIsSubmitting(false)
         return
       }
 
-      // Success - show email sent state
+      setSubmittedEmail(newEmail.trim())
       setEmailSent(true)
       setInitialSubmitTime(Date.now())
       setIsSubmitting(false)
     } catch (err) {
-      console.error('Delete account error:', err)
+      console.error('Change email error:', err)
       setError('An unexpected error occurred. Please try again.')
       setIsSubmitting(false)
     }
@@ -95,9 +107,9 @@ export function DeleteAccount() {
       setError(null)
 
       try {
-        const result = await authClient.deleteUser({
-          password: password.trim(),
-          callbackURL: '/signin?account_deleted=true'
+        const result = await authClient.changeEmail({
+          newEmail: submittedEmail.trim(),
+          callbackURL: '/signin'
         })
 
         if (result.error) {
@@ -127,7 +139,6 @@ export function DeleteAccount() {
   const handleResendEmail = () => resendLimiter.maybeExecute()
   const resendState = resendLimiter.state
 
-  // Force re-render for countdown
   const [, setTick] = useState(0)
   useEffect(() => {
     if (initialSubmitTime || (resendState.isExceeded && resendState.executionTimes.length > 0)) {
@@ -138,33 +149,31 @@ export function DeleteAccount() {
     }
   }, [initialSubmitTime, resendState.isExceeded, resendState.executionTimes.length])
 
-  // Calculate resend cooldown
   const cooldownEnd =
     Math.max(initialSubmitTime ?? 0, resendState.executionTimes[0] ?? 0) + cooldownPeriod
   const remainingSeconds = Math.ceil((cooldownEnd - Date.now()) / 1000)
   const isCooldown = remainingSeconds > 0
 
   return (
-    <Card className='bg-background-critical-faded'>
+    <Card>
       <CardHeader>
-        <CardTitle className='text-foreground-critical'>Delete Account</CardTitle>
-        <CardDescription>Permanently delete your account</CardDescription>
+        <CardTitle>Email Address</CardTitle>
+        <CardDescription>Change your email address</CardDescription>
         <CardHeaderAction>
           <Dialog open={showDialog} onOpenChange={setShowDialog} disablePointerDismissal>
-            <DialogTrigger render={<Button type='button' variant='danger' />}>
-              Delete Account
+            <DialogTrigger render={<Button type='button' variant='outline' size='sm' />}>
+              Change
             </DialogTrigger>
             <DialogPopup>
-              {/* Step 1: Password Form */}
               <Activity mode={!emailSent ? 'visible' : 'hidden'}>
                 <DialogHeader>
                   <div className='flex items-center gap-3'>
-                    <div className='bg-background-critical/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
-                      <Lucide.AlertTriangle className='text-foreground-critical h-5 w-5' />
+                    <div className='bg-background-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
+                      <Lucide.Mail className='text-foreground-primary h-5 w-5' />
                     </div>
                     <div>
-                      <DialogTitle>Delete Account?</DialogTitle>
-                      <DialogDescription>This action cannot be undone</DialogDescription>
+                      <DialogTitle>Change Email Address</DialogTitle>
+                      <DialogDescription>Enter your new email address</DialogDescription>
                     </div>
                   </div>
                   <DialogClose
@@ -177,8 +186,8 @@ export function DeleteAccount() {
                 </DialogHeader>
                 <DialogBody>
                   <p className='text-on-background-neutral text-sm'>
-                    To confirm deletion, please enter your password. We&apos;ll send you an email
-                    with a confirmation link to complete this process.
+                    To confirm this change, please enter your new email address and current
+                    password. We&apos;ll send a verification link to your new email.
                   </p>
                   {error && (
                     <Alert variant='danger' className='mt-4'>
@@ -186,30 +195,51 @@ export function DeleteAccount() {
                       <AlertDescription>{error}</AlertDescription>
                     </Alert>
                   )}
-                  <Field className='mt-4'>
-                    <Label htmlFor='delete-password'>Enter your password</Label>
-                    <InputPassword
-                      id='delete-password'
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value)
-                        if (error) setError(null)
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && password.trim() && !isSubmitting) {
-                          handleSubmit()
-                        }
-                      }}
-                      disabled={isSubmitting}
-                      placeholder='Your password'
-                      autoFocus
-                    />
-                  </Field>
+                  <div className='mt-4 grid gap-4'>
+                    <Field>
+                      <Label htmlFor='new-email'>New email address</Label>
+                      <Input
+                        id='new-email'
+                        type='email'
+                        value={newEmail}
+                        onChange={(e) => {
+                          setNewEmail(e.target.value)
+                          if (error) setError(null)
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && password.trim() && !isSubmitting) {
+                            handleSubmit()
+                          }
+                        }}
+                        disabled={isSubmitting}
+                        placeholder='new@email.com'
+                        autoFocus
+                      />
+                    </Field>
+                    <Field>
+                      <Label htmlFor='change-email-password'>Current password</Label>
+                      <InputPassword
+                        id='change-email-password'
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value)
+                          if (error) setError(null)
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && newEmail.trim() && !isSubmitting) {
+                            handleSubmit()
+                          }
+                        }}
+                        disabled={isSubmitting}
+                        placeholder='Your password'
+                      />
+                    </Field>
+                  </div>
                 </DialogBody>
                 <DialogFooter>
                   <Button
-                    variant='danger'
-                    disabled={!password.trim() || isSubmitting}
+                    variant='primary'
+                    disabled={!newEmail.trim() || !password.trim() || isSubmitting}
                     onClick={handleSubmit}
                     block
                   >
@@ -219,13 +249,12 @@ export function DeleteAccount() {
                         Sending...
                       </span>
                     ) : (
-                      'Delete Account'
+                      'Send Verification'
                     )}
                   </Button>
                 </DialogFooter>
               </Activity>
 
-              {/* Step 2: Email Sent */}
               <Activity mode={emailSent ? 'visible' : 'hidden'}>
                 <DialogHeader>
                   <DialogClose className='ml-auto' onClick={handleCloseDialog}>
@@ -237,17 +266,17 @@ export function DeleteAccount() {
                     <div className='bg-background-primary-faded mb-3 flex size-14 items-center justify-center rounded-full'>
                       <Lucide.Mail className='text-foreground-primary size-7' />
                     </div>
-                    <DialogTitle>Check Your Email</DialogTitle>
+                    <DialogTitle>Check Your New Email</DialogTitle>
                     <DialogDescription>
-                      We've sent a confirmation link to your email.
+                      We've sent a verification link to {submittedEmail}
                     </DialogDescription>
                   </div>
 
                   <Alert variant='info'>
                     <AlertDescription className='text-sm'>
-                      Check your email inbox for a confirmation message. <br />
-                      Click the link in that email to complete your account deletion. The link
-                      expires in <strong>1 hour</strong>.
+                      Check your inbox for a verification message. <br />
+                      Click the link in that email to complete the email change. The link expires in{' '}
+                      <strong>24 hours</strong>.
                     </AlertDescription>
                   </Alert>
 
@@ -286,15 +315,9 @@ export function DeleteAccount() {
         </CardHeaderAction>
       </CardHeader>
       <CardBody>
-        <Alert variant='danger'>
-          <Lucide.AlertTriangle className='size-6' />
-          <AlertDescription className='my-1 px-2'>
-            <strong>Warning: This action cannot be undone</strong>
-            <br />
-            Deleting your account will permanently remove all your data, including your profile,
-            linked social accounts, active sessions, and two-factor authentication settings.
-          </AlertDescription>
-        </Alert>
+        <p className='text-on-background-neutral text-sm'>
+          Your current email address is <strong>{currentEmail}</strong>
+        </p>
       </CardBody>
     </Card>
   )

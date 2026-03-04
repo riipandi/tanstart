@@ -12,17 +12,16 @@ import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
 import { SignInWithSocialProvider } from './-social-buttons'
 
-interface SearchParams {
-  redirect?: string
-}
-
 export const Route = createFileRoute('/(auth)/signup')({
   component: RouteComponent,
   beforeLoad: () => {
     if (publicEnv.PUBLIC_DISABLE_SIGNUP) {
       throw notFound()
     }
-  }
+  },
+  validateSearch: z.object({
+    redirect: z.string().optional()
+  })
 })
 
 const signupSchema = z
@@ -46,7 +45,7 @@ const signupSchema = z
   })
 
 function RouteComponent() {
-  const search: SearchParams = Route.useSearch()
+  const search = Route.useSearch()
   const { isPending } = authClient.useSession()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)

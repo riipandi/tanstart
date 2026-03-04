@@ -87,6 +87,7 @@ export const authOptions = {
         subject: 'Verify Your Email',
         template: 'email-verification',
         vars: {
+          name: user.name,
           email: user.email,
           verificationLink: url
         }
@@ -142,12 +143,14 @@ export const authOptions = {
     },
     changeEmail: {
       enabled: true,
+      updateEmailWithoutVerification: true,
       sendChangeEmailConfirmation: async ({ user, url, newEmail }) => {
         await sendMail({
           to: newEmail,
           subject: 'Confirm Your Email Change',
           template: 'email-change-request',
           vars: {
+            name: user.name,
             newEmail: newEmail,
             oldEmail: user?.email ?? '',
             confirmationLink: url
@@ -160,7 +163,7 @@ export const authOptions = {
       sendDeleteAccountVerification: async ({ user, url }) => {
         // Create cancel link that redirects back to account page
         const baseUrl = process.env.PUBLIC_BASE_URL || 'http://localhost:3000'
-        const cancelLink = `${baseUrl}/account?deleteCancelled=true`
+        const cancelLink = `${baseUrl}/account?delete_cancelled=true`
 
         await sendMail({
           to: user.email,

@@ -1,7 +1,8 @@
 import { createFileRoute, Link as RouterLink } from '@tanstack/react-router'
+import * as Lucide from 'lucide-react'
 import { Activity, useState } from 'react'
 import { z } from 'zod'
-import { Alert } from '#/components/alert'
+import { Alert, AlertDescription } from '#/components/alert'
 import { Card, CardBody, CardDescription, CardTitle } from '#/components/card'
 import { CardFooter, CardHeader } from '#/components/card'
 import { Form } from '#/components/form'
@@ -12,10 +13,6 @@ import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
 import { SignInWithSocialProvider } from './-social-buttons'
 
-interface SearchParams {
-  redirect?: string
-}
-
 export const Route = createFileRoute('/(auth)/signin')({
   component: RouteComponent,
   loader: () => {
@@ -23,6 +20,7 @@ export const Route = createFileRoute('/(auth)/signin')({
   },
   validateSearch: z.object({
     logout: z.union([z.string(), z.boolean()]).optional(),
+    account_deleted: z.union([z.string(), z.boolean()]).optional(),
     redirect: z.string().optional()
   })
 })
@@ -36,7 +34,7 @@ const signinSchema = z.object({
 function RouteComponent() {
   const loaderData = Route.useLoaderData()
   const navigate = Route.useNavigate()
-  const search: SearchParams = Route.useSearch()
+  const search = Route.useSearch()
   const { isPending } = authClient.useSession()
   const [error, setError] = useState<string | null>(null)
 
@@ -79,6 +77,16 @@ function RouteComponent() {
 
   return (
     <div className='w-full max-w-md space-y-6 p-8'>
+      <Activity mode={search.account_deleted ? 'visible' : 'hidden'}>
+        <Alert variant='success'>
+          <Lucide.Check className='size-4' />
+          <AlertDescription>
+            <strong>Your account has been removed.</strong> <br />
+            All associated data has been removed and cannot be recovered.
+          </AlertDescription>
+        </Alert>
+      </Activity>
+
       <Card className='w-full min-w-sm'>
         <CardHeader>
           <CardTitle>Sign in to your account</CardTitle>
