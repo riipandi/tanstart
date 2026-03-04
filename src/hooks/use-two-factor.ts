@@ -202,6 +202,7 @@ export function useTwoFactorSetup() {
     isVerifying,
     error,
     storedBackupCodes,
+    setError,
     enableTwoFactor,
     verifyTotp,
     verifyOtp,

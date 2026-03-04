@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
-import { useState, useCallback, Activity } from 'react'
+import { useState, useCallback, useEffect, useRef, Activity } from 'react'
 import { Alert, AlertDescription } from '#/components/alert'
 import { Button } from '#/components/button'
 import {
@@ -58,6 +58,7 @@ export function TwoFactorSettings(user: Session['user']) {
   const {
     isVerifying,
     error,
+    setError,
     enableTwoFactor,
     verifyTotp,
     verifyOtp,
@@ -68,6 +69,7 @@ export function TwoFactorSettings(user: Session['user']) {
     clearStoredBackupCodes
   } = useTwoFactorSetup()
 
+  // FIXME: React instrumentation encountered an error: Error: The children should not have changed if we pass in the same set.
   const resetWizard = useCallback(() => {
     setStep('idle')
     setMethod(null)
@@ -227,6 +229,19 @@ export function TwoFactorSettings(user: Session['user']) {
     return await sendOtp()
   }
 
+  // Cleanup effect: Ensure body scroll is restored when step changes
+  const previousStep = useRef<WizardStep>('idle')
+  useEffect(() => {
+    if (step === 'idle' && previousStep.current !== 'idle') {
+      // Force restore body scroll when returning to idle state from active wizard
+      setTimeout(() => {
+        document.body.style.removeProperty('overflow')
+        document.body.style.removeProperty('padding-right')
+      }, 0)
+    }
+    previousStep.current = step
+  }, [step])
+
   return (
     <Card>
       <CardHeader>
@@ -280,7 +295,7 @@ export function TwoFactorSettings(user: Session['user']) {
         </div>
       </CardHeader>
 
-      <CardBody>
+      <CardBody className='pb-0'>
         {error && (
           <div className='p-4'>
             <Alert variant='danger'>
@@ -353,6 +368,7 @@ export function TwoFactorSettings(user: Session['user']) {
               onVerify={handleVerifyOtp}
               onCancel={resetWizard}
               isVerifying={isVerifying}
+              setError={setError}
               error={error}
             />
           </Activity>

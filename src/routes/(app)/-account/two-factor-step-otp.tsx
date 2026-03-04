@@ -6,7 +6,6 @@ import { Field } from '#/components/field'
 import { Input } from '#/components/input'
 import { InputGroup, InputGroupAddon } from '#/components/input-group'
 import { Label } from '#/components/label'
-import { clx } from '#/utils/variant'
 
 interface TwoFactorStepOTPProps {
   onSendOtp: () => Promise<{ error: string | null; success: boolean }>
@@ -14,14 +13,16 @@ interface TwoFactorStepOTPProps {
   onCancel: () => void
   isVerifying: boolean
   error: string | null
+  setError: (val: string | null) => void
 }
 
-const RESEND_COUNTDOWN = 30
+const RESEND_COUNTDOWN = import.meta.env.DEV ? 10 : 30
 
 export function TwoFactorStepOTP({
   onSendOtp,
   onVerify,
   onCancel,
+  setError,
   isVerifying,
   error
 }: TwoFactorStepOTPProps) {
@@ -43,6 +44,7 @@ export function TwoFactorStepOTP({
 
     setCanResend(false)
     setCountdown(RESEND_COUNTDOWN)
+    setError(null)
 
     const result = await onSendOtp()
     if (result.error) {
@@ -65,7 +67,7 @@ export function TwoFactorStepOTP({
   return (
     <div className='p-4'>
       {!error && (
-        <Alert variant='info' className='mb-4'>
+        <Alert variant='info' className='mb-6'>
           <Lucide.Mail className='text-background-primary size-4' />
           <AlertDescription>We've sent a 6-digit code to your email address</AlertDescription>
         </Alert>
@@ -106,9 +108,6 @@ export function TwoFactorStepOTP({
             onClick={handleResendOtp}
             disabled={!canResend || countdown > 0}
           >
-            <Lucide.RefreshCw
-              className={clx('size-3.5', !canResend || countdown > 0 ? '' : 'animate-spin')}
-            />
             Resend code {countdown > 0 && `(${countdown}s)`}
           </Button>
 
