@@ -1,5 +1,6 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as Lucide from 'lucide-react'
-import { Activity, useEffect, useState } from 'react'
+import { Activity, useState } from 'react'
 import { Alert, AlertDescription } from '#/components/alert'
 import { Button } from '#/components/button'
 import {
@@ -25,65 +26,80 @@ import { Field } from '#/components/field'
 import { Input } from '#/components/input'
 import { Label } from '#/components/label'
 import { Radio, RadioGroup, RadioGroupLabel } from '#/components/radio'
-import { PasskeyInfo, usePasskey } from '#/hooks/use-passkey'
+import { Skeleton } from '#/components/skeleton'
+import { addPasskey, deletePasskey, listUserPasskeys, type PasskeyInfo } from '#/hooks/use-passkey'
 
 type AuthenticatorType = 'platform' | 'cross-platform'
 
 export function PasskeyList() {
-  const { passkeys, isLoading, error, listUserPasskeys, addPasskey, deletePasskey } = usePasskey()
+  const queryClient = useQueryClient()
 
-  // Delete dialog state
+  const {
+    data: passkeys = [],
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['user-passkeys'],
+    queryFn: async () => {
+      const result = await listUserPasskeys()
+      if (result.error) {
+        throw new Error(result.error)
+      }
+      return result.data ?? []
+    }
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const result = await deletePasskey(id)
+      if (result.error) {
+        throw new Error(result.error)
+      }
+      return result
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-passkeys'] })
+    }
+  })
+
+  const addMutation = useMutation({
+    mutationFn: async (options: { name: string; authenticatorAttachment: AuthenticatorType }) => {
+      const result = await addPasskey({
+        name: options.name,
+        authenticatorAttachment: options.authenticatorAttachment
+      })
+      if (result.error) {
+        throw new Error(result.error)
+      }
+      return result
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-passkeys'] })
+    }
+  })
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [selectedPasskey, setSelectedPasskey] = useState<PasskeyInfo | null>(null)
-  const [deleteError, setDeleteError] = useState<string | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
 
-  // Add dialog state
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [passkeyName, setPasskeyName] = useState('')
   const [authenticatorType, setAuthenticatorType] = useState<AuthenticatorType>('platform')
   const [addDialogError, setAddDialogError] = useState<string | null>(null)
-  const [isAdding, setIsAdding] = useState(false)
-
-  useEffect(() => {
-    listUserPasskeys()
-  }, [listUserPasskeys])
 
   const handleDeleteClick = (passkey: PasskeyInfo) => {
     setSelectedPasskey(passkey)
     setShowDeleteDialog(true)
-    setDeleteError(null)
-  }
-
-  const handleDeleteConfirm = async () => {
-    if (!selectedPasskey) return
-
-    setIsDeleting(true)
-    setDeleteError(null)
-
-    const result = await deletePasskey(selectedPasskey.id)
-
-    if (result.error) {
-      setDeleteError(typeof result.error === 'string' ? result.error : 'Failed to delete passkey')
-      setIsDeleting(false)
-      return
-    }
-
-    setShowDeleteDialog(false)
-    setSelectedPasskey(null)
-    setIsDeleting(false)
   }
 
   const handleDeleteClose = () => {
-    if (!isDeleting) {
+    if (!deleteMutation.isPending) {
       setShowDeleteDialog(false)
       setSelectedPasskey(null)
-      setDeleteError(null)
     }
   }
 
   const handleAddClose = () => {
-    if (!isAdding) {
+    if (!addMutation.isPending) {
       setShowAddDialog(false)
       setPasskeyName('')
       setAuthenticatorType('platform')
@@ -97,25 +113,23 @@ export function PasskeyList() {
       return
     }
 
-    setIsAdding(true)
     setAddDialogError(null)
-
-    const result = await addPasskey({
-      name: passkeyName.trim(),
-      authenticatorAttachment: authenticatorType
-    })
-
-    if (result.error) {
-      setAddDialogError(typeof result.error === 'string' ? result.error : 'Failed to add passkey')
-      setIsAdding(false)
-      return
-    }
-
-    setShowAddDialog(false)
-    setPasskeyName('')
-    setAuthenticatorType('platform')
-    setIsAdding(false)
-    listUserPasskeys()
+    addMutation.mutate(
+      {
+        name: passkeyName.trim(),
+        authenticatorAttachment: authenticatorType
+      },
+      {
+        onSuccess: () => {
+          setShowAddDialog(false)
+          setPasskeyName('')
+          setAuthenticatorType('platform')
+        },
+        onError: (err) => {
+          setAddDialogError(err instanceof Error ? err.message : 'Failed to add passkey')
+        }
+      }
+    )
   }
 
   const formatDate = (date: Date) => {
@@ -140,7 +154,11 @@ export function PasskeyList() {
         <CardHeaderAction>
           <div className='flex gap-2'>
             {passkeys.length > 0 && (
-              <Button variant='outline' onClick={() => listUserPasskeys()} disabled={isLoading}>
+              <Button
+                variant='outline'
+                onClick={() => queryClient.invalidateQueries({ queryKey: ['user-passkeys'] })}
+                disabled={isLoading}
+              >
                 <Lucide.RefreshCcw className={`mr-2 size-4 ${isLoading ? 'animate-spin' : ''}`} />
                 Refresh
               </Button>
@@ -154,17 +172,22 @@ export function PasskeyList() {
         </CardHeaderAction>
       </CardHeader>
 
-      <CardBody>
+      <CardBody className='pb-0'>
         {error && (
           <div className='mb-4'>
             <Alert variant='danger'>
               <Lucide.AlertCircle className='size-4' />
-              <AlertDescription>{error}</AlertDescription>
+              <AlertDescription>{error.message}</AlertDescription>
             </Alert>
           </div>
         )}
 
-        {passkeys.length === 0 && !isLoading ? (
+        {isLoading ? (
+          <div className='space-y-3'>
+            <Skeleton className='h-18 w-full' />
+            <Skeleton className='h-18 w-full' />
+          </div>
+        ) : passkeys.length === 0 ? (
           <div className='flex flex-col items-center justify-center py-8 text-center'>
             <div className='bg-background-neutral-faded mb-4 flex h-12 w-12 items-center justify-center rounded-full'>
               <Lucide.Key className='text-on-background-neutral size-6' />
@@ -223,7 +246,11 @@ export function PasskeyList() {
                   </DialogDescription>
                 </div>
               </div>
-              <DialogClose className='ml-auto' onClick={handleDeleteClose} disabled={isDeleting}>
+              <DialogClose
+                className='ml-auto'
+                onClick={handleDeleteClose}
+                disabled={deleteMutation.isPending}
+              >
                 <Lucide.XIcon className='size-4' strokeWidth={2.0} />
               </DialogClose>
             </DialogHeader>
@@ -249,16 +276,39 @@ export function PasskeyList() {
                 </div>
               )}
 
-              {deleteError && (
-                <div className='text-foreground-critical mt-4 text-sm'>{deleteError}</div>
+              {deleteMutation.isError && (
+                <div className='text-foreground-critical mt-4 text-sm'>
+                  {deleteMutation.error instanceof Error
+                    ? deleteMutation.error.message
+                    : 'Failed to delete passkey'}
+                </div>
               )}
             </DialogBody>
             <DialogFooter>
-              <Button variant='outline' onClick={handleDeleteClose} disabled={isDeleting} block>
+              <Button
+                variant='outline'
+                onClick={handleDeleteClose}
+                disabled={deleteMutation.isPending}
+                block
+              >
                 Cancel
               </Button>
-              <Button variant='danger' onClick={handleDeleteConfirm} disabled={isDeleting} block>
-                {isDeleting ? (
+              <Button
+                variant='danger'
+                onClick={() => {
+                  if (selectedPasskey) {
+                    deleteMutation.mutate(selectedPasskey.id, {
+                      onSuccess: () => {
+                        setShowDeleteDialog(false)
+                        setSelectedPasskey(null)
+                      }
+                    })
+                  }
+                }}
+                disabled={deleteMutation.isPending}
+                block
+              >
+                {deleteMutation.isPending ? (
                   <span className='flex items-center justify-center gap-2'>
                     <Lucide.Loader2 className='size-4 animate-spin' />
                     Deleting...
@@ -285,7 +335,11 @@ export function PasskeyList() {
                   <DialogDescription>Add passwordless authentication</DialogDescription>
                 </div>
               </div>
-              <DialogClose className='ml-auto' onClick={handleAddClose} disabled={isAdding}>
+              <DialogClose
+                className='ml-auto'
+                onClick={handleAddClose}
+                disabled={addMutation.isPending}
+              >
                 <Lucide.XIcon className='size-4' strokeWidth={2.0} />
               </DialogClose>
             </DialogHeader>
@@ -317,7 +371,7 @@ export function PasskeyList() {
                     if (addDialogError) setAddDialogError(null)
                   }}
                   placeholder='e.g., My MacBook, Work Phone'
-                  disabled={isAdding}
+                  disabled={addMutation.isPending}
                   autoFocus
                 />
               </Field>
@@ -337,7 +391,7 @@ export function PasskeyList() {
                     }`}
                   >
                     <div className='flex items-center gap-3'>
-                      <Radio value='platform' disabled={isAdding} />
+                      <Radio value='platform' disabled={addMutation.isPending} />
                       <div>
                         <div className='text-sm font-medium'>Platform Authenticator</div>
                         <div className='text-on-background-neutral text-xs'>
@@ -355,7 +409,7 @@ export function PasskeyList() {
                     }`}
                   >
                     <div className='flex items-center gap-3'>
-                      <Radio value='cross-platform' disabled={isAdding} />
+                      <Radio value='cross-platform' disabled={addMutation.isPending} />
                       <div>
                         <div className='text-sm font-medium'>Cross-Platform Authenticator</div>
                         <div className='text-on-background-neutral text-xs'>
@@ -368,16 +422,21 @@ export function PasskeyList() {
               </Field>
             </DialogBody>
             <DialogFooter>
-              <Button variant='outline' onClick={handleAddClose} disabled={isAdding} block>
+              <Button
+                variant='outline'
+                onClick={handleAddClose}
+                disabled={addMutation.isPending}
+                block
+              >
                 Cancel
               </Button>
               <Button
                 variant='primary'
                 onClick={handleAddSubmit}
-                disabled={!passkeyName.trim() || isAdding}
+                disabled={!passkeyName.trim() || addMutation.isPending}
                 block
               >
-                {isAdding ? (
+                {addMutation.isPending ? (
                   <span className='flex items-center justify-center gap-2'>
                     <Lucide.Loader2 className='size-4 animate-spin' />
                     Creating...

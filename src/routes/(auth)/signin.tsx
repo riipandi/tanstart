@@ -1,8 +1,9 @@
 import { createFileRoute, Link as RouterLink } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
-import { Activity, useState } from 'react'
+import { Activity, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { Alert, AlertDescription } from '#/components/alert'
+import { Button } from '#/components/button'
 import { Card, CardBody, CardDescription, CardTitle } from '#/components/card'
 import { CardFooter, CardHeader } from '#/components/card'
 import { Form } from '#/components/form'
@@ -37,6 +38,25 @@ function RouteComponent() {
   const search = Route.useSearch()
   const { isPending } = authClient.useSession()
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (
+      typeof PublicKeyCredential === 'undefined' ||
+      !PublicKeyCredential.isConditionalMediationAvailable ||
+      !PublicKeyCredential.isConditionalMediationAvailable()
+    ) {
+      return
+    }
+
+    authClient.signIn.passkey({
+      autoFill: true,
+      fetchOptions: {
+        onSuccess: () => {
+          window.location.href = search.redirect || '/dashboard'
+        }
+      }
+    })
+  }, [])
 
   const form = useAppForm({
     defaultValues: { email: '', password: '', rememberMe: false },
@@ -99,10 +119,50 @@ function RouteComponent() {
             <div className='mb-6'>{error ? <Alert variant='danger'>{error}</Alert> : null}</div>
           </Activity>
 
-          <SignInWithSocialProvider
-            authClient={authClient}
-            callbackURL={search.redirect || '/dashboard'}
-          />
+          <div className='flex flex-col gap-4'>
+            <SignInWithSocialProvider
+              authClient={authClient}
+              callbackURL={search.redirect || '/dashboard'}
+            />
+
+            <Button
+              variant='outline'
+              onClick={async () => {
+                const originalError = console.error
+                try {
+                  console.error = () => {}
+                  await authClient.signIn.passkey({
+                    autoFill: true,
+                    fetchOptions: {
+                      onSuccess: () => {
+                        window.location.href = search.redirect || '/dashboard'
+                      }
+                    }
+                  })
+                } catch (err: unknown) {
+                  const errorObj = err as { code?: string; name?: string }
+                  const errorCode = errorObj?.code || ''
+                  const errorName = errorObj?.name || ''
+                  if (
+                    errorCode.includes('ABORT') ||
+                    errorCode.includes('AbortError') ||
+                    errorName.includes('AbortError')
+                  ) {
+                    console.error = originalError
+                    return
+                  }
+                  console.error = originalError
+                  setError('Passkey sign-in failed. Please try again.')
+                } finally {
+                  console.error = originalError
+                }
+              }}
+              block
+            >
+              <Lucide.Key className='size-4' />
+              Sign in with Passkey
+            </Button>
+          </div>
 
           <Separator className='my-8' contentSide='center'>
             Or, continue with
@@ -123,7 +183,7 @@ function RouteComponent() {
                 }
               }}
             >
-              {(field) => <field.TextField label='Email' />}
+              {(field) => <field.TextField label='Email' autoComplete='email webauthn' />}
             </form.AppField>
 
             <form.AppField
@@ -137,7 +197,9 @@ function RouteComponent() {
                 }
               }}
             >
-              {(field) => <field.PasswordField label='Password' />}
+              {(field) => (
+                <field.PasswordField label='Password' autoComplete='current-password webauthn' />
+              )}
             </form.AppField>
 
             <div className='flex items-center justify-between'>

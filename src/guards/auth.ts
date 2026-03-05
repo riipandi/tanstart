@@ -257,7 +257,7 @@ export const authOptions = {
     passkey({
       // FIXME: Passkey create error if using snake_case
       // @see: https://github.com/better-auth/better-auth/issues/4862
-      rpID: protectedEnv.APP_MODE ? protectedEnv.PUBLIC_SITE_DOMAIN : 'localhost',
+      rpID: protectedEnv.APP_MODE === 'production' ? protectedEnv.PUBLIC_SITE_DOMAIN : 'localhost',
       rpName: protectedEnv.PUBLIC_IDENTIFIER,
       origin: protectedEnv.PUBLIC_BASE_URL,
       authenticatorSelection: {

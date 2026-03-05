@@ -156,8 +156,8 @@ export function SocialAccounts() {
 
         {isLoading ? (
           <div className='space-y-3'>
-            <Skeleton className='h-16 w-full' />
-            <Skeleton className='h-16 w-full' />
+            <Skeleton className='h-18 w-full' />
+            <Skeleton className='h-18 w-full' />
           </div>
         ) : (
           <div className='space-y-3'>

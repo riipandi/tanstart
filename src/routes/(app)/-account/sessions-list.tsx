@@ -151,9 +151,9 @@ export function SessionsList() {
         </CardHeader>
         <CardBody>
           <div className='space-y-3'>
-            <Skeleton className='h-20 w-full' />
-            <Skeleton className='h-20 w-full' />
-            <Skeleton className='h-20 w-full' />
+            <Skeleton className='h-18 w-full' />
+            <Skeleton className='h-18 w-full' />
+            <Skeleton className='h-18 w-full' />
           </div>
         </CardBody>
       </Card>
