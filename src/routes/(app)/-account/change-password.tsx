@@ -78,9 +78,6 @@ export function ChangePassword() {
         </CardHeader>
         <CardBody>
           <div className='flex flex-col items-center text-center'>
-            <div className='bg-background-success/10 mb-4 flex h-12 w-12 items-center justify-center rounded-full'>
-              <Lucide.Check className='text-foreground-success h-6 w-6' />
-            </div>
             <Alert variant='success'>
               <Lucide.CheckCircle className='size-4' />
               <AlertDescription>
@@ -91,7 +88,13 @@ export function ChangePassword() {
                   : 'Your password has been updated.'}
               </AlertDescription>
             </Alert>
-            <Button variant='outline' size='sm' onClick={() => setSuccess(false)} className='mt-4'>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => setSuccess(false)}
+              className='mt-4'
+              block
+            >
               Change Password Again
             </Button>
           </div>

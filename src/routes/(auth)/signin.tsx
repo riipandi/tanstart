@@ -39,6 +39,9 @@ function RouteComponent() {
   const { isPending } = authClient.useSession()
   const [error, setError] = useState<string | null>(null)
 
+  const [step, setStep] = useState<'init' | 'selector'>('init')
+  const [signinMethod, setSigninMethod] = useState<'password' | 'magic-link'>('password')
+
   useEffect(() => {
     if (
       typeof PublicKeyCredential === 'undefined' ||
@@ -183,36 +186,69 @@ function RouteComponent() {
                 }
               }}
             >
-              {(field) => <field.TextField label='Email' autoComplete='email webauthn' />}
+              {(field) => <field.TextField label='Email address' autoComplete='email webauthn' />}
             </form.AppField>
 
-            <form.AppField
-              name='password'
-              validators={{
-                onBlur: ({ value }) => {
-                  if (!value || value.trim().length === 0) {
-                    return 'Password is required'
-                  }
-                  return undefined
-                }
-              }}
+            <Activity
+              mode={step === 'selector' && signinMethod === 'password' ? 'visible' : 'hidden'}
             >
-              {(field) => (
-                <field.PasswordField label='Password' autoComplete='current-password webauthn' />
-              )}
-            </form.AppField>
-
-            <div className='flex items-center justify-between'>
-              <form.AppField name='rememberMe'>
-                {(field) => <field.CheckboxField label='Remember me' />}
+              <form.AppField
+                name='password'
+                validators={{
+                  onBlur: ({ value }) => {
+                    if (!value || value.trim().length === 0) {
+                      return 'Password is required'
+                    }
+                    return undefined
+                  }
+                }}
+              >
+                {(field) => (
+                  <field.PasswordField
+                    label='Password'
+                    autoComplete='current-password webauthn'
+                    autoFocus={step === 'selector'}
+                  />
+                )}
               </form.AppField>
 
-              <Link render={<RouterLink to='/forgot-password' />}>Forgot password?</Link>
-            </div>
+              <div className='flex items-center justify-between'>
+                <form.AppField name='rememberMe'>
+                  {(field) => <field.CheckboxField label='Remember me' />}
+                </form.AppField>
 
-            <form.AppForm>
-              <form.SubmitButton label='Sign In' />
-            </form.AppForm>
+                <Link render={<RouterLink to='/forgot-password' />}>Forgot password?</Link>
+              </div>
+            </Activity>
+
+            <Activity mode={step === 'init' ? 'visible' : 'hidden'}>
+              <Button
+                type='button'
+                block
+                onClick={() => {
+                  setSigninMethod('password')
+                  setStep('selector')
+                }}
+              >
+                Continue
+              </Button>
+            </Activity>
+
+            <Activity mode={step === 'selector' ? 'visible' : 'hidden'}>
+              <form.AppForm>
+                <form.SubmitButton label='Sign in' />
+              </form.AppForm>
+              <Button
+                type='button'
+                variant='ghost'
+                onClick={() => {
+                  setSigninMethod('password')
+                  setStep('selector')
+                }}
+              >
+                Continue with Magic Link
+              </Button>
+            </Activity>
           </Form>
         </CardBody>
         <CardFooter className='debug w-full items-center justify-center text-center'>
