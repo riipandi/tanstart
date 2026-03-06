@@ -27,6 +27,7 @@ and scale their SaaS products with best practices and essential features ready t
 - Styling with [Tailwind CSS][tailwindcss] and [tailwind-merge][tailwind-merge]
 - Code formatting and linting with [Oxlint][oxlint] and [Oxfmt][oxfmt]
 - Unit testing with [Vitest][vitest], E2E testing with [Playwright][playwright]
+- [Storybook][storybook] for UI component development and testing.
 
 ## 🏁 Quickstart
 
@@ -95,17 +96,18 @@ This project licensed under the [MIT license][license-mit]. See the [LICENSE](./
 [![Made by](https://badgen.net/badge/icon/Aris%20Ripandi?label=Made+by&color=black&labelColor=black)][riipandi-x]
 
 <!-- link reference definition -->
+[baseui]: https://base-ui.com/react/overview/quick-start
 [clsx]: https://www.npmjs.com/package/clsx
 [docker]: https://docs.docker.com/engine/install
-[baseui]: https://base-ui.com/react/overview/quick-start
 [fly-io]: https://fly.io/docs/getting-started/launch/
 [kysely-dialects]: https://www.kysely.dev/docs/dialects
 [license-mit]: https://choosealicense.com/licenses/mit/
+[oxfmt]: https://oxc.rs/docs/guide/usage/formatter
+[oxlint]: https://oxc.rs/docs/guide/usage/linter
 [playwright]: https://playwright.dev
 [riipandi-x]: https://x.com/intent/follow?screen_name=riipandi
+[storybook]: https://storybook.js.org/docs
 [tailwind-merge]: https://www.npmjs.com/package/tailwind-merge
 [tailwindcss]: https://tailwindcss.com
 [typescript]: https://typescriptlang.org
 [vitest]: https://vitest.dev
-[oxlint]: https://oxc.rs/docs/guide/usage/linter
-[oxfmt]: https://oxc.rs/docs/guide/usage/formatter
