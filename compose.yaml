@@ -7,7 +7,15 @@ x-common: &common
   extra_hosts: ['host.docker.internal:host-gateway']
   restart: unless-stopped
 
-services:
+# services:
+#   libsql:
+#     <<: *common
+#     image: ghcr.io/tursodatabase/libsql-server:${LIBSQL_VERSION:-latest}
+#     hostname: libsql
+#     ports: ['5001:5001', '8080:8080', '8081:8081']
+#     volumes: ['libsql_data:/var/lib/sqld/data:rw']
+#     command: '/bin/sqld --enable-namespaces --enable-http-console --max-active-namespaces 2000'
+
   pgsql:
     <<: *common
     # image: dhi.io/postgres:${PGSQL_VERSION:-18} # production
@@ -161,6 +169,8 @@ configs:
 
 volumes:
   pgsql_data:
+    driver: local
+  libsql_data:
     driver: local
   mailpit_data:
     driver: local
