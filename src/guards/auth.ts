@@ -64,7 +64,7 @@ export const authOptions = {
         to: user.email,
         subject: 'Your Password Has Been Reset',
         template: 'password-reset-confirmation',
-        vars: { email: user.email }
+        vars: { name: user.name }
       })
     },
     // @see: https://better-auth.com/docs/plugins/admin#email-enumeration-protection
@@ -249,9 +249,13 @@ export const authOptions = {
       }
     }),
     magicLink({
-      sendMagicLink: async ({ email, token, url }) => {
-        // send email to user
-        console.info(email, token, url)
+      sendMagicLink: async ({ email, url }) => {
+        await sendMail({
+          to: email,
+          subject: 'Your Magic Sign-In Link',
+          template: 'magic-link',
+          vars: { magicLink: url }
+        })
       }
     }),
     passkey({

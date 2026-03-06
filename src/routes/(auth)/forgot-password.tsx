@@ -1,18 +1,11 @@
 import { createFileRoute, Link as RouterLink } from '@tanstack/react-router'
-import { Activity, useState } from 'react'
+import { Activity, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { Alert } from '#/components/alert'
-import {
-  Card,
-  CardBody,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '#/components/card'
+import { Card, CardBody, CardDescription } from '#/components/card'
+import { CardFooter, CardHeader, CardTitle } from '#/components/card'
 import { Form } from '#/components/form'
 import { Link } from '#/components/link'
-import { publicEnv } from '#/config'
 import { authClient } from '#/guards/auth-client'
 import { useAppForm } from '#/hooks/use-form'
 
@@ -27,6 +20,7 @@ const forgotPasswordSchema = z.object({
 function RouteComponent() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [emailValue, setEmailValue] = useState('')
 
   const form = useAppForm({
     defaultValues: { email: '' },
@@ -36,7 +30,7 @@ function RouteComponent() {
       try {
         const result = await authClient.requestPasswordReset({
           email: value.email,
-          redirectTo: `${publicEnv.PUBLIC_BASE_URL}/reset-password`
+          redirectTo: '/reset-password'
         })
 
         if (result.error) {
@@ -51,6 +45,14 @@ function RouteComponent() {
       }
     }
   })
+
+  useEffect(() => {
+    const savedEmail = sessionStorage.getItem('signin-email')
+    if (savedEmail) {
+      setEmailValue(savedEmail)
+      form.setFieldValue('email', savedEmail)
+    }
+  }, [])
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -111,7 +113,7 @@ function RouteComponent() {
                 }
               }}
             >
-              {(field) => <field.TextField label='Email' />}
+              {(field) => <field.TextField label='Email' disabled={emailValue !== ''} />}
             </form.AppField>
 
             <form.AppForm>
