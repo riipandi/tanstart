@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Copy } from '#/components/copy'
 import { ensureSession } from '#/guards/session'
 import { ChangePassword } from './-account/change-password'
-import { PasskeyList } from './-account/passkey-list'
+// import { PasskeyList } from './-account/passkey-list'
 import { TwoFactorSettings } from './-account/two-factor'
 
 export const Route = createFileRoute('/(app)/account/security')({
@@ -28,7 +28,8 @@ function RouteComponent() {
         </div>
 
         <TwoFactorSettings {...user} />
-        <PasskeyList />
+        {/* FIXME: Temporary disabled because of issue: `TypeError: Reflect.getMetadata is not a function` */}
+        {/* <PasskeyList /> */}
         <ChangePassword />
       </div>
     </div>
