@@ -56,7 +56,6 @@ export function TwoFactorStepSetup({
           <div
             className='bg-background-page border-border-neutral rounded-md border p-2'
             style={{ width: '200px', height: '200px' }}
-            // eslint-disable-next-line react/no-danger -- SVG from trusted uqr library with server-generated TOTP URI
             dangerouslySetInnerHTML={{ __html: qrCodeSvg }}
             data-qr-code='totp'
           />
