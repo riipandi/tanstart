@@ -6,7 +6,7 @@
  * @see: https://better-auth.com/docs/concepts/session-management#customizing-session-response
  */
 
-import { passkey } from '@better-auth/passkey'
+// import { passkey } from '@better-auth/passkey'
 import { betterAuth, type BetterAuthOptions } from 'better-auth'
 import { admin } from 'better-auth/plugins'
 import { twoFactor, emailOTP } from 'better-auth/plugins'
@@ -258,17 +258,18 @@ export const authOptions = {
         })
       }
     }),
-    passkey({
-      // FIXME: Passkey create error if using snake_case
-      // @see: https://github.com/better-auth/better-auth/issues/4862
-      rpID: protectedEnv.APP_MODE === 'production' ? protectedEnv.PUBLIC_SITE_DOMAIN : 'localhost',
-      rpName: protectedEnv.PUBLIC_IDENTIFIER,
-      origin: protectedEnv.PUBLIC_BASE_URL,
-      authenticatorSelection: {
-        userVerification: 'required',
-        residentKey: 'preferred'
-      }
-    }),
+    // FIXME: Temporary disabled because of issue: `TypeError: Reflect.getMetadata is not a function`
+    // passkey({
+    //   // FIXME: Passkey create error if using snake_case
+    //   // @see: https://github.com/better-auth/better-auth/issues/4862
+    //   rpID: protectedEnv.APP_MODE === 'production' ? protectedEnv.PUBLIC_SITE_DOMAIN : 'localhost',
+    //   rpName: protectedEnv.PUBLIC_IDENTIFIER,
+    //   origin: protectedEnv.PUBLIC_BASE_URL,
+    //   authenticatorSelection: {
+    //     userVerification: 'required',
+    //     residentKey: 'preferred'
+    //   }
+    // }),
     admin()
   ]
 } satisfies BetterAuthOptions

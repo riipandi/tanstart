@@ -393,6 +393,7 @@ function RouteComponent() {
                       console.error = originalError
                     }
                   }}
+                  hidden // FIXME: Temporary disabled because of issue: `TypeError: Reflect.getMetadata is not a function`
                   block
                 >
                   <Lucide.Key className='size-4' />
