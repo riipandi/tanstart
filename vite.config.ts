@@ -1,25 +1,48 @@
 import tailwindcss from '@tailwindcss/vite'
+import { devtools } from '@tanstack/devtools-vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-import react from '@vitejs/plugin-react'
-import mdx from 'fumadocs-mdx/vite'
-import { nitro } from 'nitro/vite'
+import viteReact from '@vitejs/plugin-react'
+import { type NitroPluginConfig, nitro } from 'nitro/vite'
+import { fileURLToPath } from 'node:url'
+import { isProduction } from 'std-env'
 import { defineConfig } from 'vite'
-import tsConfigPaths from 'vite-tsconfig-paths'
+import tsconfigPaths from 'vite-tsconfig-paths'
+
+const resolve = (path: string) => fileURLToPath(new URL(path, import.meta.url))
+
+const nitroConfig: NitroPluginConfig = {
+  compatibilityDate: '2025-09-15',
+  preset: 'node_server',
+  plugins: ['src/database/db-plugin.ts']
+}
 
 export default defineConfig({
   plugins: [
-    mdx(await import('./source.config')),
-    tsConfigPaths({ projects: ['./tsconfig.json'] }),
-    tanstackStart({
-      router: { generatedRouteTree: './routes.gen.ts' },
-      prerender: { enabled: true },
-    }),
+    devtools({ removeDevtoolsOnBuild: true }),
+    nitro(nitroConfig),
     tailwindcss(),
-    react(),
-    nitro(),
+    tanstackStart({
+      router: {
+        generatedRouteTree: resolve('./src/routes.gen.ts')
+      }
+    }),
+    viteReact({
+      babel: {
+        plugins: ['babel-plugin-react-compiler']
+      }
+    }),
+    tsconfigPaths({
+      projects: [resolve('./tsconfig.json')],
+      ignoreConfigErrors: true
+    })
   ],
-  server: { port: 3000 },
   build: {
-    chunkSizeWarningLimit: 1024 * 2,
+    chunkSizeWarningLimit: 1024 * 4,
+    minify: isProduction ? 'esbuild' : false
   },
+  resolve: {
+    alias: {
+      '@': resolve('./src')
+    }
+  }
 })

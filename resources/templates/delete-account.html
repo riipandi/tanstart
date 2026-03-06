@@ -1,0 +1,97 @@
+<div
+  style="
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 32px;
+    font-family:
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      Roboto,
+      Helvetica,
+      sans-serif;
+    color: #333333;
+    line-height: 1.6;
+    background-color: #ffffff;
+  "
+>
+  <h2 style="margin: 0 0 24px 0; font-size: 24px; font-weight: 600; color: #dc2626">
+    Delete Account Request
+  </h2>
+
+  <p style="margin: 0 0 16px 0; color: #333333">Hello,</p>
+
+  <p style="margin: 0 0 16px 0; color: #333333">
+    We received a request to delete your account
+    <strong style="font-weight: 600; color: #333333">{{email}}</strong>.
+  </p>
+
+  <p style="margin: 0 0 32px 0; color: #333333">
+    This action is <strong style="font-weight: 600; color: #dc2626">permanent</strong> and cannot be
+    undone. All your data will be permanently deleted.
+  </p>
+
+  <div style="margin: 32px 0; text-align: center">
+    <a
+      href="{{deleteLink}}"
+      style="
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #dc2626;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow:
+          0px 1px 5px -4px rgba(0, 0, 0, 0.5),
+          0px 4px 8px 0px rgba(0, 0, 0, 0.05);
+      "
+    >
+      Delete My Account
+    </a>
+    <span style="margin: 0 8px"></span>
+    <a
+      href="{{cancelLink}}"
+      style="
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #6b7280;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow:
+          0px 1px 5px -4px rgba(0, 0, 0, 0.5),
+          0px 4px 8px 0px rgba(0, 0, 0, 0.05);
+      "
+    >
+      Cancel Request
+    </a>
+  </div>
+
+  <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280">
+    Or copy and paste this link into your browser:
+  </p>
+  <p style="margin: 0 0 32px 0; font-size: 14px; color: #dc2626; word-break: break-all">
+    {{deleteLink}}
+  </p>
+
+  <div
+    style="
+      margin: 0;
+      padding: 16px;
+      background-color: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      font-size: 14px;
+    "
+  >
+    <p style="margin: 0; color: #333333">
+      <strong style="font-weight: 600; color: #92400e">Important:</strong> This link will expire in
+      1 hour. If you did not request this deletion, please ignore this email or click "Cancel
+      Request" above.
+    </p>
+  </div>
+</div>

@@ -1,13 +1,18 @@
-import { createRouter as createTanStackRouter } from '@tanstack/react-router'
-import { DefaultCatchBoundary, NotFound } from '#/components/boundaries'
+import { createRouter } from '@tanstack/react-router'
+import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
+import { getContext } from './provider'
 import { routeTree } from './routes.gen'
 
-export function getRouter() {
-  return createTanStackRouter({
+export const getRouter = () => {
+  const ctx = getContext()
+
+  const router = createRouter({
     routeTree,
-    defaultNotFoundComponent: NotFound,
-    defaultErrorComponent: DefaultCatchBoundary,
-    defaultPreload: 'intent',
-    scrollRestoration: true,
+    context: { ...ctx },
+    defaultPreload: 'intent'
   })
+
+  setupRouterSsrQueryIntegration({ router, queryClient: ctx.queryClient })
+
+  return router
 }

@@ -2,20 +2,18 @@
 
 [![Release](https://img.shields.io/github/v/release/riipandi/better-start?logo=tanstack&color=orange)](https://github.com/riipandi/better-start/releases)
 [![Languages](https://img.shields.io/github/languages/top/riipandi/better-start)](https://github.com/riipandi/better-start)
-[![Test](https://github.com/riipandi/better-start/actions/workflows/test.yml/badge.svg)](https://github.com/riipandi/better-start/actions/workflows/test.yml)
 [![Contribution](https://badgen.net/badge/icon/Contributions%20Welcome?icon=bitcoin-lightning&label&color=black&labelColor=black)](https://github.com/riipandi/better-start/pulse)
+<!-- [![Test](https://github.com/riipandi/better-start/actions/workflows/test.yml/badge.svg)](https://github.com/riipandi/better-start/actions/workflows/test.yml) -->
 
-Better Start is a robust SaaS starter kit designed to boost developer productivity. Built with React, 
+Better Start is a robust SaaS starter kit designed to boost developer productivity. Built with React,
 TanStack Start, TypeScript, Kysely, and Better Auth this boilerplate offers a solid foundation for modern
 web applications. It comes pre-configured with authentication, user invitation functionality, and admin
-capabilities. While LibSQL (SQLite compatible) is the default database, developers can easily switch to
-any database [supported by Kysely][kysely-dialects]. The project embraces minimalism by not including
-a UI kit, but it's set up with Tailwind CSS for flexible styling. Docker configuration is included for
-easy deployment, with the option to deploy to Vercel or other edge platforms.
+capabilities. Docker configuration is included for easy deployment, with the option to deploy to
+[Fly.io][fly-io] or other edge platforms.
 
 Unit testing with Vitest and E2E testing are provided out of the box. Code formatting and linting are
-handled by Oxlint and Oxfmt This starter kit empowers developers to quickly launch and scale their
-SaaS products with best practices and essential features ready to go.
+handled by [Oxlint][oxlint] and [Oxfmt][oxfmt] This starter kit empowers developers to quickly launch
+and scale their SaaS products with best practices and essential features ready to go.
 
 ## What's in the stack?
 
@@ -24,20 +22,17 @@ SaaS products with best practices and essential features ready to go.
 - [Kysely](https://kysely.dev/) for type-safe database queries
 - [Better Auth](https://better-auth.com/) for authentication and authorization
 - [PostgreSQL](https://www.postgresql.org/) as the default database (easily switchable)
-- [Tailwind CSS][tailwindcss] for flexible styling
+- [Base UI][baseui] UI components for building accessible user interfaces
 - Deploy to [Fly.io](https://fly.io) using [Docker][docker] container (easy to switch to other edge platforms)
-- Ready for multi-tenant (multiple subdomains with a single codebase)
-- Healthcheck endpoint for [Fly backups region fallbacks][fly-io]
-- Custom [Express][expressjs] server for production
-- Styling with [Tailwind CSS][tailwindcss], [clsx][clsx], and [tailwind-merge][tailwind-merge]
+- Styling with [Tailwind CSS][tailwindcss] and [tailwind-merge][tailwind-merge]
 - Code formatting and linting with [Oxlint][oxlint] and [Oxfmt][oxfmt]
-- Unit testing with [Vitest][vitest]
-- E2E testing with [Playwright][playwright]
+- Unit testing with [Vitest][vitest], E2E testing with [Playwright][playwright]
+- [Storybook][storybook] for UI component development and testing.
 
 ## 🏁 Quickstart
 
 ```sh
-pnpm dlx tiged riipandi/blueprint-nitrojs my-app
+pnpm dlx tiged riipandi/better-start my-app
 ```
 
 To get started with setting up this project, refer to [CONTRIBUTING.md](./CONTRIBUTING.md) for step-by-step instructions.
@@ -49,23 +44,23 @@ in case you would like to discuss something or have a question.
 
 ## ✨ Implemented Features
 
-- [ ] Authentication and Authorization
-    - [ ] Sign in
-        - [ ] Email and password
-        - [ ] Username and password
-        - [ ] Magic link
+- [x] Authentication and Authorization
+    - [x] Sign in
+        - [x] Email and password
+        - [x] Username and password
+        - [x] Magic link
+        - [x] Social provider (Google, GitHub, etc)
+        - [x] Account Recovery (forgot password)
+        - [x] Remember me
         - [ ] Passkey
-        - [ ] Social provider (Google, GitHub, etc)
-        - [ ] Account Recovery (forgot password)
-        - [ ] Remember me
-    - [ ] Sign up
-        - [ ] Email, username and password
-        - [ ] Social provider (Google, GitHub, etc)
-        - [ ] Account verification via email
-    - [ ] Two Factor Authentication (2FA)
-        - [ ] Using TOTP (Google Authenticator, Authy, etc)
-        - [ ] OTP Code via email
-    - [ ] Session management
+    - [x] Sign up
+        - [x] Email, username and password
+        - [x] Social provider (Google, GitHub, etc)
+        - [x] Account verification via email
+    - [x] Two Factor Authentication (2FA)
+        - [x] Using TOTP (Google Authenticator, Authy, etc)
+        - [x] OTP Code via email
+    - [x] Session management
     - [ ] Role-based access control (RBAC)
     - [ ] Impersonation (login as another user)
     - [ ] JWT/JWKS authentication
@@ -81,8 +76,8 @@ in case you would like to discuss something or have a question.
     - [ ] Delete organization
 - [ ] Better logging integration
 - [ ] Roles and Permissions management
-- [ ] Using S3 for file storage (avatar, etc)
-- [ ] Automatic Kysely database migrations
+- [x] Using S3 for file storage (avatar, etc)
+- [x] Automatic Kysely database migrations
 - [ ] Deployment via Docker container
 
 ## 🙏 Thanks to...
@@ -101,17 +96,18 @@ This project licensed under the [MIT license][license-mit]. See the [LICENSE](./
 [![Made by](https://badgen.net/badge/icon/Aris%20Ripandi?label=Made+by&color=black&labelColor=black)][riipandi-x]
 
 <!-- link reference definition -->
+[baseui]: https://base-ui.com/react/overview/quick-start
 [clsx]: https://www.npmjs.com/package/clsx
 [docker]: https://docs.docker.com/engine/install
-[expressjs]: https://expressjs.com/
-[fly-io]: https://fly.io/docs/reference/configuration/#services-http_checks
+[fly-io]: https://fly.io/docs/getting-started/launch/
 [kysely-dialects]: https://www.kysely.dev/docs/dialects
 [license-mit]: https://choosealicense.com/licenses/mit/
+[oxfmt]: https://oxc.rs/docs/guide/usage/formatter
+[oxlint]: https://oxc.rs/docs/guide/usage/linter
 [playwright]: https://playwright.dev
 [riipandi-x]: https://x.com/intent/follow?screen_name=riipandi
+[storybook]: https://storybook.js.org/docs
 [tailwind-merge]: https://www.npmjs.com/package/tailwind-merge
 [tailwindcss]: https://tailwindcss.com
 [typescript]: https://typescriptlang.org
 [vitest]: https://vitest.dev
-[oxlint]: https://oxc.rs/docs/guide/usage/linter
-[oxfmt]: https://oxc.rs/docs/guide/usage/formatter

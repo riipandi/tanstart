@@ -10,11 +10,10 @@ inputs:
   nodeVersion:
     description: 'Specify Nodejs version'
     required: false
-    default: '20'
+    default: '24'
   pnpmVersion:
     description: 'Specify pnpm version'
     required: false
-    # default: '9'
 
 runs:
   using: composite
