@@ -15,7 +15,6 @@
     "compatibility_date": "2025-09-15",
     "compatibility_flags": ["nodejs_compat"],
     "main": "@tanstack/react-start/server-entry",
-    "minify": true,
     "observability": {
         "enabled": true
     },
