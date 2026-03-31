@@ -37,6 +37,7 @@ export function ThemeSwitcher({ className }: { className?: string }) {
         onClick={() => setTheme(cycle[current] ?? 'light')}
         className='rounded-lg p-2 text-foreground-neutral-faded transition hover:bg-background-neutral-faded hover:text-foreground-neutral'
         aria-label={labels[current]}
+        suppressHydrationWarning
       >
         <Activity mode={current === 'light' ? 'visible' : 'hidden'}>
           <Lucide.Sun className='size-4' />
