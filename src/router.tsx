@@ -1,18 +1,28 @@
-import { createRouter } from '@tanstack/react-router'
+import { createRouter as createTanStackRouter } from '@tanstack/react-router'
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
-import { getContext } from './provider'
+import { type BreadcrumbValue, getContext } from './provider'
 import { routeTree } from './routes.gen'
 
-export const getRouter = () => {
+export function getRouter() {
   const ctx = getContext()
-
-  const router = createRouter({
+  const router = createTanStackRouter({
     routeTree,
-    context: { ...ctx },
-    defaultPreload: 'intent'
+    scrollRestoration: true,
+    defaultPreload: 'intent',
+    defaultPreloadStaleTime: 0,
+    context: { ...ctx }
   })
 
   setupRouterSsrQueryIntegration({ router, queryClient: ctx.queryClient })
 
   return router
+}
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: ReturnType<typeof getRouter>
+  }
+  interface StaticDataRouteOption {
+    breadcrumb?: BreadcrumbValue
+  }
 }

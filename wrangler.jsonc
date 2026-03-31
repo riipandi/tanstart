@@ -1,0 +1,36 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * - https://developers.cloudflare.com/workers/wrangler/configuration
+ * - https://developers.cloudflare.com/workers/runtime-apis/bindings
+ * - https://developers.cloudflare.com/workers/static-assets/binding
+ *
+ * Build configurations:
+ * - Build command: `pnpm run build`
+ * - Deploy command: `pnpm run deploy`
+ * - Non-production branch deploy command: `pnpm exec wrangler versions upload`
+ */
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "tanstart",
+    "compatibility_date": "2025-09-15",
+    "compatibility_flags": ["nodejs_compat"],
+    "main": "@tanstack/react-start/server-entry",
+    "minify": true,
+    "observability": {
+        "enabled": true
+    },
+    "dev": {
+        "host": "127.0.0.1",
+        "port": 3000
+    },
+    "placement": {
+        "mode": "smart"
+    },
+    "vars": {
+        /* Build -> Variables and secrets */
+        "WRANGLER_SEND_METRICS": "false",
+        "COREPACK_INTEGRITY_KEYS": "0",
+        "NODE_VERSION": "24.12.1",
+        "PNPM_VERSION": "10.33.0"
+    }
+}

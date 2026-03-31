@@ -1,13 +1,14 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema-jsonc.json",
-  "entry": ["src/router.tsx"],
-  "exclude": ["binaries", "dependencies"],
-  "project": ["src/**/*.{ts,tsx}", "!src/components/**/*", "!src/**/*.gen.ts", "!src/**/*.d.ts"],
-  "tanstack-router": {
-    "entry": ["src/routes.gen.{ts,js}"],
-    "project": ["src/**/*.{ts,tsx}"]
-  },
-  "paths": {
-    "~/*": ["./*"]
-  }
+    "$schema": "https://unpkg.com/knip@6/schema.json",
+    "entry": ["src/router.tsx"],
+    "exclude": ["binaries", "dependencies"],
+    "project": ["src/**/*.{ts,tsx}", "!src/components/**/*", "!src/**/*.gen.ts", "!src/**/*.d.ts"],
+    "tanstack-router": {
+        "entry": ["src/routes.gen.{ts,js}"],
+        "project": ["src/**/*.{ts,tsx}"]
+    },
+    "paths": {
+        "#/*": ["./*"]
+    },
+    "tags": ["-lintignore"]
 }

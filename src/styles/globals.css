@@ -3,9 +3,7 @@
 @import './fontface.css';
 @import './theme.css';
 
-@variant dark
-(
-&:where([data-theme="dark"] *));
+@variant dark (&:where([data-theme="dark"] *));
 
 /* Custom motion animations */
 @theme inline {
@@ -78,7 +76,7 @@
     isolation: isolate;
   }
   body {
-    @apply bg-background-page text-foreground-neutral font-sans text-base;
+    @apply bg-background-page text-foreground-neutral text-base font-sans;
   }
   button:not(:disabled),
   [role='button']:not(:disabled) {

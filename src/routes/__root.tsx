@@ -1,35 +1,51 @@
-import type { QueryClient } from '@tanstack/react-query'
-import { createRootRouteWithContext, HeadContent, Scripts } from '@tanstack/react-router'
-import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query'
-import { GlobalNotFound } from '#/components/boundaries'
-import { UIProvider, ThemeProvider } from '#/components/provider'
-import { AppDevTools } from '#/devtools'
-import { getContext, RootProvider } from '#/provider'
-import type { TRPCRouter } from '#/trpc/router'
+import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
+import { getContext, RootProvider, type GlobalContext } from '#/provider'
 import appCss from '../styles/globals.css?url'
-
-export interface GlobalContext {
-  queryClient: QueryClient
-  trpc: TRPCOptionsProxy<TRPCRouter>
-}
+import { GlobalNotFound, GlobalError } from './-boundaries'
+import DevTools from './-devtools'
+import { ThemeProvider } from './-theme'
 
 export const Route = createRootRouteWithContext<GlobalContext>()({
   shellComponent: RootDocument,
   notFoundComponent: GlobalNotFound,
+  errorComponent: GlobalError,
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'Better Start' }
+      { name: 'theme-color', media: '(prefers-color-scheme: light)', content: '#5a58f2' },
+      { name: 'theme-color', media: '(prefers-color-scheme: dark)', content: '#000d1a' },
+      { name: 'description', content: 'TanStack Start Application' },
+      { title: 'TanStack Start Starter' }
     ],
     links: [
-      { rel: 'stylesheet', href: appCss },
-      { rel: 'preconnect', href: 'https://cdn.jsdelivr.net' }
+      { rel: 'manifest', href: '/manifest.json' },
+      { rel: 'shortcut icon', href: '/favicon.ico' },
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+      { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+      { rel: 'apple-touch-icon', sizes: '180x180', href: '/favicon.png' },
+      { rel: 'preconnect', href: 'https://cdn.jsdelivr.net' },
+      {
+        rel: 'preload',
+        as: 'font',
+        type: 'font/woff2',
+        href: 'https://cdn.jsdelivr.net/fontsource/fonts/mona-sans:vf@latest/latin-wght-normal.woff2',
+        crossOrigin: 'anonymous'
+      },
+      {
+        rel: 'preload',
+        as: 'font',
+        type: 'font/woff2',
+        href: 'https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono:vf@latest/latin-wght-normal.woff2',
+        crossOrigin: 'anonymous'
+      },
+      { rel: 'stylesheet', href: appCss }
     ]
   })
 })
 
-function RootDocument({ children }: React.PropsWithChildren) {
+function RootDocument(props: React.PropsWithChildren) {
   const { queryClient } = getContext()
 
   return (
@@ -39,9 +55,9 @@ function RootDocument({ children }: React.PropsWithChildren) {
           <head>
             <HeadContent />
           </head>
-          <body>
-            <UIProvider>{children}</UIProvider>
-            <AppDevTools queryClient={queryClient} />
+          <body className='isolate'>
+            {props.children}
+            <DevTools queryClient={queryClient} />
             <Scripts />
           </body>
         </html>

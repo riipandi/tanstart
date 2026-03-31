@@ -1,6 +1,6 @@
 [
-  {
-    "action": "remove",
-    "files": [".agent", "docs", "LICENSE", "README.md", "AGENTS.md"]
-  }
+    {
+        "action": "remove",
+        "files": [".agent", ".docs", "docs", "LICENSE", "README.md", "AGENTS.md"]
+    }
 ]
