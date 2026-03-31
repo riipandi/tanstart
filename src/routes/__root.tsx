@@ -1,5 +1,5 @@
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
-import { getContext, RootProvider, type GlobalContext } from '#/provider'
+import { getContext, type GlobalContext } from '#/provider'
 import appCss from '../styles/globals.css?url'
 import { GlobalNotFound, GlobalError } from './-boundaries'
 import DevTools from './-devtools'
@@ -49,19 +49,17 @@ function RootDocument(props: React.PropsWithChildren) {
   const { queryClient } = getContext()
 
   return (
-    <RootProvider queryClient={queryClient}>
-      <ThemeProvider>
-        <html lang='en' suppressHydrationWarning>
-          <head>
-            <HeadContent />
-          </head>
-          <body className='isolate'>
-            {props.children}
-            <DevTools queryClient={queryClient} />
-            <Scripts />
-          </body>
-        </html>
-      </ThemeProvider>
-    </RootProvider>
+    <ThemeProvider>
+      <html lang='en' suppressHydrationWarning>
+        <head>
+          <HeadContent />
+        </head>
+        <body className='isolate'>
+          {props.children}
+          <DevTools queryClient={queryClient} />
+          <Scripts />
+        </body>
+      </html>
+    </ThemeProvider>
   )
 }
