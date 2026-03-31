@@ -1,139 +1,27 @@
-# Contributing Guideline
+# Contributing Guide
 
-Please open an issue to discuss the contribution you wish to make before submitting any changes.
+When contributing to this repository, please first discuss the change you wish to make via issue, email,
+or any other method with the owners of this repository before making any changes. This way we can guide
+you through the process and give feedback.
 
-This way we can guide you through the process and give feedback.
+## 🍽️ Pull Request Process
+
+You can contribute changes to this repo by opening a pull request:
+
+1. After forking this repository to your Git account, make the proposed changes on your forked branch.
+2. Run tests and linting locally.
+3. Commit your changes and push them to your forked repository.
+4. Navigate to the main project repository and select the _Pull Requests_ tab.
+5. Click the _New pull request_ button, then select the option "Compare across forks"
+6. Leave the base branch set to main. Set the compare branch to your forked branch, and open the pull request.
+7. Once your pull request is created, ensure that all checks have passed and that your branch has no conflicts with the base branch. If there are any issues, resolve these changes in your local repository, and then commit and push them to git.
+8. Similarly, respond to any reviewer comments or requests for changes by making edits to your local repository and pushing them to Git.
+9. Once the pull request has been reviewed, those with write access to the branch will be able to merge your changes into the project repository.
+
+If you need more information on the steps to create a pull request, you can find a detailed walkthrough in the [Github documentation][pull-requests-docs].
 
 ## 🏁 Quick Start
 
-You will need `Node.js >=20.11.1`, `pnpm >=9.12.0` and `Docker >= 20.10` installed on your machine.
+**TODO** Put the guidelines here.
 
-### Up and Running
-
-1. Install the required toolchain & SDK: [Node.js][nodejs], [pnpm][pnpm], and [Docker][docker].
-2. Create `.env` file or copy from `.env.example`, then configure required variables.
-3. Generate application secret key: `pnpm generate:key`
-4. Install required project dependencies: `pnpm install`
-5. Start the database server and local SMTP server: `pnpm pre-dev`
-6. Run project in development mode: `pnpm dev`
-
-If you don't have OpenSSL installed, an alternative option for generating a secret key
-is to use [1password][1password] to create a random secret.
-
-Application will run at <http://localhost:3000>
-
-For detailed explanation on how things work, check out [TanStack Start documentation][start-docs].
-
-### OAuth Configuration
-
-Callback: `http://localhost:3000/api/auth/callback/<PROVIDER>`
-
-### Webhooks
-
-In order to receive webhooks (_i.e. notifications, payment integrations, etc_), you will need
-to expose the local port to the internet. To expose a local port to the internet, you can use
-service like [Tailscale Funnel][tailscale], [Expose by Beyond Code][expose-dev], or [ngrok][ngrok].
-
-In this case we will use Tailscale Funnel. By default, no alias for `tailscale` is set up.
-If you plan on frequently accessing the Tailscale CLI, you can add an alias to your `.bashrc`
-or `.zshrc` to make it easier.
-
-```sh
-alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
-```
-
-```sh
-tailscale funnel --bg=false http://localhost:3000
-tailscale funnel status
-```
-
-Reference: https://www.twilio.com/blog/expose-localhost-to-internet-with-tunnel
-
-## 🔰 Database Migration
-
-> TODO: add more information here
-
-## Testing
-
-### Unit Testing
-
-```sh
-pnpm test            # Run unit tests
-pnpm test:coverage   # Run unit tests and generate coverage report
-pnpm test:report     # View the unit test report
-pnpm test:ui         # Launch the unit test runner UI
-```
-
-### E2E Testing
-
-```sh
-pnpm e2e-test:install   # Install dependencies for E2E testing
-pnpm e2e-test:ui        # Launch the E2E test runner UI
-
-pnpm e2e-test:chrome    # Run end-to-end tests in Chrome browser
-pnpm e2e-test:firefox   # Run end-to-end tests in Firefox browser
-pnpm e2e-test:safari    # Run end-to-end tests in Safari browser
-pnpm e2e-test:mobile    # Run end-to-end tests for mobile devices
-
-pnpm e2e-test:report    # Generate and view the E2E test report
-```
-
-## 🐳 Docker Container
-
-### Development Server
-
-```sh
-# Start development server
-docker-compose up -d
-
-# Stop development server
-docker-compose down --remove-orphans --volumes
-```
-
-### Build Container
-
-```sh
-pnpm docker:build
-```
-
-### List Docker Images
-
-```sh
-pnpm docker:images
-```
-
-### Testing Container
-
-```sh
-# Run API Docker container in foreground
-docker run --rm -it -p 3000:3000 --name better-start --env-file .env better-start
-```
-
-### Push Images
-
-Sign in to container registry:
-
-```sh
-echo $REGISTRY_TOKEN | docker login ghcr.io --username YOUR_USERNAME --password-stdin
-```
-
-Push docker image:
-
-```sh
-docker push ghcr.io/riipandi/better-start:latest
-```
-
-## 🚀 Deployment
-
-Read [Deployment Guide](./DEPLOY.md) for detailed documentation.
-
-<!-- link reference definition -->
-[1password]: https://1password.com/password-generator
-[turso-cli]: https://docs.turso.tech/cli/installation
-[docker]: https://docs.docker.com/engine/install
-[expose-dev]: https://expose.dev/
-[ngrok]: https://ngrok.com/
-[nodejs]: https://nodejs.org/en/download/
-[pnpm]: https://pnpm.io/installation
-[start-docs]: https://tanstack.com/start
-[tailscale]: https://tailscale.com/kb/1223/funnel
+[pull-requests-docs]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork

@@ -5,9 +5,11 @@
 .pnp.js
 .DS_Store
 .DS_Store?
+.memelord/
 /coverage
 /[Tt]emp/
 /[Tt]mp/
+/vendor/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
@@ -34,6 +36,7 @@ _data/
 build/
 dist/
 dist-ssr/
+release/
 output/
 .build/
 .data
@@ -77,21 +80,22 @@ compose.env*
 storybook-static/
 
 # Application data
-public/assets/styles.css
 /storage/
 
 # Miscellaneous
+cloudflare-env.d.ts
 pnpm-exec-summary.json
 slim.report.json
-.memelord/
 RELEASE.md
 audit.json
 todos.json
-count.txt
+sbom-*
 
-# TanStack
+# TanStack Start
 .tanstack/
+routeTree.gen.ts
 routes.gen.ts
+__unconfig*
 *.gen.ts
 
 # Terraform
