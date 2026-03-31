@@ -12,7 +12,7 @@ TanStack Start is a full-stack web framework built on top of [Vite](https://vite
 You will need [`Node.js >= 24.14`][nodejs], [`PNPM >= 10.33`][pnpm], and [`Docker >= 20.10`][docker] installed on your machine.
 
 ```sh
-pnpm dlx tiged riipandi/better-start my-app
+pnpm dlx tiged riipandi/tanstart my-app
 ```
 
 Read the [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines on contributing to this project.
