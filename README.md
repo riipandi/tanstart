@@ -62,6 +62,7 @@ This project licensed under the [MIT license][license-mit]. See the [LICENSE](./
 
 <!-- References -->
 [docker]: https://docs.docker.com/engine/install/
+[license-mit]: https://choosealicense.com/licenses/mit/
 [nodejs]: https://nodejs.org/en/download
 [pnpm]: https://pnpm.io/installation
 [riipandi-x]: https://x.com/intent/follow?screen_name=riipandi
