@@ -11,6 +11,10 @@ TanStack Start is a full-stack web framework built on top of [Vite](https://vite
 
 You will need [`Node.js >= 24.14`][nodejs], [`PNPM >= 10.33`][pnpm], and [`Docker >= 20.10`][docker] installed on your machine.
 
+```sh
+pnpm dlx tiged riipandi/better-start my-app
+```
+
 Read the [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines on contributing to this project.
 
 ```bash
@@ -46,7 +50,18 @@ Files prefixed with `demo` can be safely deleted. They are there to provide a st
 For more detailed information about the system architecture, design decisions, and project structure,
 please refer to the documentation in the [`docs`](./docs) directory.
 
+## License
+
+This project licensed under the [MIT license][license-mit]. See the [LICENSE](./LICENSE) file for more information.
+
+---
+
+<sub>🤫 Psst! If you like my work you can support me via [GitHub sponsors](https://github.com/sponsors/riipandi).</sub>
+
+[![Made by](https://badgen.net/badge/icon/Aris%20Ripandi?label=Made+by&color=black&labelColor=black)][riipandi-x]
+
 <!-- References -->
 [docker]: https://docs.docker.com/engine/install/
 [nodejs]: https://nodejs.org/en/download
 [pnpm]: https://pnpm.io/installation
+[riipandi-x]: https://x.com/intent/follow?screen_name=riipandi
