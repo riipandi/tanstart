@@ -1,5 +1,6 @@
 # TanStart
 
+A starter template featuring TanStack libs (Start, Query, DevTools), Tailwind CSS, and TypeScript.
 TanStack Start is a full-stack web framework built on top of [Vite](https://vitejs.dev/),
 [React](https://react.dev/), and [TanStack Router](https://tanstack.com/router/latest).
 
