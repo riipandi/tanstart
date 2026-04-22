@@ -9,6 +9,7 @@ import { defineConfig } from 'vite'
 const isProduction = process.env.NODE_ENV === 'production'
 
 export default defineConfig({
+  envPrefix: ['VITE_', 'PUBLIC_'],
   plugins: [
     devtools(),
     tailwindcss(),

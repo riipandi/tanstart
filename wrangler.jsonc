@@ -5,14 +5,17 @@
  * - https://developers.cloudflare.com/workers/static-assets/binding
  *
  * Build configurations:
- * - Build command: `pnpm run build`
- * - Deploy command: `pnpm run deploy`
+ * - Build command: `pnpm run typegen && pnpm run build`
+ * - Deploy command: `pnpm exec wrangler deploy --env production`
  * - Non-production branch deploy command: `pnpm exec wrangler versions upload`
+ *
+ * Envar for build only (Settings -> Build -> Variables and secrets):
+ * - PUBLIC_ or VITE_ prefixed variables need to added here!
  */
 {
     "$schema": "node_modules/wrangler/config-schema.json",
     "name": "tanstart",
-    "compatibility_date": "2025-09-15",
+    "compatibility_date": "2026-04-07",
     "compatibility_flags": ["nodejs_compat"],
     "main": "@tanstack/react-start/server-entry",
     "send_metrics": false,
@@ -31,12 +34,16 @@
         "mode": "smart"
     },
     "observability": {
-        "enabled": true
+        "enabled": true,
+        "head_sampling_rate": 0.01,
+        "logs": {
+            "enabled": true,
+            "head_sampling_rate": 0.7
+        }
     },
     "vars": {
-        /* Build -> Variables and secrets */
-        "COREPACK_INTEGRITY_KEYS": "0",
-        "NODE_VERSION": "24.12.1",
+        /* Settings -> Variables and secrets */
+        "NODE_VERSION": "24.14.1",
         "PNPM_VERSION": "10.33.0"
     }
 }
