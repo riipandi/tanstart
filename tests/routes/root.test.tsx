@@ -34,7 +34,8 @@ describe('root route', () => {
     // jsdom always wraps in a <div>, so this warning is expected noise.
     const origError = console.error
     console.error = (...args: unknown[]) => {
-      if (typeof args[0] === 'string' && args[0].includes('<html> cannot be a child')) return
+      const all = args.map(String).join(' ')
+      if (all.includes('<html>') && all.includes('cannot be a child')) return
       origError.call(console, ...args)
     }
 
