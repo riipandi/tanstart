@@ -11,7 +11,7 @@ This template is designed to provide a minimal and solid foundation for building
 
 ## Quick Start
 
-You will need [`Node.js >= 24.14`][nodejs], [`PNPM >= 11.11`][pnpm], and [`Docker >= 20.10`][docker] installed on your machine.
+You will need [`Node.js >= 24.18`][nodejs], [`PNPM >= 11.11`][pnpm], and [`Docker >= 20.10`][docker] installed on your machine.
 
 ```sh
 pnpm dlx tiged riipandi/tanstart my-app
