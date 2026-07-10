@@ -29,6 +29,15 @@ describe('root route', () => {
   })
 
   it('renders shell with route content', async () => {
+    // Suppress React warning about <html> inside jsdom's <div>.
+    // The shell component renders <html> as the document root (correct for SSR);
+    // jsdom always wraps in a <div>, so this warning is expected noise.
+    const origError = console.error
+    console.error = (...args: unknown[]) => {
+      if (typeof args[0] === 'string' && args[0].includes('<html> cannot be a child')) return
+      origError.call(console, ...args)
+    }
+
     const { Route } = await import('#/routes/__root')
     const {
       createRootRouteWithContext,
@@ -70,5 +79,7 @@ describe('root route', () => {
       },
       { timeout: 3000 }
     )
+
+    console.error = origError
   })
 })

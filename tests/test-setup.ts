@@ -16,3 +16,6 @@ if (!window.matchMedia) {
     })
   })
 }
+
+// Polyfill scrollTo for TanStack Router scroll restoration in jsdom
+window.scrollTo = () => {}
