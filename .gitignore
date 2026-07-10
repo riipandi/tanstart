@@ -5,10 +5,10 @@
 .pnp.js
 .DS_Store
 .DS_Store?
-.memelord/
 /coverage
 /[Tt]emp/
 /[Tt]mp/
+/storage/
 /vendor/
 Thumbs.db
 ehthumbs.db
@@ -32,18 +32,18 @@ npm-debug.log*
 *.db
 
 # Output directory
-_data/
 build/
 dist/
 dist-ssr/
 release/
-output/
+/output/
+/out/
+.react-email/
 .build/
 .data
 .cache
 .nitro
 .output
-.vinxi
 .wrangler
 .netlify
 .wireit
@@ -68,7 +68,6 @@ compose.env*
 # Disable this line in your real app
 /playwright/.cache/
 /playwright-report/
-/tests-results/
 /blob-report/
 .playwright/
 
@@ -79,24 +78,19 @@ compose.env*
 *storybook.log
 storybook-static/
 
-# Application data
-/storage/
-
-# Miscellaneous
-cloudflare-env.d.ts
-pnpm-exec-summary.json
-slim.report.json
-RELEASE.md
-audit.json
-todos.json
-sbom-*
-
 # TanStack Start
 .tanstack/
 routeTree.gen.ts
 routes.gen.ts
 __unconfig*
 *.gen.ts
+
+# Miscellaneous
+pnpm-exec-summary.json
+slim.report.json
+RELEASE.md
+audit.json
+sbom-*
 
 # Terraform
 .terraform/
