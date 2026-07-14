@@ -1,5 +1,5 @@
 {
-    "$schema": "https://unpkg.com/oxfmt@0.58/configuration_schema.json",
+    "$schema": "node_modules/oxfmt/configuration_schema.json",
     "endOfLine": "lf",
     "useTabs": false,
     "tabWidth": 2,
