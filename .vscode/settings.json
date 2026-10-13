@@ -5,7 +5,6 @@
         "source.fixAll.oxc": "always"
     },
     "files.associations": {
-        "*.css": "tailwindcss",
         "*.vars": "dotenv",
         "*.yaml.example": "yaml",
         "*.yml.example": "yaml",
@@ -36,13 +35,6 @@
         "**/generated/**": true,
         "**/specs/**": true
     },
-    "tailwindCSS.experimental.classRegex": [
-        // @ref: https://www.tailwind-variants.org/docs/getting-started
-        // @ref: https://github.com/paolotiu/tailwind-intellisense-regex-list
-        ["(?:cn|cx|cva|clx|tv)\\(([^;]*)[\\);]", "[`'\"`]([^'\"`;]*)[`'\"`]"],
-        ["classList={{([^;]*)}}", "\\s*?[\"'`]([^\"'`]*).*?:"]
-    ],
-    "tailwindCSS.files.exclude": ["*.{json,md,mdx,js,ts,yml,yaml}"],
     "[css]": {
         "editor.defaultFormatter": "oxc.oxc-vscode"
     },
@@ -85,9 +77,6 @@
     },
     "[markdown]": {
         "editor.defaultFormatter": "darkriszty.markdown-table-prettify"
-    },
-    "[tailwindcss]": {
-        "editor.defaultFormatter": "oxc.oxc-vscode"
     },
     "[toml]": {
         "editor.defaultFormatter": "Shellomo.enhanced-toml",

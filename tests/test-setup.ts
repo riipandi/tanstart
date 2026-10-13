@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest'
 
-// Polyfill matchMedia for @lonik/themer in jsdom
+// Polyfill matchMedia for theme detection in jsdom
 if (!window.matchMedia) {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,

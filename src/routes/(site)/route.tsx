@@ -1,5 +1,7 @@
+import * as stylex from '@stylexjs/stylex'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
-import { ThemeSwitcher } from '#/routes/-theme'
+import { pageStyles } from '#/styles/pages/site.stylex'
+import { ThemeSwitcher } from '#/theme/theme-switcher'
 
 export const Route = createFileRoute('/(site)')({
   component: RouteComponent
@@ -7,8 +9,8 @@ export const Route = createFileRoute('/(site)')({
 
 function RouteComponent() {
   return (
-    <div className='p-8'>
-      <ThemeSwitcher className='absolute right-4 top-4' />
+    <div {...stylex.props(pageStyles.page)}>
+      <ThemeSwitcher />
       <Outlet />
     </div>
   )

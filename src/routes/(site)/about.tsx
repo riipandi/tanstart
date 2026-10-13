@@ -1,4 +1,6 @@
+import * as stylex from '@stylexjs/stylex'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { aboutStyles, buttonStyles } from '#/styles/pages/site.stylex'
 
 export const Route = createFileRoute('/(site)/about')({
   component: RouteComponent,
@@ -10,23 +12,16 @@ export const Route = createFileRoute('/(site)/about')({
 
 function RouteComponent() {
   return (
-    <div className='mx-auto max-w-5xl p-4'>
-      <section className='bg-background-elevation-base border border-border-neutral rounded-2xl p-6 sm:p-8'>
-        <p className='text-foreground-primary text-xs font-semibold uppercase tracking-widest mb-2'>
-          About
-        </p>
-        <h1 className='mb-3 text-4xl font-bold text-foreground-neutral sm:text-5xl'>
-          A small starter with room to grow.
-        </h1>
-        <p className='m-0 max-w-3xl text-base leading-8 text-foreground-neutral-faded'>
+    <div {...stylex.props(aboutStyles.container)}>
+      <section {...stylex.props(aboutStyles.card)}>
+        <p {...stylex.props(aboutStyles.eyebrow)}>About</p>
+        <h1 {...stylex.props(aboutStyles.heading)}>A small starter with room to grow.</h1>
+        <p {...stylex.props(aboutStyles.description)}>
           TanStack Start gives you type-safe routing, server functions, and modern SSR defaults. Use
           this as a clean foundation, then layer in your own routes, styling, and add-ons.
         </p>
-        <div className='mt-6'>
-          <Link
-            to='/'
-            className='rounded-full border border-border-neutral bg-background-elevation-base/50 px-5 py-2.5 text-sm font-semibold text-foreground-neutral no-underline transition hover:-translate-y-0.5 hover:border-foreground-neutral-faded'
-          >
+        <div {...stylex.props(aboutStyles.ctaRow)}>
+          <Link to='/' {...stylex.props(buttonStyles.neutral)}>
             &larr; Back
           </Link>
         </div>
