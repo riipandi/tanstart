@@ -1,6 +1,6 @@
 # TanStart
 
-A starter template featuring TanStack libs (Start, Query, DevTools), Tailwind CSS, and TypeScript.
+A starter template featuring TanStack libs (Start, Query, DevTools), StyleX, and TypeScript.
 TanStack Start is a full-stack web framework built on top of [Vite](https://vitejs.dev/),
 [React](https://react.dev/), and [TanStack Router](https://tanstack.com/router/latest).
 This template is designed to provide a minimal and solid foundation for building full-stack web applications.
@@ -11,7 +11,7 @@ This template is designed to provide a minimal and solid foundation for building
 
 ## Quick Start
 
-You will need [`Node.js >= 24.18`][nodejs], [`PNPM >= 11.11`][pnpm], and [`Docker >= 20.10`][docker] installed on your machine.
+You will need [`Node.js >= 24.18`][nodejs], [`PNPM >= 12.11`][pnpm], and [`Docker >= 20.10`][docker] installed on your machine.
 
 ```sh
 pnpm dlx tiged riipandi/tanstart my-app

@@ -1,9 +1,9 @@
 import { cloudflare } from '@cloudflare/vite-plugin'
-import tailwindcss from '@tailwindcss/vite'
+import stylex from '@stylexjs/unplugin/vite'
 import { devtools } from '@tanstack/devtools-vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-import viteReact from '@vitejs/plugin-react'
-import path from 'node:path'
+import react from '@vitejs/plugin-react'
+import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 
 const isProduction = process.env.NODE_ENV === 'production'
@@ -11,26 +11,27 @@ const isProduction = process.env.NODE_ENV === 'production'
 export default defineConfig({
   envPrefix: ['VITE_', 'PUBLIC_'],
   plugins: [
+    stylex({
+      aliases: { '#/*': resolve('./src/*') },
+      enableDevClassNames: !isProduction,
+      useCSSLayers: { before: ['reset'], prefix: 'stylex' }
+    }),
     devtools(),
-    tailwindcss(),
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
     tanstackStart({
       router: {
-        routesDirectory: path.resolve('./src/routes'),
-        generatedRouteTree: path.resolve('./src/routes.gen.ts')
+        routesDirectory: resolve('./src/routes'),
+        generatedRouteTree: resolve('./src/routes.gen.ts')
       }
     }),
-    viteReact()
+    react({ compiler: true })
   ],
-  resolve: {
-    alias: { '#': path.resolve('./src') },
-    tsconfigPaths: true
-  },
+  resolve: { tsconfigPaths: true },
   build: {
     emptyOutDir: true,
     chunkSizeWarningLimit: 1024 * 4,
     minify: isProduction ? 'oxc' : false,
     reportCompressedSize: false
   },
-  server: { port: 3000 }
+  server: { port: 3000, strictPort: true }
 })

@@ -1,41 +1,37 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { ThemeProvider, ThemeSwitcher } from '#/routes/-theme'
+import { ThemeProvider, useThemeSetting as useThemeSettingActual } from '#/theme/theme'
+import type { ThemeSetting } from '#/theme/theme'
+import { ThemeSwitcher } from '#/theme/theme-switcher'
 
-const { mockUseTheme } = vi.hoisted(() => ({
-  mockUseTheme: vi.fn<() => { theme: string | null; setTheme: (t: string) => void }>(() => ({
-    theme: 'light',
-    setTheme: vi.fn<(...args: Array<unknown>) => void>()
-  }))
+const { mockSetTheme, mockSettingRef } = vi.hoisted(() => ({
+  mockSetTheme: vi.fn<(next: ThemeSetting) => void>(),
+  mockSettingRef: { current: 'light' as ThemeSetting }
 }))
 
-vi.mock('@lonik/themer', () => ({
-  ThemeProvider: ({
-    children,
-    ...props
-  }: { children?: React.ReactNode } & Record<string, unknown>) =>
-    React.createElement(
-      'div',
-      {
-        'data-testid': 'theme-provider',
-        'data-themes': ((props.themes ?? []) as string[]).join(','),
-        'data-default': (props.defaultTheme ?? '') as string
-      },
-      children
-    ),
-  useTheme: mockUseTheme
-}))
+const Probe = () => {
+  const { setting } = useThemeSettingActual()
+  return <div data-testid='probe'>{setting}</div>
+}
 
-vi.mock('#/utils/variant', () => ({
-  clx: (...classes: string[]) => classes.filter(Boolean).join(' ')
-}))
-
+vi.mock('#/routes/-theme', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('#/theme/theme')>()
+  return {
+    ...actual,
+    useThemeSetting: vi.fn<() => { setting: ThemeSetting; setTheme: (next: ThemeSetting) => void }>(
+      () => ({
+        setting: mockSettingRef.current,
+        setTheme: mockSetTheme
+      })
+    )
+  }
+})
 beforeEach(() => {
-  mockUseTheme.mockReturnValue({
-    theme: 'light',
-    setTheme: vi.fn<(...args: Array<unknown>) => void>()
-  })
+  mockSettingRef.current = 'light'
+  mockSetTheme.mockClear()
+  localStorage.clear()
+  document.documentElement.className = ''
 })
 
 describe('ThemeProvider', () => {
@@ -48,67 +44,54 @@ describe('ThemeProvider', () => {
       )
     )
     expect(screen.getByTestId('child')).toBeInTheDocument()
+    document.documentElement.className = ''
   })
 
-  it('passes theme config', () => {
+  it('applies saved theme from localStorage', () => {
+    localStorage.setItem('tanstart-theme', 'dark')
     render(React.createElement(ThemeProvider, null, null))
-    const el = document.querySelector('[data-testid="theme-provider"]')
-    expect(el).toHaveAttribute('data-themes', 'light,dark')
-    expect(el).toHaveAttribute('data-default', 'system')
+    expect(document.documentElement.style.colorScheme).toBe('dark')
+    document.documentElement.className = ''
   })
 })
 
 describe('ThemeSwitcher', () => {
   it('renders sun icon for light theme', () => {
+    mockSettingRef.current = 'light'
     render(React.createElement(ThemeSwitcher))
     expect(screen.getByLabelText('Switch to dark mode')).toBeInTheDocument()
   })
 
   it('renders moon icon for dark theme', () => {
-    mockUseTheme.mockReturnValue({
-      theme: 'dark',
-      setTheme: vi.fn<(...args: Array<unknown>) => void>()
-    })
+    mockSettingRef.current = 'dark'
     render(React.createElement(ThemeSwitcher))
     expect(screen.getByLabelText('Switch to system mode')).toBeInTheDocument()
   })
 
   it('renders monitor icon for system theme', () => {
-    mockUseTheme.mockReturnValue({
-      theme: 'system',
-      setTheme: vi.fn<(...args: Array<unknown>) => void>()
-    })
-    render(React.createElement(ThemeSwitcher))
-    expect(screen.getByLabelText('Switch to light mode')).toBeInTheDocument()
-  })
-
-  it('handles null theme as system', () => {
-    mockUseTheme.mockReturnValue({
-      theme: null,
-      setTheme: vi.fn<(...args: Array<unknown>) => void>()
-    })
+    mockSettingRef.current = 'system'
     render(React.createElement(ThemeSwitcher))
     expect(screen.getByLabelText('Switch to light mode')).toBeInTheDocument()
   })
 
   it('cycles light→dark on click', () => {
-    const setTheme = vi.fn<(...args: Array<unknown>) => void>()
-    mockUseTheme.mockReturnValue({ theme: 'light', setTheme })
+    mockSettingRef.current = 'light'
     render(React.createElement(ThemeSwitcher))
     screen.getByRole('button').click()
-    expect(setTheme).toHaveBeenCalledWith('dark')
-  })
-
-  it('applies className', () => {
-    render(React.createElement(ThemeSwitcher, { className: 'foo' }))
-    expect(document.querySelector('.foo')).toBeInTheDocument()
+    expect(mockSetTheme).toHaveBeenCalledWith('dark')
   })
 
   it('falls back to light on unknown theme', () => {
-    const setTheme = vi.fn<(...args: Array<unknown>) => void>()
-    mockUseTheme.mockReturnValue({ theme: 'unknown', setTheme })
+    mockSettingRef.current = 'unknown' as ThemeSetting
     render(React.createElement(ThemeSwitcher))
     screen.getByRole('button').click()
-    expect(setTheme).toHaveBeenCalledWith('light')
+    expect(mockSetTheme).toHaveBeenCalledWith('light')
+  })
+})
+
+describe('useThemeSetting', () => {
+  it('returns mocked context value', () => {
+    render(<Probe />)
+    expect(screen.getByTestId('probe').textContent).toBe('light')
   })
 })

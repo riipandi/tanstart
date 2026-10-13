@@ -1,36 +1,31 @@
+import * as stylex from '@stylexjs/stylex'
 import { Link, type ErrorComponentProps } from '@tanstack/react-router'
 import * as Lucide from 'lucide-react'
 import { Activity } from 'react'
+import { boundariesStyles } from '#/styles/pages/boundaries.stylex'
+import { buttonStyles, ctaRowStyles } from '#/styles/pages/site.stylex'
 
 export function GlobalNotFound() {
   return (
-    <main className='mx-auto flex min-h-screen max-w-5xl items-center justify-center px-4 py-12'>
-      <section className='bg-background-elevation-base border-border-neutral animate-in fade-in slide-in-from-bottom-3 duration-500 relative w-full overflow-hidden rounded-2xl border px-6 py-14 text-center sm:px-10'>
-        <div className='pointer-events-none absolute -top-24 -left-20 h-56 w-56 rounded-full bg-background-primary/10 blur-3xl' />
-        <div className='pointer-events-none absolute -right-20 -bottom-20 h-56 w-56 rounded-full bg-background-primary-faded/10 blur-3xl' />
+    <main {...stylex.props(boundariesStyles.main)}>
+      <section {...stylex.props(boundariesStyles.section, boundariesStyles.notFoundSection)}>
+        <div {...stylex.props(boundariesStyles.glow, boundariesStyles.glowPrimary)} />
+        <div {...stylex.props(boundariesStyles.glow, boundariesStyles.glowPrimaryFaded)} />
 
-        <Lucide.SearchX
-          className='mx-auto mb-6 h-14 w-14 text-foreground-primary/50'
-          strokeWidth={1.5}
-        />
+        <Lucide.SearchX {...stylex.props(boundariesStyles.icon)} strokeWidth={1.5} />
 
-        <p className='text-foreground-primary mb-3 text-xs font-semibold uppercase tracking-widest'>
+        <p {...stylex.props(boundariesStyles.eyebrow, boundariesStyles.eyebrowPrimary)}>
           Error 404
         </p>
 
-        <h1 className='mb-3 text-4xl font-bold tracking-tight text-foreground-neutral sm:text-5xl'>
-          Page not found
-        </h1>
+        <h1 {...stylex.props(boundariesStyles.heading)}>Page not found</h1>
 
-        <p className='mx-auto mb-8 max-w-md text-sm text-foreground-neutral-faded sm:text-base'>
+        <p {...stylex.props(boundariesStyles.description)}>
           The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
 
-        <div className='flex flex-col items-center gap-3 sm:flex-row sm:justify-center'>
-          <Link
-            to='/'
-            className='rounded-full border border-border-primary bg-background-primary-faded px-5 py-2.5 text-sm font-semibold text-foreground-primary no-underline transition hover:-translate-y-0.5 hover:bg-background-primary-faded/60'
-          >
+        <div {...stylex.props(ctaRowStyles.responsive)}>
+          <Link to='/' {...stylex.props(buttonStyles.primary)}>
             Back to Home
           </Link>
         </div>
@@ -44,48 +39,37 @@ export function GlobalError({ error, reset }: ErrorComponentProps) {
     error instanceof Error ? error.message : typeof error === 'string' ? error : ''
 
   return (
-    <main className='mx-auto flex min-h-screen max-w-5xl items-center justify-center px-4 py-12'>
-      <section className='border-critical/20 bg-background-elevation-base animate-in fade-in slide-in-from-bottom-3 duration-500 relative w-full overflow-hidden rounded-2xl border px-6 py-14 text-center sm:px-10'>
-        <div className='pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-background-critical/10 blur-3xl' />
-        <div className='pointer-events-none absolute -bottom-20 -left-20 h-56 w-56 rounded-full bg-background-critical-faded/10 blur-3xl' />
+    <main {...stylex.props(boundariesStyles.main)}>
+      <section {...stylex.props(boundariesStyles.section, boundariesStyles.errorSection)}>
+        <div {...stylex.props(boundariesStyles.glow, boundariesStyles.glowCritical)} />
+        <div {...stylex.props(boundariesStyles.glow, boundariesStyles.glowCriticalFaded)} />
 
         <Lucide.AlertCircle
-          className='mx-auto mb-6 h-14 w-14 text-foreground-critical/50'
+          {...stylex.props(boundariesStyles.icon, boundariesStyles.iconCritical)}
           strokeWidth={1.5}
         />
 
-        <p className='text-foreground-critical mb-3 text-xs font-semibold uppercase tracking-widest'>
+        <p {...stylex.props(boundariesStyles.eyebrow, boundariesStyles.eyebrowCritical)}>
           Unexpected error
         </p>
 
-        <h1 className='mb-3 text-4xl font-bold tracking-tight text-foreground-neutral sm:text-5xl'>
-          Something went wrong
-        </h1>
+        <h1 {...stylex.props(boundariesStyles.heading)}>Something went wrong</h1>
 
-        <p className='mx-auto mb-6 max-w-full text-sm text-foreground-neutral-faded sm:text-base'>
+        <p {...stylex.props(boundariesStyles.description)}>
           An unexpected error occurred. You can try again or go back to the home page.
         </p>
 
         <Activity mode={errorMessage ? 'visible' : 'hidden'}>
-          <div className='mx-auto mb-8 max-w-lg rounded-lg border border-border-neutral bg-background-page p-4 text-left'>
-            <code className='text-foreground-critical block overflow-x-auto whitespace-pre-wrap wrap-break-word font-mono text-xs'>
-              {errorMessage}
-            </code>
+          <div {...stylex.props(boundariesStyles.errorBox)}>
+            <code {...stylex.props(boundariesStyles.errorCode)}>{errorMessage}</code>
           </div>
         </Activity>
 
-        <div className='flex flex-col items-center gap-3 sm:flex-row sm:justify-center'>
-          <button
-            type='button'
-            onClick={reset}
-            className='rounded-full border border-border-critical bg-background-critical-faded px-5 py-2.5 text-sm font-semibold text-foreground-critical transition hover:-translate-y-0.5 hover:bg-background-critical-faded/60'
-          >
+        <div {...stylex.props(ctaRowStyles.responsive)}>
+          <button type='button' onClick={reset} {...stylex.props(buttonStyles.critical)}>
             Try again
           </button>
-          <Link
-            to='/'
-            className='rounded-full border border-border-neutral bg-background-elevation-base/50 px-5 py-2.5 text-sm font-semibold text-foreground-neutral no-underline transition hover:-translate-y-0.5 hover:border-foreground-neutral-faded'
-          >
+          <Link to='/' {...stylex.props(buttonStyles.neutral)}>
             Back to Home
           </Link>
         </div>

@@ -1,0 +1,53 @@
+/*
+ * StyleX CSS output is injected automatically by @stylexjs/unplugin:
+ * - build: appended to the CSS asset via the `generateBundle` hook,
+ *   wrapped in `@layer stylex` (see `useCSSLayers` in vite.config.ts).
+ * - dev: served from the `/virtual:stylex.css` middleware endpoint.
+ */
+
+@import './reset.css';
+@import './fontface.css';
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family:
+      'Mona Sans Variable', system-ui, -apple-system, Roboto, Aptos, Helvetica, sans-serif;
+  }
+}
+
+@layer utilities {
+  .debug {
+    border-width: 1px;
+    border-style: dashed;
+    border-color: #f87171;
+  }
+}
+
+/*
+ * Theme switcher icon visibility, driven by the `data-theme-setting`
+ * attribute on <html> (set by the inline theme init script and applyTheme)
+ * so the correct icon shows before React hydrates — no icon flicker.
+ */
+[data-theme-setting='light'] [data-theme-icon='dark'],
+[data-theme-setting='light'] [data-theme-icon='system'],
+[data-theme-setting='dark'] [data-theme-icon='light'],
+[data-theme-setting='dark'] [data-theme-icon='system'],
+[data-theme-setting='system'] [data-theme-icon='light'],
+[data-theme-setting='system'] [data-theme-icon='dark'] {
+  display: none;
+}

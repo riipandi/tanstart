@@ -1,9 +1,43 @@
-import path from 'node:path'
+import stylex from '@stylexjs/unplugin/vite'
+import { EventEmitter } from 'node:events'
+import { resolve } from 'node:path'
+import type { Plugin, ViteDevServer } from 'vite'
 import { defineConfig } from 'vitest/config'
 
+/**
+ * StyleX starts a dev HMR interval in configureServer and only clears it on
+ * httpServer 'close'. Vitest's Vite server often has no httpServer, so the
+ * interval keeps the process alive after tests finish.
+ * (Same workaround as vite-react-template's vitest config.)
+ */
+function vitestStylexCleanup(): Plugin {
+  let server: ViteDevServer | undefined
+  const closeHttpServer = () => {
+    server?.httpServer?.emit('close')
+  }
+  return {
+    name: 'vitest-stylex-cleanup',
+    enforce: 'pre',
+    apply: 'serve',
+    configureServer(devServer) {
+      server = devServer
+      if (!devServer.httpServer) {
+        Object.assign(devServer, { httpServer: new EventEmitter() })
+      }
+    },
+    buildEnd: closeHttpServer,
+    closeWatcher: closeHttpServer
+  }
+}
+
 export default defineConfig({
+  plugins: [
+    vitestStylexCleanup(),
+    // Compile StyleX styles for unit tests (defineVars/create/createTheme).
+    stylex({ useCSSLayers: true, aliases: { '#/*': resolve('./src/*') } })
+  ],
   resolve: {
-    alias: { '#': path.resolve('./src') }
+    alias: { '#': resolve('./src') }
   },
   test: {
     globals: true,

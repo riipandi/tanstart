@@ -1,9 +1,16 @@
+import * as stylex from '@stylexjs/stylex'
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
 import { getContext, type GlobalContext } from '#/provider'
-import appCss from '../styles/globals.css?url'
+import { themeInitScript, ThemeProvider } from '#/theme/theme'
+import appCss from '../assets/globals.css?url'
 import { GlobalNotFound, GlobalError } from './-boundaries'
 import DevTools from './-devtools'
-import { ThemeProvider } from './-theme'
+
+const bodyStyles = stylex.create({
+  root: {
+    isolation: 'isolate'
+  }
+})
 
 export const Route = createRootRouteWithContext<GlobalContext>()({
   shellComponent: RootDocument,
@@ -19,6 +26,10 @@ export const Route = createRootRouteWithContext<GlobalContext>()({
       { title: 'TanStack Start Starter' }
     ],
     links: [
+      // In dev, StyleX CSS is served by the unplugin middleware endpoint
+      // (`transformIndexHtml` only works for SPA index.html, not SSR shells).
+      // In production, the plugin appends compiled CSS to the main stylesheet.
+      ...(import.meta.env.DEV ? [{ rel: 'stylesheet', href: '/virtual:stylex.css' }] : []),
       { rel: 'manifest', href: '/manifest.json' },
       { rel: 'shortcut icon', href: '/favicon.ico' },
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -53,8 +64,9 @@ function RootDocument(props: React.PropsWithChildren) {
       <html lang='en' suppressHydrationWarning>
         <head>
           <HeadContent />
+          <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         </head>
-        <body className='isolate'>
+        <body {...stylex.props(bodyStyles.root)}>
           {props.children}
           <DevTools queryClient={queryClient} />
           <Scripts />
