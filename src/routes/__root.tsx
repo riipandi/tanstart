@@ -1,7 +1,7 @@
 import * as stylex from '@stylexjs/stylex'
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
 import { getContext, type GlobalContext } from '#/provider'
-import { ThemeProvider } from '#/theme/theme'
+import { themeInitScript, ThemeProvider } from '#/theme/theme'
 import appCss from '../assets/globals.css?url'
 import { GlobalNotFound, GlobalError } from './-boundaries'
 import DevTools from './-devtools'
@@ -64,6 +64,7 @@ function RootDocument(props: React.PropsWithChildren) {
       <html lang='en' suppressHydrationWarning>
         <head>
           <HeadContent />
+          <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         </head>
         <body {...stylex.props(bodyStyles.root)}>
           {props.children}

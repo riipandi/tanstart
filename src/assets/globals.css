@@ -37,3 +37,17 @@
     border-color: #f87171;
   }
 }
+
+/*
+ * Theme switcher icon visibility, driven by the `data-theme-setting`
+ * attribute on <html> (set by the inline theme init script and applyTheme)
+ * so the correct icon shows before React hydrates — no icon flicker.
+ */
+[data-theme-setting='light'] [data-theme-icon='dark'],
+[data-theme-setting='light'] [data-theme-icon='system'],
+[data-theme-setting='dark'] [data-theme-icon='light'],
+[data-theme-setting='dark'] [data-theme-icon='system'],
+[data-theme-setting='system'] [data-theme-icon='light'],
+[data-theme-setting='system'] [data-theme-icon='dark'] {
+  display: none;
+}

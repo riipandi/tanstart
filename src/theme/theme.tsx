@@ -6,6 +6,22 @@ export type ThemeSetting = 'light' | 'dark' | 'system'
 const STORAGE_KEY = 'tanstart-theme'
 const THEME_EVENT = 'tanstart:theme-change'
 
+// Runs before first paint to avoid a light-mode flash when the stored or
+// system theme is dark. Inline and blocking on purpose: it must finish
+// before the document renders.
+const themeInitScript = `
+(function () {
+  try {
+    var setting = localStorage.getItem('${STORAGE_KEY}') || 'system';
+    var isDark = setting === 'dark' || (setting === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var tokens = ${JSON.stringify(darkThemeClass)}.split(/\\s+/).filter(Boolean);
+    for (var i = 0; i < tokens.length; i++) { document.documentElement.classList.toggle(tokens[i], isDark); }
+    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+    document.documentElement.dataset.themeSetting = setting;
+  } catch (e) {}
+})();
+`
+
 const cycle: Record<ThemeSetting, ThemeSetting> = { light: 'dark', dark: 'system', system: 'light' }
 
 const labels: Record<ThemeSetting, string> = {
@@ -31,6 +47,8 @@ function applyTheme(setting: ThemeSetting) {
     document.documentElement.classList.toggle(token, isDark)
   }
   document.documentElement.style.colorScheme = isDark ? 'dark' : 'light'
+  // Drives CSS-based icon visibility in the ThemeSwitcher (see globals.css).
+  document.documentElement.dataset.themeSetting = setting
 }
 
 function getSnapshot(): ThemeSetting {
@@ -82,4 +100,4 @@ export function useThemeSetting() {
   return { setting, setTheme }
 }
 
-export { cycle, labels, applyTheme }
+export { cycle, themeInitScript, labels, applyTheme }
