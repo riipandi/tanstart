@@ -40,6 +40,9 @@ export function GlobalNotFound() {
 }
 
 export function GlobalError({ error, reset }: ErrorComponentProps) {
+  const errorMessage =
+    error instanceof Error ? error.message : typeof error === 'string' ? error : ''
+
   return (
     <main className='mx-auto flex min-h-screen max-w-5xl items-center justify-center px-4 py-12'>
       <section className='border-critical/20 bg-background-elevation-base animate-in fade-in slide-in-from-bottom-3 duration-500 relative w-full overflow-hidden rounded-2xl border px-6 py-14 text-center sm:px-10'>
@@ -63,10 +66,10 @@ export function GlobalError({ error, reset }: ErrorComponentProps) {
           An unexpected error occurred. You can try again or go back to the home page.
         </p>
 
-        <Activity mode={error.message ? 'visible' : 'hidden'}>
+        <Activity mode={errorMessage ? 'visible' : 'hidden'}>
           <div className='mx-auto mb-8 max-w-lg rounded-lg border border-border-neutral bg-background-page p-4 text-left'>
             <code className='text-foreground-critical block overflow-x-auto whitespace-pre-wrap wrap-break-word font-mono text-xs'>
-              {error.message}
+              {errorMessage}
             </code>
           </div>
         </Activity>
